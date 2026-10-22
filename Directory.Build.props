@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Version>0.1.0</Version>
+    <Authors>GaameTranslate contributors</Authors>
+    <Copyright>Copyright © 2026 GaameTranslate contributors</Copyright>
+  </PropertyGroup>
+</Project>
