@@ -116,10 +116,13 @@ public sealed class LocalDatabase(string directory)
     public async Task<IReadOnlyList<TranslationSession>> GetHistoryAsync(string search = "", CancellationToken token = default)
     {
         await using var connection = await OpenAsync(token); await using var command = connection.CreateCommand();
-        command.CommandText = "SELECT payload FROM history WHERE instr(lower(original),lower($search))>0 OR instr(lower(translated),lower($search))>0 ORDER BY created DESC LIMIT 500";
-        command.Parameters.AddWithValue("$search", search);
+        command.CommandText = "SELECT original, translated, payload FROM history ORDER BY created DESC";
         var result = new List<TranslationSession>(); await using var reader = await command.ExecuteReaderAsync(token);
-        while (await reader.ReadAsync(token)) result.Add(JsonSerializer.Deserialize<TranslationSession>(reader.GetString(0))!);
+        while (await reader.ReadAsync(token))
+        {
+            if (!reader.GetString(0).Contains(search, StringComparison.OrdinalIgnoreCase) && !reader.GetString(1).Contains(search, StringComparison.OrdinalIgnoreCase)) continue;
+            result.Add(JsonSerializer.Deserialize<TranslationSession>(reader.GetString(2))!); if (result.Count >= 500) break;
+        }
         return result;
     }
     public async Task DeleteHistoryAsync(Guid id, CancellationToken token = default) => await ExecuteAsync("DELETE FROM history WHERE id=$id", id.ToString(), token);

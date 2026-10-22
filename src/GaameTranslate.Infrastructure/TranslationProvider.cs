@@ -14,6 +14,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
     public string Name => settings.Provider;
     public async Task<IReadOnlyList<TranslationItem>> TranslateAsync(TranslationRequest request, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (request.Texts.Count == 0) return [];
         if (request.Texts.Any(t => t.Length > 15000)) throw new UserFacingException("This text block is too long. Select a smaller area (up to 15,000 characters per block).");
         var output = new List<TranslationItem>();
@@ -39,6 +40,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
         {
             for (var attempt = 0; ; attempt++)
             {
+                timeout.Token.ThrowIfCancellationRequested();
                 using var message = BuildRequest(input);
                 using var response = await client.SendAsync(message, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
                 if ((response.StatusCode == HttpStatusCode.TooManyRequests || (int)response.StatusCode >= 500) && attempt < 2)
@@ -60,6 +62,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
                 // Bound responses even when a local/custom server is misconfigured.
                 await response.Content.LoadIntoBufferAsync(4 * 1024 * 1024, timeout.Token).ConfigureAwait(false);
                 using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token).ConfigureAwait(false));
+                timeout.Token.ThrowIfCancellationRequested();
                 return ParseResponse(json.RootElement, input);
             }
         }
@@ -76,7 +79,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
         {
             var body = new Dictionary<string, object> { ["text"] = input.Texts, ["target_lang"] = input.Target == "en" ? "EN-US" : input.Target.ToUpperInvariant() };
             if (input.Source != "auto") body["source_lang"] = Languages.Base(input.Source).ToUpperInvariant();
-            if (!string.IsNullOrWhiteSpace(input.Context)) body["context"] = input.Context;
+            if (!string.IsNullOrWhiteSpace(input.Context)) body["context"] = input.Context[..Math.Min(5000,input.Context.Length)];
             var message = new HttpRequestMessage(HttpMethod.Post, Name == "DeepL Free" ? "https://api-free.deepl.com/v2/translate" : "https://api.deepl.com/v2/translate") { Content = JsonContent.Create(body) };
             message.Headers.TryAddWithoutValidation("Authorization", "DeepL-Auth-Key " + key);
             return message;
@@ -122,9 +125,9 @@ public sealed class TranslationCache
     public async Task<IReadOnlyList<TranslationItem>> TranslateAsync(ITranslationProvider provider, TranslationRequest request, string configurationIdentity, CancellationToken token)
     {
         var keys = request.Texts.Select(t => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new[] { provider.Name, configurationIdentity, request.Source, request.Target, request.Context, t }))))).ToArray();
-        var missing = Enumerable.Range(0, keys.Length).Where(i => !cache.ContainsKey(keys[i])).ToArray();
         // Read hits before adding; clearing the bounded cache cannot invalidate a result in flight.
         var results = keys.Select(k => cache.TryGetValue(k, out var hit) ? hit : null).ToArray();
+        var missing = Enumerable.Range(0, keys.Length).Where(i => results[i] is null).ToArray();
         if (missing.Length > 0)
         {
             var fetched = await provider.TranslateAsync(request with { Texts = missing.Select(i => request.Texts[i]).ToArray() }, token).ConfigureAwait(false);

@@ -41,6 +41,8 @@ public sealed record AppSettings
     public HotkeySettings Hotkeys { get; init; } = new();
     public AppSettings Validate()
     {
+        if (Preprocessing is null || Hotkeys is null || string.IsNullOrWhiteSpace(OcrLanguage)) throw new UserFacingException("Settings are incomplete. Restore the OCR and shortcut settings.");
+        if (ContextHint is null || ContextHint.Length > 1000) throw new UserFacingException("Keep the translation context hint under 1,000 characters.");
         if (!Languages.Translation.Any(l => l.Code == TargetLanguage)) throw new UserFacingException("Choose a supported target language.");
         if (SourceLanguage != "auto" && !Languages.Translation.Any(l => l.Code == SourceLanguage)) throw new UserFacingException("Choose a supported source language.");
         if (Provider is not ("DeepL Free" or "DeepL Pro" or "Azure" or "LibreTranslate")) throw new UserFacingException("Choose a translation provider.");
