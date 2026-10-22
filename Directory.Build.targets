@@ -1,0 +1,9 @@
+<Project>
+  <!-- Scope the servicing override to .NET runtimes, never to the WinRT SDK reference pack. -->
+  <Target Name="SelectGaamePublishRuntime" BeforeTargets="ProcessFrameworkReferences" Condition="'$(GaameRuntimeVersion)' != ''">
+    <ItemGroup>
+      <FrameworkReference Update="Microsoft.NETCore.App;Microsoft.WindowsDesktop.App;Microsoft.WindowsDesktop.App.WPF;Microsoft.WindowsDesktop.App.WindowsForms"
+                          RuntimeFrameworkVersion="$(GaameRuntimeVersion)" />
+    </ItemGroup>
+  </Target>
+</Project>
