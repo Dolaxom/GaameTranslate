@@ -37,6 +37,7 @@
 *.exe
 *.out
 *.app
+!src/GaameTranslate.App/
 
 # Build directories
 build/

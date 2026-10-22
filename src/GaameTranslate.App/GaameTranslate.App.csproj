@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>../../assets/GaameTranslate.ico</ApplicationIcon>
+    <AssemblyName>GaameTranslate</AssemblyName>
+    <Product>GaameTranslate</Product>
+    <Description>Screen translation and vocabulary for Windows</Description>
+    <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../GaameTranslate.Core/GaameTranslate.Core.csproj" />
+    <ProjectReference Include="../GaameTranslate.Infrastructure/GaameTranslate.Infrastructure.csproj" />
+    <ProjectReference Include="../GaameTranslate.Windows/GaameTranslate.Windows.csproj" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
+  </ItemGroup>
+</Project>
