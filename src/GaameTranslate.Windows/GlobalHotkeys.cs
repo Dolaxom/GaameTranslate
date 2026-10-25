@@ -24,7 +24,8 @@ public sealed class GlobalHotkeys : IDisposable
     }
     public static IReadOnlyList<(string Action, string Shortcut)> Bindings(HotkeySettings settings) => [
         ("Region", settings.Region), ("Fullscreen", settings.Fullscreen), ("Repeat", settings.Repeat),
-        ("ToggleOverlay", settings.ToggleOverlay), ("Vocabulary", settings.Vocabulary), ("Interaction", settings.Interaction)];
+        ("ToggleOverlay", settings.ToggleOverlay), ("Vocabulary", settings.Vocabulary), ("Interaction", settings.Interaction),
+        ("ScreenTranslation",settings.ScreenTranslation),("WordLookup",settings.WordLookup)];
     public static void Validate(HotkeySettings settings)
     {
         var parsed = Bindings(settings).Select(b => Parse(b.Shortcut)).ToArray();

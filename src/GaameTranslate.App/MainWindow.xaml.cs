@@ -59,11 +59,13 @@ public partial class MainWindow : Window
     });
     private async void Export_Click(object sender, RoutedEventArgs e) => await ExportAsync(false);
     private async void Anki_Click(object sender, RoutedEventArgs e) => await ExportAsync(true);
+    private async void SyncAnki_Click(object sender, RoutedEventArgs e) => await vm.GuardAsync(vm.SyncAnkiAsync);
     private async Task ExportAsync(bool anki) => await vm.GuardAsync(async () =>
     {
-        var dialog = new SaveFileDialog { Filter = anki ? "Anki text (*.txt)|*.txt" : "CSV files (*.csv)|*.csv", FileName = anki ? "GaameTranslate-Anki.txt" : "GaameTranslate-vocabulary.csv" }; if (dialog.ShowDialog(this) != true) return;
+        var dialog = new SaveFileDialog { Filter = anki ? "Anki package (*.apkg)|*.apkg|Anki text (*.txt)|*.txt" : "CSV files (*.csv)|*.csv", FileName = anki ? "GaameTranslate.apkg" : "GaameTranslate-vocabulary.csv" }; if (dialog.ShowDialog(this) != true) return;
         var entries = WordsList.Items.Cast<VocabularyEntry>().ToArray();
-        await File.WriteAllTextAsync(dialog.FileName, anki ? VocabularyCsv.ExportAnki(entries) : VocabularyCsv.Export(entries), new System.Text.UTF8Encoding(true)); vm.Status = "Vocabulary exported.";
+        if (anki && Path.GetExtension(dialog.FileName).Equals(".apkg", StringComparison.OrdinalIgnoreCase)) await Task.Run(() => AnkiPackageExporter.ExportAsync(dialog.FileName, entries, vm.Media));
+        else await File.WriteAllTextAsync(dialog.FileName, anki ? VocabularyCsv.ExportAnki(entries) : VocabularyCsv.Export(entries), new System.Text.UTF8Encoding(true)); vm.Status = "Vocabulary exported.";
     });
     private void Reopen_Click(object sender, RoutedEventArgs e) => vm.ReopenHistory();
     private void CopyHistory_Click(object sender, RoutedEventArgs e) { if (vm.SelectedHistory is { } history) vm.Copy(history.TranslatedText); }

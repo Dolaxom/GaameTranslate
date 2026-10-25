@@ -47,7 +47,25 @@ public sealed class LocalDatabase(string directory)
         long id = 0; VocabularyEntry? existing = null;
         await using (var reader = await find.ExecuteReaderAsync(token))
             if (await reader.ReadAsync(token)) { id = reader.GetInt64(0); existing = JsonSerializer.Deserialize<VocabularyEntry>(reader.GetString(1)); }
-        if (existing is not null) entry = existing with { Id = id, Encounters = existing.Encounters + 1 };
+        if (existing is not null) entry = existing with
+        {
+            Id = id,
+            Encounters = existing.Encounters + 1,
+            Translation = entry.Translation,
+            Context = Keep(entry.Context, existing.Context),
+            TranslatedContext = Keep(entry.TranslatedContext, existing.TranslatedContext),
+            Lemma = Keep(entry.Lemma, existing.Lemma),
+            Phonetic = Keep(entry.Phonetic, existing.Phonetic),
+            PartOfSpeech = Keep(entry.PartOfSpeech, existing.PartOfSpeech),
+            Level = Keep(entry.Level, existing.Level),
+            Definition = Keep(entry.Definition, existing.Definition),
+            Synonyms = Keep(entry.Synonyms, existing.Synonyms),
+            Examples = Keep(entry.Examples, existing.Examples),
+            Explanation = Keep(entry.Explanation, existing.Explanation),
+            DictionarySource = Keep(entry.DictionarySource, existing.DictionarySource),
+            ScreenshotFile = Keep(entry.ScreenshotFile, existing.ScreenshotFile),
+            AudioFile = Keep(entry.AudioFile, existing.AudioFile)
+        };
         else
         {
             await using var insert = connection.CreateCommand(); insert.Transaction = transaction;
@@ -61,6 +79,7 @@ public sealed class LocalDatabase(string directory)
         return entry;
     }
     private static string Stamp(DateTimeOffset value) => value.UtcDateTime.ToString("O", CultureInfo.InvariantCulture);
+    private static string Keep(string value, string previous) => string.IsNullOrWhiteSpace(value) ? previous : value;
     private static async Task UpdateCoreAsync(SqliteConnection connection, SqliteTransaction? transaction, VocabularyEntry entry, CancellationToken token)
     {
         await using var command = connection.CreateCommand(); command.Transaction = transaction;

@@ -27,6 +27,7 @@ internal static class Dialogs
         var word = SettingsView.Text(root, "Word", entry?.Word ?? ""); var meaning = SettingsView.Text(root, "Translation", entry?.Translation ?? "");
         var context = SettingsView.Text(root, "Original sentence", entry?.Context ?? ""); var translated = SettingsView.Text(root, "Translated sentence", entry?.TranslatedContext ?? "");
         var tags = SettingsView.Text(root, "Tags", entry?.Tags ?? ""); var notes = SettingsView.Text(root, "Notes", entry?.Notes ?? "");
+        var phonetic = SettingsView.Text(root, "Произношение", entry?.Phonetic ?? ""); var grammar = SettingsView.Text(root, "Часть речи", entry?.PartOfSpeech ?? ""); var definition = SettingsView.Text(root, "Определение", entry?.Definition ?? ""); var examples = SettingsView.Text(root, "Примеры", entry?.Examples ?? ""); var explanation = SettingsView.Text(root, "Объяснение", entry?.Explanation ?? "");
         root.Children.Add(SettingsView.Muted(entry is null ? $"{vm.Settings.SourceLanguage} → {vm.Settings.TargetLanguage}" : $"{entry.SourceLanguage} → {entry.TargetLanguage} · {entry.Encounters} encounters · added {entry.AddedAt.LocalDateTime:d}"));
         var feedback = SettingsView.Muted(""); root.Children.Add(feedback); var save = new Button { Content = "Save word", Style = (Style)System.Windows.Application.Current.FindResource("PrimaryButton") }; root.Children.Add(save);
         var window = Shell(owner, "Vocabulary", new ScrollViewer { Content = root, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
@@ -35,7 +36,7 @@ internal static class Dialogs
             save.IsEnabled = false;
             try
             {
-                var next = (entry ?? new VocabularyEntry { SourceLanguage = vm.Settings.SourceLanguage, TargetLanguage = vm.Settings.TargetLanguage }) with { Word = word.Text.Trim(), Translation = meaning.Text.Trim(), Context = context.Text, TranslatedContext = translated.Text, Tags = tags.Text, Notes = notes.Text };
+                var next = (entry ?? new VocabularyEntry { SourceLanguage = vm.Settings.SourceLanguage, TargetLanguage = vm.Settings.TargetLanguage }) with { Word = word.Text.Trim(), Translation = meaning.Text.Trim(), Context = context.Text, TranslatedContext = translated.Text, Tags = tags.Text, Notes = notes.Text, Phonetic = phonetic.Text, PartOfSpeech = grammar.Text, Definition = definition.Text, Examples = examples.Text, Explanation = explanation.Text };
                 if (entry is null) await vm.SaveWordAsync(next); else await vm.UpdateWordAsync(next); window.Close();
             }
             catch (Exception e) { feedback.Text = e is UserFacingException ? e.Message : "Could not save the word. Check available disk space and try again."; }

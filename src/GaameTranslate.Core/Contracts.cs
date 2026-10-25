@@ -25,3 +25,10 @@ public interface ISettingsStore
     Task<AppSettings> LoadAsync(CancellationToken cancellationToken = default);
     Task SaveAsync(AppSettings settings, CancellationToken cancellationToken = default);
 }
+public interface ISpeechService
+{
+    IReadOnlyList<LanguageChoice> Voices { get; }
+    Task<byte[]> SynthesizeAsync(string text, string language, string voice, CancellationToken token);
+    Task SpeakAsync(string text, string language, string voice, CancellationToken token);
+    void Stop();
+}

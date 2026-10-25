@@ -20,14 +20,20 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
 
 public sealed record CapturedFrame(byte[] Bgra, int Width, int Height, PixelRect Bounds);
 public sealed record OcrWord(string Text, PixelRect Bounds);
-public sealed record OcrBlock(int Order, string Text, PixelRect Bounds, IReadOnlyList<OcrWord> Words, double? Confidence = null);
+public sealed record OcrBlock(int Order, string Text, PixelRect Bounds, IReadOnlyList<OcrWord> Words, double? Confidence = null)
+{
+    public IReadOnlyList<PixelRect> LineBounds { get; init; } = [];
+}
 public sealed record OcrDocument(IReadOnlyList<OcrBlock> Blocks, string Language, double? TextAngle = null)
 {
     public string Text => string.Join(Environment.NewLine, Blocks.Select(b => b.Text));
 }
 public sealed record TranslationItem(string Text, string SourceLanguage);
 public sealed record TranslationRequest(IReadOnlyList<string> Texts, string Source, string Target, string Context = "");
-public sealed record TranslatedBlock(OcrBlock Original, string Translation);
+public sealed record TranslatedBlock(OcrBlock Original, string Translation)
+{
+    public string? BackgroundColor { get; init; }
+}
 public sealed record PipelineTimings(double CaptureMs, double OcrMs, double TranslationMs, double TotalMs);
 public sealed record TranslationSession(Guid Id, DateTimeOffset CreatedAt, PixelRect CaptureBounds,
     string SourceLanguage, string TargetLanguage, string Provider, string CaptureType,
@@ -55,6 +61,29 @@ public sealed record VocabularyEntry
     public double IntervalDays { get; init; }
     public double Ease { get; init; } = 2.5;
     public DateTimeOffset DueAt { get; init; } = DateTimeOffset.UtcNow;
+    public string Lemma { get; init; } = "";
+    public string Phonetic { get; init; } = "";
+    public string PartOfSpeech { get; init; } = "";
+    public string Level { get; init; } = "";
+    public string Definition { get; init; } = "";
+    public string Synonyms { get; init; } = "";
+    public string Examples { get; init; } = "";
+    public string Explanation { get; init; } = "";
+    public string DictionarySource { get; init; } = "";
+    public string ScreenshotFile { get; init; } = "";
+    public string AudioFile { get; init; } = "";
+}
+public sealed record DictionaryArticle(string Headword, string Definition, string Source)
+{
+    public string Phonetic { get; init; } = "";
+    public string PartOfSpeech { get; init; } = "";
+    public string Level { get; init; } = "";
+    public string Translation { get; init; } = "";
+    public string ContextTranslation { get; init; } = "";
+    public string Synonyms { get; init; } = "";
+    public string Examples { get; init; } = "";
+    public string Explanation { get; init; } = "";
+    public bool Generated { get; init; }
 }
 public sealed record LanguageChoice(string Code, string Name)
 {

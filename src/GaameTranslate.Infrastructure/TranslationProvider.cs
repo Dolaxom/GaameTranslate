@@ -16,13 +16,15 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (request.Texts.Count == 0) return [];
+        if (ProviderCatalog.IsLanguageModel(Name)) return await new LanguageModelClient(client, credentials).TranslateAsync(settings, request, cancellationToken);
+        if (Name == "Yandex Translate" && request.Texts.Any(t => t.Length > 9000)) throw new UserFacingException("Для Яндекс Переводчика выберите фрагмент короче 9 000 символов или используйте языковую модель.");
         if (request.Texts.Any(t => t.Length > 15000)) throw new UserFacingException("This text block is too long. Select a smaller area (up to 15,000 characters per block).");
         var output = new List<TranslationItem>();
         // Stay below both provider item and request-size limits, including JSON escaping overhead.
         var batch = new List<string>(); var characters = 0;
         foreach (var text in request.Texts)
         {
-            if (batch.Count >= 40 || characters + text.Length > 16000)
+            if (batch.Count > 0 && (batch.Count >= 40 || characters + text.Length > (Name == "Yandex Translate" ? 9000 : 16000)))
             {
                 output.AddRange(await SendBatchAsync(request with { Texts = batch.ToArray() }, cancellationToken));
                 batch.Clear(); characters = 0;
@@ -35,7 +37,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
     private async Task<IReadOnlyList<TranslationItem>> SendBatchAsync(TranslationRequest input, CancellationToken cancellationToken)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+        timeout.CancelAfter(TimeSpan.FromSeconds(settings.TranslationTimeoutSeconds));
         try
         {
             for (var attempt = 0; ; attempt++)
@@ -66,7 +68,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
                 return ParseResponse(json.RootElement, input);
             }
         }
-        catch (OperationCanceledException e) when (!cancellationToken.IsCancellationRequested) { throw new UserFacingException("The translation request timed out after 30 seconds. Check the service and try again.", e); }
+        catch (OperationCanceledException e) when (!cancellationToken.IsCancellationRequested) { throw new UserFacingException($"Переводчик не ответил за {settings.TranslationTimeoutSeconds} с. Проверьте сервис или увеличьте тайм-аут.", e); }
         catch (HttpRequestException e) { throw new UserFacingException("Cannot reach the translation provider. Check your connection or start your local LibreTranslate service.", e); }
         catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException)
         { throw new UserFacingException("The provider returned an invalid response. Check the selected API endpoint.", e); }
@@ -75,11 +77,24 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
     {
         var key = credentials.Read(Name) ?? "";
         if (Name != "LibreTranslate" && string.IsNullOrWhiteSpace(key)) throw new UserFacingException("Add your translation API key in Settings, or select a local LibreTranslate service.");
+        if (Name == "Yandex Translate")
+        {
+            var body = new Dictionary<string, object> { ["texts"] = input.Texts, ["targetLanguageCode"] = input.Target, ["format"] = "PLAIN_TEXT" };
+            if (input.Source != "auto") body["sourceLanguageCode"] = Languages.Base(input.Source);
+            if (settings.YandexIamToken)
+            {
+                if (string.IsNullOrWhiteSpace(settings.YandexFolderId)) throw new UserFacingException("Для IAM-токена Яндекса укажите folder ID в настройках.");
+                body["folderId"] = settings.YandexFolderId;
+            }
+            var message = new HttpRequestMessage(HttpMethod.Post, "https://translate.api.cloud.yandex.net/translate/v2/translate") { Content = JsonContent.Create(body) };
+            message.Headers.TryAddWithoutValidation("Authorization", (settings.YandexIamToken ? "Bearer " : "Api-Key ") + key);
+            return message;
+        }
         if (Name.StartsWith("DeepL", StringComparison.Ordinal))
         {
             var body = new Dictionary<string, object> { ["text"] = input.Texts, ["target_lang"] = input.Target == "en" ? "EN-US" : input.Target.ToUpperInvariant() };
             if (input.Source != "auto") body["source_lang"] = Languages.Base(input.Source).ToUpperInvariant();
-            if (!string.IsNullOrWhiteSpace(input.Context)) body["context"] = input.Context[..Math.Min(5000,input.Context.Length)];
+            if (!string.IsNullOrWhiteSpace(input.Context)) body["context"] = input.Context[..Math.Min(5000, input.Context.Length)];
             var message = new HttpRequestMessage(HttpMethod.Post, Name == "DeepL Free" ? "https://api-free.deepl.com/v2/translate" : "https://api.deepl.com/v2/translate") { Content = JsonContent.Create(body) };
             message.Headers.TryAddWithoutValidation("Authorization", "DeepL-Auth-Key " + key);
             return message;
@@ -101,7 +116,8 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
     private IReadOnlyList<TranslationItem> ParseResponse(JsonElement json, TranslationRequest input)
     {
         List<TranslationItem> items;
-        if (Name.StartsWith("DeepL", StringComparison.Ordinal)) items = json.GetProperty("translations").EnumerateArray()
+        if (Name == "Yandex Translate") items = json.GetProperty("translations").EnumerateArray().Select(t => new TranslationItem(t.GetProperty("text").GetString()!, t.TryGetProperty("detectedLanguageCode", out var code) ? code.GetString()! : input.Source)).ToList();
+        else if (Name.StartsWith("DeepL", StringComparison.Ordinal)) items = json.GetProperty("translations").EnumerateArray()
             .Select(t => new TranslationItem(t.GetProperty("text").GetString()!, t.TryGetProperty("detected_source_language", out var l) ? l.GetString()!.ToLowerInvariant() : input.Source)).ToList();
         else if (Name == "Azure") items = json.EnumerateArray().Select(t => new TranslationItem(t.GetProperty("translations")[0].GetProperty("text").GetString()!,
             t.TryGetProperty("detectedLanguage", out var l) ? l.GetProperty("language").GetString()! : input.Source)).ToList();
