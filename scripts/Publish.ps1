@@ -11,7 +11,10 @@ try {
     Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination $destination
     Copy-Item -LiteralPath (Join-Path $root 'docs') -Destination $destination -Recurse -Force
     Copy-Item -LiteralPath (Join-Path $root 'assets') -Destination $destination -Recurse -Force
-    $archive=Join-Path $root 'artifacts/GaameTranslate-0.1.0-win-x64.zip'
+    $userScripts=Join-Path $destination 'scripts'
+    New-Item -ItemType Directory -Path $userScripts -Force | Out-Null
+    Copy-Item -LiteralPath (Join-Path $root 'scripts/Start-LocalModels.ps1') -Destination $userScripts -Force
+    $archive=Join-Path $root 'artifacts/GaameTranslate-0.2.0-win-x64.zip'
     Compress-Archive -Path (Join-Path $destination '*') -DestinationPath $archive -Force
     $digest=Get-FileHash -LiteralPath $archive -Algorithm SHA256
     Set-Content -LiteralPath ($archive+'.sha256') -Value ($digest.Hash.ToLowerInvariant()+'  '+[System.IO.Path]::GetFileName($archive)) -Encoding ascii

@@ -36,9 +36,9 @@ Implementation was exercised on Windows with .NET SDK 10.0.103, an x64 desktop a
 
 - Debug and Release builds are checked with build output retained in `artifacts` where applicable.
 - The real English OCR result for the native fixture was **Hello traveler. Your journey begins here.**
-- Final Release run: **51/51 xUnit tests passed**, and **26/26 Windows integration checks passed**, with zero build warnings or errors. Machine-readable artifacts are `artifacts/test-results/unit-tests.trx` and `artifacts/verification/results.json`. These describe the implementation run, not a guarantee about future builds.
+- Final Release run: **67/67 xUnit tests passed**, and **30/30 Windows integration checks passed**, with zero build warnings or errors. Machine-readable artifacts are `artifacts/test-results/unit-tests.trx` and `artifacts/verification-release-v02/results.json`. These describe the implementation run, not a guarantee about future builds.
 - The main page and overlay renders were visually inspected. Source/target selector display, inherited window themes, compact floating size, dark scrollbars and primary-action contrast were corrected during this pass.
-- No live provider keys or local model service were available. No actual game or mixed-DPI hardware compatibility claim is made.
+- Local Ollama / TranslateGemma and Qwen are exercised separately in artifacts/quality*. Cloud services have contract tests; no live Yandex/GigaChat/DeepL/Azure credentials were supplied. No actual game or mixed-DPI hardware compatibility claim is made.
 - The self-contained Windows x64 distribution was also launched successfully with bundled **Microsoft.NETCore.App 10.0.13** and **Microsoft.WindowsDesktop.App 10.0.13**. Its separate native smoke run passed real English OCR, desktop capture and DPAPI checks.
 
 ## Manual acceptance matrix
@@ -70,11 +70,11 @@ Use an isolated data directory. Prepare an actual configured provider before eva
 | Repeated saved word | One entry, incremented encounter count, existing notes preserved |
 | Vocabulary search/filter/sort/edit/delete | Matching view updates, edits survive restart, duplicate rename rejected |
 | CSV punctuation/multiline/import/export | Unicode and quotes roundtrip; duplicate imports count as encounters |
-| Anki export | UTF-8 tab-separated fields import into mapped Anki fields |
+| Anki export | APKG with media imports and reimports without duplicate notes; optional TSV remains available |
 | Review Again/Hard/Good/Easy | Answer reveals, grading changes due time, future cards leave due queue |
 | History disabled / clear / reopen | No new retained entries when disabled; existing data can be cleared; reopen shows source/translation/word lookup |
 | Tray / shortcut conflict / second launch | Hotkeys remain active while hidden; conflicts reported; second launch activates existing window |
 | Light appearance / narrow window / 200% text | Readable, keyboard-focus visible, scrollable settings and pages |
 | Exit during selection/OCR/network call | Pipeline cancels, no stranded overlay/tray icon or registered shortcut |
 
-For soak testing, repeat 100 captures and track process working set, private bytes, USER/GDI handles and idle CPU using Task Manager/Process Explorer. The app is event driven and performs no capture at idle. Stage timings are displayed on Translate and in bounded diagnostics without recognized text or credentials.
+For soak testing, repeat 100 captures and track process working set, private bytes, USER/GDI handles and idle CPU using Task Manager/Process Explorer. The app performs no capture at idle unless explicit region monitoring is enabled. Opt-in XInput polling checks button state without capture. Stage timings are displayed on Translate and in bounded diagnostics without recognized text or credentials.
