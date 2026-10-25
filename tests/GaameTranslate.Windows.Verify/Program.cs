@@ -87,6 +87,17 @@ internal static class Program
         var profilePreferences = vm.SettingsForSession(vm.LastSession!);
         Check(profilePreferences.OverlayMode == OverlayMode.SidePanel && profilePreferences.OverlayFontSize == 27 && vm.Settings.OverlayMode == OverlayMode.Floating && !profilePreferences.SaveWordScreenshots, "Foreground game profile reaches overlay without changing global preferences or privacy");
         Check(System.Windows.Application.Current.Windows.Cast<Window>().Any(w => w.IsVisible && w.Title == "GaameTranslate · translation" && w.Width == 390), "Game profile selects the actual side panel window");
+        manager.Close(); await vm.SaveSettingsAsync(vm.Settings with { SaveWordScreenshots = true, SaveWordAudio = true }, null, false);
+        var currentSession = vm.LastSession!;
+        var popup = new WordLookupWindow(vm, "traveler", currentSession, currentSession.Blocks[0], new("traveler", "A person who travels.", "Native fixture") { Translation = "путник" });
+        popup.Show(); await Task.Delay(100);
+        await vm.SaveSettingsAsync(vm.Settings with { SaveWordScreenshots = false, SaveWordAudio = false }, null, false);
+        var popupRoot = (StackPanel)((ScrollViewer)popup.Content).Content;
+        popupRoot.Children.OfType<WrapPanel>().Single().Children.OfType<Button>().Last().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        for (var retry = 0; retry < 30 && vm.Words.Single().Encounters == saved.Encounters; retry++) await Task.Delay(100);
+        var popupSavedWord = vm.Words.Single();
+        Check(popupSavedWord.Encounters > saved.Encounters && popupSavedWord.ScreenshotFile.Length == 0 && popupSavedWord.AudioFile.Length == 0, "An open dictionary honors media opt-outs changed before saving");
+        popup.Close();
         manager.Close(); vm.SelectedHistory = session; vm.ReopenHistory();
         Check(vm.LastFrame is null && vm.SettingsForSession(session).OverlayMode == OverlayMode.Floating, "Reopened history cannot attach an unrelated screenshot or stale game profile");
         fixture.Close(); main.Close(); await vm.StopAsync();

@@ -36,7 +36,7 @@ Implementation was exercised on Windows with .NET SDK 10.0.103, an x64 desktop a
 
 - Debug and Release builds are checked with build output retained in `artifacts` where applicable.
 - The real English OCR result for the native fixture was **Hello traveler. Your journey begins here.**
-- Final Release run: **67/67 xUnit tests passed**, and **30/30 Windows integration checks passed**, with zero build warnings or errors. Machine-readable artifacts are `artifacts/test-results/unit-tests.trx` and `artifacts/verification-release-v02/results.json`. These describe the implementation run, not a guarantee about future builds.
+- Final Release run: **67/67 xUnit tests passed**, and **31/31 Windows integration checks passed**, with zero build warnings or errors. Machine-readable artifacts are `artifacts/test-results/unit-tests.trx` and `artifacts/verification-release-v02/results.json`. These describe the implementation run, not a guarantee about future builds.
 - The main page and overlay renders were visually inspected. Source/target selector display, inherited window themes, compact floating size, dark scrollbars and primary-action contrast were corrected during this pass.
 - Local Ollama / TranslateGemma and Qwen are exercised separately in artifacts/quality*. Cloud services have contract tests; no live Yandex/GigaChat/DeepL/Azure credentials were supplied. No actual game or mixed-DPI hardware compatibility claim is made.
 - The self-contained Windows x64 distribution was also launched successfully with bundled **Microsoft.NETCore.App 10.0.13** and **Microsoft.WindowsDesktop.App 10.0.13**. Its separate native smoke run passed real English OCR, desktop capture and DPAPI checks.

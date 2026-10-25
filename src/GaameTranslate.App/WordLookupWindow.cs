@@ -76,8 +76,8 @@ public sealed class WordLookupWindow : Window
             try
             {
                 var screenshot = ""; var audio = ""; var mediaFailure = "";
-                if (preferences.SaveWordScreenshots && vm.LastSession?.Id == session.Id && vm.LastFrame is { } frame) screenshot = await vm.Media.SaveAsync(Crop(frame, block.Original.Bounds), ".png", lifetime.Token);
-                if (preferences.SaveWordAudio) try { audio = await vm.Media.SaveAsync(await vm.Speech.SynthesizeAsync(recognizedWord, session.SourceLanguage, preferences.SpeechVoice, lifetime.Token), ".wav", lifetime.Token); } catch (UserFacingException e) { mediaFailure = " · " + e.Message; }
+                if (vm.Settings.SaveWordScreenshots && vm.LastSession?.Id == session.Id && vm.LastFrame is { } frame) screenshot = await vm.Media.SaveAsync(Crop(frame, block.Original.Bounds), ".png", lifetime.Token);
+                if (vm.Settings.SaveWordAudio) try { audio = await vm.Media.SaveAsync(await vm.Speech.SynthesizeAsync(recognizedWord, session.SourceLanguage, preferences.SpeechVoice, lifetime.Token), ".wav", lifetime.Token); } catch (UserFacingException e) { mediaFailure = " · " + e.Message; }
                 var entry = await vm.SaveWordAsync(new() { Word = recognizedWord, Translation = result.Text, SourceLanguage = result.SourceLanguage, TargetLanguage = session.TargetLanguage, Context = block.Original.Text, TranslatedContext = translatedContext.Text, Lemma = article?.Headword ?? "", Phonetic = article?.Phonetic ?? "", PartOfSpeech = article?.PartOfSpeech ?? "", Level = article?.Level ?? "", Definition = article?.Definition ?? "", Synonyms = article?.Synonyms ?? "", Examples = article?.Examples ?? "", Explanation = article?.Explanation ?? "", DictionarySource = article?.Source ?? "", ScreenshotFile = screenshot, AudioFile = audio });
                 save.Content = "★ Сохранено"; feedback.Text = (entry.Encounters > 1 ? "Слово уже в словаре · счётчик встреч обновлён" : "Слово добавлено в словарь") + mediaFailure;
             }
