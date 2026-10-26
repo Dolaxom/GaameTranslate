@@ -17,6 +17,13 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
     private bool disposed;
     private IReadOnlyList<DictionaryArticle> local = [], online = [];
     private DictionaryArticle? generated;
+    private bool contextIsDictionary;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasProviderFallback), nameof(DictionaryNotice))]
+    private bool wordProviderFallback;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasProviderFallback), nameof(DictionaryNotice))]
+    private bool contextProviderFallback;
     [ObservableProperty] private string word = "";
     [ObservableProperty] private string translation = "";
     [ObservableProperty] private string basicTranslation = "";
@@ -33,12 +40,14 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
     public IReadOnlyList<DictionaryArticle> Articles => (generated is null ? Enumerable.Empty<DictionaryArticle>() : [generated]).Concat(local).Concat(online).ToArray();
     public bool CanSave => !string.IsNullOrWhiteSpace(Translation);
     public bool HasInitialArticle { get; }
-    public UiMessage DictionaryNotice => vm.UsesBuiltInDictionary(preferences) ? ProviderCatalog.DictionaryShortWarning : "";
+    public bool HasProviderFallback => WordProviderFallback || ContextProviderFallback;
+    public UiMessage DictionaryNotice => HasProviderFallback ? ProviderCatalog.DictionaryFallbackShortWarning : vm.UsesBuiltInDictionary(preferences) || contextIsDictionary ? ProviderCatalog.DictionaryShortWarning : "";
     public event Action? ArticlesChanged;
     public WordLookupViewModel(MainViewModel model, string selected, TranslationSession origin, TranslatedBlock original, DictionaryArticle? knownArticle = null)
     {
         vm = model; session = origin; block = original; preferences = vm.SettingsForSession(origin); ResultLanguage = origin.SourceLanguage;
         Word = selected; ContextTranslation = original.Translation;
+        contextIsDictionary = origin.IsDictionaryTranslation; ContextProviderFallback = origin.IsDictionaryFallback;
         if (knownArticle is not null)
         {
             HasInitialArticle = true; generated = knownArticle; Translation = BasicTranslation = knownArticle.Translation; TranslationSource = L.M("{0}", knownArticle.Source);
@@ -50,6 +59,7 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
     {
         version++; active?.Cancel(); Translation = BasicTranslation = ""; TranslationSource = WordStatus = ContextStatus = ExplanationStatus = "";
         IsLoadingWord = IsLoadingContext = IsLoadingExplanation = false; generated = null; local = online = []; ArticlesChanged?.Invoke();
+        WordProviderFallback = false; OnPropertyChanged(nameof(DictionaryNotice));
     }
     public async Task LoadAsync(bool forceExplanation = false)
     {
@@ -67,18 +77,19 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
                 var quick = await vm.LookupWordAsync(selected, session.SourceLanguage, session.TargetLanguage, preferences, token);
                 if (!Current()) return;
                 BasicTranslation = quick.Item.Text; Translation = quick.Item.Text; ResultLanguage = quick.Item.SourceLanguage;
+                WordProviderFallback = quick.Item.IsDictionaryFallback;
                 TranslationSource = quick.Saved ? "Сохранённый перевод" : quick.Item.IsDictionaryTranslation ? new UiMessage(ProviderCatalog.BuiltInDictionary) : L.M("Быстрый перевод · {0}", preferences.Provider);
                 vm.RecordWordLookupReady(session, started.Elapsed.TotalMilliseconds);
                 WordStatus = "";
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { return; }
-            catch (Exception error) { if (Current()) WordStatus = Message(error, "Быстрый перевод недоступен. Пробуем получить значение из контекста."); }
+            catch (Exception error) { if (Current()) { if (error is UserFacingException { IsDictionaryFallback: true }) WordProviderFallback = true; WordStatus = Message(error, "Быстрый перевод недоступен. Пробуем получить значение из контекста."); } }
             finally { if (Current()) IsLoadingWord = false; }
             if (!Current()) return;
             // Begin expensive work only after the word request has completed, so it has priority on local servers.
             var contextTask = LoadContextAsync(); var explanationTask = LoadExplanationAsync(); var onlineTask = LoadOnlineAsync();
             await Task.WhenAll(contextTask, explanationTask, onlineTask, localTask);
-            if (Current() && ContextTranslation.Length > 0) await vm.CompleteWordLookupContextAsync(session, ContextTranslation, started.Elapsed.TotalMilliseconds, token);
+            if (Current() && ContextTranslation.Length > 0) await vm.CompleteWordLookupContextAsync(session, ContextTranslation, started.Elapsed.TotalMilliseconds, token, contextIsDictionary, ContextProviderFallback);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { }
         catch (Exception error) { if (Current()) ContextStatus = Message(error, "Перевод показан, но не удалось обновить историю."); }
@@ -98,12 +109,16 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
         }
         async Task LoadContextAsync()
         {
-            if (!string.IsNullOrWhiteSpace(ContextTranslation)) return;
+            if (!string.IsNullOrWhiteSpace(ContextTranslation) && !ContextProviderFallback) return;
             IsLoadingContext = true;
             try
             {
-                var translated = await vm.LookupAsync(block.Original.Text, session.SourceLanguage, session.TargetLanguage, preferences.ContextHint, token, preferences);
-                if (Current() && string.IsNullOrWhiteSpace(generated?.ContextTranslation)) ContextTranslation = translated.Text;
+                var translated = await vm.LookupAsync(block.Original.Text, session.SourceLanguage, session.TargetLanguage, preferences.ContextHint, token, preferences, preserveUnknownText: true);
+                if (Current() && string.IsNullOrWhiteSpace(generated?.ContextTranslation))
+                {
+                    ContextTranslation = translated.Text; contextIsDictionary = translated.IsDictionaryTranslation; ContextProviderFallback = translated.IsDictionaryFallback;
+                    OnPropertyChanged(nameof(DictionaryNotice));
+                }
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { }
             catch (Exception error) { if (Current() && ContextTranslation.Length == 0) ContextStatus = Message(error, "Не удалось перевести реплику. Перевод слова остаётся доступен."); }
@@ -117,8 +132,8 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
             {
                 var article = await vm.Dictionary.ExplainAsync(preferences, selected, session.SourceLanguage, session.TargetLanguage, block.Original.Text, token);
                 if (!Current()) return;
-                generated = article; Translation = article.Translation; TranslationSource = L.M("Значение в этой реплике · {0}", preferences.AssistantProvider);
-                if (!string.IsNullOrWhiteSpace(article.ContextTranslation)) { ContextTranslation = article.ContextTranslation; ContextStatus = ""; }
+                generated = article; Translation = article.Translation; WordProviderFallback = false; TranslationSource = L.M("Значение в этой реплике · {0}", preferences.AssistantProvider);
+                if (!string.IsNullOrWhiteSpace(article.ContextTranslation)) { ContextTranslation = article.ContextTranslation; contextIsDictionary = false; ContextProviderFallback = false; ContextStatus = ""; OnPropertyChanged(nameof(DictionaryNotice)); }
                 WordStatus = ""; ArticlesChanged?.Invoke();
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { }

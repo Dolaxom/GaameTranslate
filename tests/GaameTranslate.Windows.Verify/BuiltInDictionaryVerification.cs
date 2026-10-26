@@ -77,6 +77,50 @@ internal static class BuiltInDictionaryVerification
         await vm.SaveSettingsAsync(previous with { Provider = "LibreTranslate" }, null, false);
         vm.InputText = "Hello, traveler!"; await vm.TranslateTextCommand.ExecuteAsync(null); await Settle();
         Check(!vm.NeedsProviderSetup && !notice.IsVisible && vm.LastSession?.IsDictionaryTranslation == false && vm.OutputText == "[LIVE-ADAPTER TEST DOUBLE] translation" && api.Requests == 1, "Configuring a provider removes the notice and bypasses cached dictionary results");
+        api.Failure = "offline";
+        await vm.SaveSettingsAsync(vm.Settings with { ContextHint = "failover test" }, null, false);
+        vm.InputText = "Hello, traveler!"; await vm.TranslateTextCommand.ExecuteAsync(null); await Settle();
+        Check(vm.LastSession is { IsDictionaryFallback: true, IsDictionaryTranslation: true, Provider: ProviderCatalog.BuiltInDictionary } && vm.OutputText.Contains("привет"), "A configured but offline service produces a real dictionary translation");
+        Check(vm.Settings.Provider == "LibreTranslate" && notice.IsVisible && vm.UsedDictionaryFallback, "Service failure displays a backup notice without changing saved provider settings");
+        Check((await database.GetHistoryAsync()).First().IsDictionaryFallback, "History preserves runtime-fallback provenance");
+        var beforeCooldown = api.Requests;
+        Check((await vm.LookupAsync("sword", "en", "ru", "", default)).IsDictionaryFallback && api.Requests == beforeCooldown, "Subsequent word requests bypass the broken service during cooldown");
+        var runtimeSession = cursorSession with { Provider = "LibreTranslate", IsDictionaryTranslation = false, IsDictionaryFallback = false, Blocks = cursorSession.Blocks.Select(b => b with { Translation = "" }).ToArray() };
+        UiText.SetLanguage("en");
+        var fallbackPopup = new WordLookupWindow(vm, "journey", runtimeSession, runtimeSession.Blocks[0]); fallbackPopup.Show();
+        var fallbackModel = (WordLookupViewModel)fallbackPopup.DataContext;
+        for (var retry = 0; retry < 100 && !fallbackModel.CanSave; retry++) await Task.Delay(20);
+        await Settle();
+        Check(fallbackModel.CanSave && fallbackModel.HasProviderFallback && Descendants(fallbackPopup).OfType<TextBlock>().Any(t => AutomationProperties.GetAutomationId(t) == "lookup-dictionary-notice" && t.IsVisible && t.Text.Contains("Service failed")), "An already open word popup reveals its runtime-fallback notice and remains usable");
+        Save(fallbackPopup, Path.Combine(output, "en-failover-word.png")); UiText.SetLanguage("ru"); await Settle(); Save(fallbackPopup, Path.Combine(output, "ru-failover-word.png"));
+        Check(fallbackModel.DictionaryNotice.Text.Contains("Сервис недоступен"), "Runtime-fallback notice changes to Russian in place");
+        api.Failure = "success";
+        await vm.SaveSettingsAsync(vm.Settings with { ContextHint = "popup recovery" }, null, false);
+        await fallbackModel.LoadAsync(); await Settle();
+        Check(!fallbackModel.HasProviderFallback && fallbackModel.ContextTranslation == "[LIVE-ADAPTER TEST DOUBLE] translation" && !Descendants(fallbackPopup).OfType<TextBlock>().Single(t => AutomationProperties.GetAutomationId(t) == "lookup-dictionary-notice").IsVisible, "Refreshing an existing popup after service recovery replaces dictionary context and removes the warning"); fallbackPopup.Close();
+        api.Failure = "offline";
+        await vm.SaveSettingsAsync(vm.Settings with { ContextHint = "screen outage" }, null, false);
+        await vm.LookupAsync("sword", "en", "ru", "", default); beforeCooldown = api.Requests;
+        await vm.RunCaptureAsync("Screen translation");
+        Check(vm.LastSession?.IsDictionaryFallback == true && api.Requests == beforeCooldown, "Screen translation also uses the offline fallback during an outage");
+        using (var overlays = new OverlayManager(vm, NullLogger<OverlayManager>.Instance))
+        {
+            overlays.Show(vm.LastSession!); await Settle();
+            Check(Application.Current.Windows.Cast<Window>().Where(w => w.IsVisible).Any(w => Descendants(w).OfType<TextBlock>().Any(t => t.Text.Contains("Сервис недоступен"))), "Screen overlay identifies a service failure rather than claiming setup is missing"); overlays.Close();
+        }
+        UiText.SetLanguage("en");
+        bool connectionFailed = false;
+        try { await vm.TestConnectionAsync(vm.Settings, null, false, default); } catch (UserFacingException) { connectionFailed = true; }
+        Check(connectionFailed, "Connection testing reports the failed service instead of disguising fallback as a successful connection");
+        api.Failure = "hang";
+        await vm.SaveSettingsAsync(vm.Settings with { ContextHint = "hung service" }, null, false);
+        var timeoutWatch = System.Diagnostics.Stopwatch.StartNew();
+        var timed = await vm.LookupAsync("journey", "en", "ru", "", default);
+        Check(timed.IsDictionaryFallback && timeoutWatch.Elapsed < TimeSpan.FromSeconds(9), "A hung HTTP service falls back within the five-second response budget");
+        api.Failure = "success";
+        await vm.SaveSettingsAsync(vm.Settings with { ContextHint = "recovered service" }, null, false);
+        vm.InputText = "Hello, traveler!"; await vm.TranslateTextCommand.ExecuteAsync(null); await Settle();
+        Check(!vm.UsedDictionaryFallback && !notice.IsVisible && vm.OutputText == "[LIVE-ADAPTER TEST DOUBLE] translation", "A healthy service replaces fallback output and removes the warning");
         main.Close(); await vm.StopAsync(); UiText.SetLanguage("ru"); return passed;
     }
     private static IEnumerable<DependencyObject> Descendants(DependencyObject root) { yield return root; foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>()) foreach (var item in Descendants(child)) yield return item; }
@@ -90,7 +134,14 @@ internal static class BuiltInDictionaryVerification
     private sealed class Api : HttpMessageHandler
     {
         public int Requests { get; private set; }
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token) { Requests++; return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{\"translatedText\":[\"[LIVE-ADAPTER TEST DOUBLE] translation\"]}") }); }
+        public string Failure { get; set; } = "success";
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+        {
+            Requests++;
+            if (Failure == "offline") throw new HttpRequestException("Test server offline");
+            if (Failure == "hang") await Task.Delay(Timeout.Infinite, token);
+            return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{\"translatedText\":[\"[LIVE-ADAPTER TEST DOUBLE] translation\"]}") };
+        }
     }
     private sealed class Capture : IScreenCapture { public Task<CapturedFrame> CaptureAsync(PixelRect bounds, CancellationToken token) => Task.FromResult(new CapturedFrame(new byte[4], 1, 1, bounds)); }
     private sealed class Ocr : IOcrProvider
@@ -100,7 +151,7 @@ internal static class BuiltInDictionaryVerification
         {
             NativeMethods.GetCursorPos(out var cursor);
             var bounds = new PixelRect(cursor.X - 120, cursor.Y - 10, 230, 30);
-            return Task.FromResult(new OcrDocument([new(0, "Hello, traveler!", bounds, [new("Hello", new(cursor.X - 120, cursor.Y - 10, 80, 30)), new("traveler", new(cursor.X - 15, cursor.Y - 10, 100, 30))])], "en"));
+            return Task.FromResult(new OcrDocument([new(0, "Hello, traveler!", bounds, [new("Hello", new(cursor.X - 120, cursor.Y - 10, 80, 30)), new("traveler", new(cursor.X - 15, cursor.Y - 10, 100, 30))]), new(1, "Qzxvillage", new(cursor.X + 200, cursor.Y + 100, 100, 30), [])], "en"));
         }
     }
 }

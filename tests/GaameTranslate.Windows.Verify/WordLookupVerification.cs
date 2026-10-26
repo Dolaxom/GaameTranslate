@@ -116,10 +116,12 @@ internal static class WordLookupVerification
         using (var failure = new WordLookupViewModel(vm, "failure", fromOverlay, translatedBlock with { Translation = "", Original = translatedBlock.Original with { Text = "Unique sentence for failure." } }))
         {
             api.FailEnrichment = true; await failure.LoadAsync(); api.FailEnrichment = false;
-            Check(failure.CanSave && failure.Translation == "[FAST] failure" && failure.ExplanationStatus.Length > 0 && failure.ContextStatus.Length > 0, "Assistant and context failures retain the usable first result");
+            Check(failure.CanSave && failure.Translation == "[FAST] failure" && failure.ExplanationStatus.Length > 0 && failure.ContextTranslation.Length > 0 && failure.HasProviderFallback, "Assistant failure retains the first word while failed context uses the dictionary");
         }
+        await vm.SaveSettingsAsync(preferences, null, false);
         using (var recovery = new WordLookupViewModel(vm, "noquick", fromOverlay, translatedBlock))
         { await recovery.LoadAsync(); Check(recovery.CanSave && recovery.Translation.StartsWith("[AI]"), "Assistant can still recover a meaning when the quick provider fails"); }
+        await vm.SaveSettingsAsync(preferences, null, false);
         api.BlockEnrichment = true;
         var closePopup = new WordLookupWindow(vm, "closing", fromOverlay, translatedBlock with { Translation = "", Original = translatedBlock.Original with { Text = "Unique sentence for closing." } }); closePopup.Show(); var closeModel = (WordLookupViewModel)closePopup.DataContext;
         await WaitFor(() => closeModel.CanSave && closeModel.IsLoadingExplanation && closeModel.IsLoadingContext); closePopup.Close();

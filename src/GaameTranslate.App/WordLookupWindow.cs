@@ -23,12 +23,9 @@ public sealed class WordLookupWindow : Window
         var grammar = SettingsView.Muted("", new(0, 6, 0, 10)); root.Children.Add(grammar);
         var meaning = new TextBlock { FontSize = 22, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, Margin = new(0, 4, 0, 8) }; root.Children.Add(meaning); Identify(meaning, "lookup-translation"); AutomationProperties.SetLiveSetting(meaning, AutomationLiveSetting.Polite);
         var origin = SettingsView.Muted("", new(0, 0, 0, 8)); System.Windows.Data.BindingOperations.SetBinding(origin, TextBlock.TextProperty, Ui.Binding(new Binding(nameof(model.TranslationSource)))); root.Children.Add(origin);
-        if (model.DictionaryNotice.Length > 0)
-        {
-            var notice = SettingsView.Muted(model.DictionaryNotice, new(0, 8, 0, 12)); Identify(notice, "lookup-dictionary-notice"); root.Children.Add(notice);
-            var setup = Ui.Localize(new Button { Content = "Set up translation", HorizontalAlignment = HorizontalAlignment.Left, Margin = new(0, 0, 0, 12) });
-            setup.Click += (_, _) => { vm.OpenSettingsCommand.Execute(null); Close(); }; root.Children.Add(setup);
-        }
+        var notice = SettingsView.Muted(model.DictionaryNotice, new(0, 8, 0, 12)); Identify(notice, "lookup-dictionary-notice"); root.Children.Add(notice);
+        var setup = Ui.Localize(new Button { Content = "Set up translation", HorizontalAlignment = HorizontalAlignment.Left, Margin = new(0, 0, 0, 12) });
+        setup.Click += (_, _) => { vm.OpenSettingsCommand.Execute(null); Close(); }; root.Children.Add(setup);
         var basic = SettingsView.Muted("", new(0, 0, 0, 8)); root.Children.Add(basic);
         var wordState = SettingsView.Muted("", new(0, 0, 0, 8)); root.Children.Add(wordState); Identify(wordState, "lookup-word-status");
         var explanationState = SettingsView.Muted("", new(0, 0, 0, 12)); root.Children.Add(explanationState); Identify(explanationState, "lookup-explanation-status");
@@ -46,6 +43,7 @@ public sealed class WordLookupWindow : Window
         string Signature() => JsonSerializer.Serialize(new { model.Word, model.Translation, model.ContextTranslation, model.Article });
         void UpdateState()
         {
+            Ui.SetText(notice, model.DictionaryNotice); notice.Visibility = setup.Visibility = model.DictionaryNotice.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
             if (model.Translation.Length > 0) meaning.Text = model.Translation; else Ui.SetText(meaning, model.IsLoadingWord || model.WordStatus.Length == 0 ? "Перевод слова…" : "Перевод пока недоступен");
             Ui.SetText(basic, model.BasicTranslation.Length > 0 && model.BasicTranslation != model.Translation ? L.M("Первый перевод: {0}", model.BasicTranslation) : new UiMessage(""));
             basic.Visibility = basic.Text.Length > 0 ? Visibility.Visible : Visibility.Collapsed;

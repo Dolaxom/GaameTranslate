@@ -31,8 +31,12 @@ public sealed record OcrDocument(IReadOnlyList<OcrBlock> Blocks, string Language
 public sealed record TranslationItem(string Text, string SourceLanguage)
 {
     public bool IsDictionaryTranslation { get; init; }
+    public bool IsDictionaryFallback { get; init; }
 }
-public sealed record TranslationRequest(IReadOnlyList<string> Texts, string Source, string Target, string Context = "");
+public sealed record TranslationRequest(IReadOnlyList<string> Texts, string Source, string Target, string Context = "")
+{
+    public bool PreserveUnknownText { get; init; }
+}
 public sealed record TranslatedBlock(OcrBlock Original, string Translation)
 {
     public string? BackgroundColor { get; init; }
@@ -43,6 +47,7 @@ public sealed record TranslationSession(Guid Id, DateTimeOffset CreatedAt, Pixel
     IReadOnlyList<TranslatedBlock> Blocks, PipelineTimings Timings)
 {
     public bool IsDictionaryTranslation { get; init; }
+    public bool IsDictionaryFallback { get; init; }
     public string OriginalText => string.Join(Environment.NewLine, Blocks.Select(b => b.Original.Text));
     public string TranslatedText => string.Join(Environment.NewLine, Blocks.Select(b => b.Translation));
 }
@@ -143,6 +148,7 @@ public static class ReviewScheduler
 }
 public sealed class UserFacingException(UiMessage message, Exception? inner = null) : Exception(message.Text, inner)
 {
+    public bool IsDictionaryFallback { get; init; }
     public UiMessage LocalizedMessage { get; } = message;
     public override string Message => LocalizedMessage.Text;
 }

@@ -14,6 +14,9 @@ public sealed class BuiltInDictionaryProvider : ITranslationProvider
     public string Name => ProviderCatalog.BuiltInDictionary;
     public static int EntryCount => entries.Value.Count;
     public static IReadOnlyList<string> Lookup(string word) => Find(word) ?? [];
+    public static bool Supports(TranslationRequest request) => Languages.Base(request.Target) == "ru"
+        && (Languages.Base(request.Source) == "en" || request.Source == "auto" && !request.Texts.Any(text => text.Any(c => char.IsLetter(c) && c > 127)))
+        && request.Texts.All(text => text.Length <= 15000);
 
     public Task<IReadOnlyList<TranslationItem>> TranslateAsync(TranslationRequest request, CancellationToken cancellationToken)
         => Task.Run(() => Translate(request, cancellationToken), cancellationToken);
@@ -48,7 +51,7 @@ public sealed class BuiltInDictionaryProvider : ITranslationProvider
                 position = words[last].Index + words[last].Length; i = last;
             }
             translated.Append(text, position, text.Length - position);
-            if (words.Count == 1 && found == 0) throw new UserFacingException("This word is not in the built-in dictionary. Check the spelling or set up a translation provider in Settings.");
+            if (words.Count == 1 && found == 0 && !request.PreserveUnknownText) throw new UserFacingException("This word is not in the built-in dictionary. Check the spelling or set up a translation provider in Settings.");
             return Item(translated.ToString());
         }).ToArray();
         return result;

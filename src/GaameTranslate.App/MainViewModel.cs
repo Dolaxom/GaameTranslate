@@ -15,8 +15,12 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     DictionaryService dictionary, ISpeechService speech, LocalMediaStore media) : ObservableObject
 {
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SourceLanguage), nameof(TargetLanguage), nameof(LanguagePairLabel), nameof(NeedsProviderSetup))]
+    [NotifyPropertyChangedFor(nameof(SourceLanguage), nameof(TargetLanguage), nameof(LanguagePairLabel), nameof(NeedsProviderSetup), nameof(ShowDictionaryNotice), nameof(DictionaryNotice), nameof(DictionaryNoticeTitle))]
     private AppSettings settings = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowDictionaryNotice), nameof(DictionaryNotice), nameof(DictionaryNoticeTitle))]
+    private bool usedDictionaryFallback;
+    private readonly TranslationFailover failover = new();
     [ObservableProperty] private int pageIndex;
     [ObservableProperty] private UiMessage status = "Ready when you are. Select an area to get started.";
     [ObservableProperty] private bool isBusy;
@@ -54,6 +58,9 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public GameProfileStore Profiles { get; } = new(Path.GetDirectoryName(media.DirectoryPath)!);
     public bool UsesBuiltInDictionary(AppSettings configuration) => configuration.Provider == ProviderCatalog.BuiltInDictionary || ProviderCatalog.RequiresKey(configuration) && !HasKey(configuration.Provider);
     public bool NeedsProviderSetup => UsesBuiltInDictionary(Settings);
+    public bool ShowDictionaryNotice => NeedsProviderSetup || UsedDictionaryFallback;
+    public UiMessage DictionaryNotice => UsedDictionaryFallback ? ProviderCatalog.DictionaryFallbackWarning : ProviderCatalog.DictionaryWarning;
+    public UiMessage DictionaryNoticeTitle => UsedDictionaryFallback ? "Backup translation · English → Russian" : "Built-in dictionary · English → Russian";
     public string EffectiveProviderName(AppSettings configuration) => UsesBuiltInDictionary(configuration) ? ProviderCatalog.BuiltInDictionary : configuration.Provider;
     public UiMessage LanguagePairLabel => L.M("{0} → {1}", new UiMessage(Settings.SourceLanguage == "auto" ? "Auto" : Languages.Translation.FirstOrDefault(l => l.Code == Settings.SourceLanguage)?.Name ?? Settings.SourceLanguage), new UiMessage(Languages.Translation.FirstOrDefault(l => l.Code == Settings.TargetLanguage)?.Name ?? Settings.TargetLanguage));
     public string SourceLanguage
@@ -109,6 +116,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
         catch (OperationCanceledException) { if (!IsBusy) Status = "Cancelled. Ready for your next capture."; }
         catch (Exception e)
         {
+            if (e is UserFacingException { IsDictionaryFallback: true }) UsedDictionaryFallback = true;
             logger.LogWarning("Operation failed: {ExceptionType}", e.GetType().Name);
             Status = e is UserFacingException known ? known.LocalizedMessage : "The operation could not be completed. Check your settings, connection and available disk space, then try again.";
             OperationFailed?.Invoke(Status.Text);
@@ -165,14 +173,14 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             Status = "Translating text…";
             var texts = SplitSentences ? TextProcessing.SplitSentences(InputText) : new[] { TextProcessing.Normalize(InputText) };
             var provider = Provider(configuration);
-            var result = await cache.TranslateAsync(provider, new(texts, configuration.SourceLanguage, configuration.TargetLanguage, configuration.ContextHint), CacheIdentity(configuration), token);
-            token.ThrowIfCancellationRequested(); OutputText = string.Join(Environment.NewLine, result.Select(r => r.Text)); Status = result.Any(r => r.IsDictionaryTranslation) ? ProviderCatalog.DictionaryShortWarning : "Translation ready.";
+            var result = await cache.TranslateAsync(provider, new(texts, configuration.SourceLanguage, configuration.TargetLanguage, configuration.ContextHint) { PreserveUnknownText = true }, CacheIdentity(configuration), token);
+            token.ThrowIfCancellationRequested(); UsedDictionaryFallback = result.Any(r => r.IsDictionaryFallback); OutputText = string.Join(Environment.NewLine, result.Select(r => r.Text)); Status = UsedDictionaryFallback ? ProviderCatalog.DictionaryFallbackShortWarning : result.Any(r => r.IsDictionaryTranslation) ? ProviderCatalog.DictionaryShortWarning : "Translation ready.";
             var blocks = texts.Select((t, i) => new TranslatedBlock(new(i, t, new(0, 0, 0, 0), []), result[i].Text)).ToArray();
-            var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, new(), result[0].SourceLanguage, configuration.TargetLanguage, EffectiveProviderName(configuration), "Text", blocks, new(0, 0, 0, 0)) { IsDictionaryTranslation = result.Any(r => r.IsDictionaryTranslation) };
+            var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, new(), result[0].SourceLanguage, configuration.TargetLanguage, result.Any(r => r.IsDictionaryTranslation) ? ProviderCatalog.BuiltInDictionary : EffectiveProviderName(configuration), "Text", blocks, new(0, 0, 0, 0)) { IsDictionaryTranslation = result.Any(r => r.IsDictionaryTranslation), IsDictionaryFallback = UsedDictionaryFallback };
             LastSession = session; LastFrame = null; lastProfileSettings = null; if (Settings.SaveHistory) await Task.Run(() => database.AddHistoryAsync(session, Settings.HistoryLimit, token), token); await RefreshAsync();
         });
     });
-    private ITranslationProvider Provider(AppSettings? configuration = null) => UsesBuiltInDictionary(configuration ?? Settings) ? new BuiltInDictionaryProvider() : new TranslationProvider(http, configuration ?? Settings, credentials);
+    private ITranslationProvider Provider(AppSettings? configuration = null) => UsesBuiltInDictionary(configuration ?? Settings) ? new BuiltInDictionaryProvider() : failover.Wrap(new TranslationProvider(http, configuration ?? Settings, credentials), CacheIdentity(configuration));
     private string CacheIdentity(AppSettings? configuration = null) => ProviderCatalog.Identity(configuration ?? Settings);
     private async Task ExecutePipelineAsync(Func<CancellationToken, Task> work)
     {
@@ -245,16 +253,18 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             }
             Status = L.M("Перевод {0} реплик…", document.Blocks.Count); clock.Restart();
             var result = await cache.TranslateAsync(Provider(configuration), new(document.Blocks.Select(b => b.Text).ToArray(), source, configuration.TargetLanguage,
-                string.Join("\n", new[] { configuration.ContextHint, document.Text[..Math.Min(document.Text.Length, 10000)] }).Trim()), CacheIdentity(configuration), token);
+                string.Join("\n", new[] { configuration.ContextHint, document.Text[..Math.Min(document.Text.Length, 10000)] }).Trim()) { PreserveUnknownText = true }, CacheIdentity(configuration), token);
             var translationMs = clock.Elapsed.TotalMilliseconds; token.ThrowIfCancellationRequested();
+            UsedDictionaryFallback = result.Any(r => r.IsDictionaryFallback);
             var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, result.FirstOrDefault()?.SourceLanguage ?? document.Language,
-                configuration.TargetLanguage, EffectiveProviderName(configuration), kind, document.Blocks.Select((b, i) => new TranslatedBlock(b, result[i].Text) { BackgroundColor = configuration.SampleOverlayBackground ? ScreenAnalysis.SampleBackground(frame, b.Bounds) : null }).ToArray(), new(captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds)) { IsDictionaryTranslation = result.Any(r => r.IsDictionaryTranslation) };
+                configuration.TargetLanguage, result.Any(r => r.IsDictionaryTranslation) ? ProviderCatalog.BuiltInDictionary : EffectiveProviderName(configuration), kind, document.Blocks.Select((b, i) => new TranslatedBlock(b, result[i].Text) { BackgroundColor = configuration.SampleOverlayBackground ? ScreenAnalysis.SampleBackground(frame, b.Bounds) : null }).ToArray(), new(captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds)) { IsDictionaryTranslation = result.Any(r => r.IsDictionaryTranslation), IsDictionaryFallback = UsedDictionaryFallback };
             LastSession = session; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = session.OriginalText; OutputText = session.TranslatedText;
             PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Translate {2:0} ms  ·  Total {3:0} ms", captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds);
             SessionReady?.Invoke(session);
             previousScreenText = document.Text;
             Status = IsMonitoring ? new UiMessage("Автоперевод области включён · нажмите Стоп для завершения") : L.M("Переведено реплик: {0}. {1} · {2}", session.Blocks.Count, configuration.OcrEngine, configuration.Provider);
             if (session.IsDictionaryTranslation) Status = ProviderCatalog.DictionaryShortWarning;
+            if (session.IsDictionaryFallback) Status = ProviderCatalog.DictionaryFallbackShortWarning;
             logger.LogInformation("Pipeline finished: {BlockCount} blocks, capture {CaptureMs:0} ms, OCR {OcrMs:0} ms, translation {TranslationMs:0} ms", session.Blocks.Count, captureMs, ocrMs, translationMs);
             if (Settings.SaveHistory)
             {
@@ -270,7 +280,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
         value.Validate(); GlobalHotkeys.Validate(value.Hotkeys); await settingsStore.SaveAsync(value);
         if (removeKey) credentials.Delete(value.Provider); else if (!string.IsNullOrWhiteSpace(newKey)) credentials.Write(value.Provider, newKey.Trim());
         Settings = value; L.SetLanguage(value.InterfaceLanguage);
-        if (!InterfaceOnlySettingsChange) { lastProfileSettings = null; cache.Clear(); }
+        if (!InterfaceOnlySettingsChange) { lastProfileSettings = null; cache.Clear(); failover.Clear(); UsedDictionaryFallback = false; }
         OnPropertyChanged(nameof(NeedsProviderSetup)); Status = "Настройки сохранены."; SettingsChanged?.Invoke();
     }
     public bool HasKey(string provider) { try { return !string.IsNullOrWhiteSpace(credentials.Read(provider)); } catch (UserFacingException) { return false; } }
@@ -279,8 +289,9 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     {
         if (!ProviderCatalog.All.Any(p => p.Name == provider)) throw new UserFacingException("Выберите сервис перевода.");
         if (remove) credentials.Delete(provider); else if (!string.IsNullOrWhiteSpace(key)) credentials.Write(provider, key.Trim());
-        if (remove || !string.IsNullOrWhiteSpace(key)) cache.Clear();
+        if (remove || !string.IsNullOrWhiteSpace(key)) { cache.Clear(); failover.Clear(); UsedDictionaryFallback = false; }
         OnPropertyChanged(nameof(NeedsProviderSetup));
+        OnPropertyChanged(nameof(ShowDictionaryNotice));
     }
     public async Task<string> TestConnectionAsync(AppSettings configuration, string? draftKey, bool removeSavedKey, CancellationToken token)
     {
@@ -298,7 +309,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public async Task TestProviderAsync()
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(Settings.TranslationTimeoutSeconds));
-        var result = await Provider().TranslateAsync(new(["Hello, traveler."], "en", Settings.TargetLanguage, Settings.ContextHint), timeout.Token);
+        var result = await new TranslationProvider(http, Settings, credentials).TranslateAsync(new(["Hello, traveler."], "en", Settings.TargetLanguage, Settings.ContextHint), timeout.Token);
         Status = L.M("{0}: {1}", Settings.Provider, result[0].Text);
     }
     public async Task SyncAnkiAsync()
@@ -310,9 +321,10 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             Status = L.M("Anki: добавлено {0}, обновлено {1}, помечено удалёнными {2}. Расписание повторений сохранено.", result.Added, result.Updated, result.MarkedRemoved);
         });
     }
-    public async Task<TranslationItem> LookupAsync(string word, string source, string target, string context, CancellationToken token, AppSettings? configuration = null)
+    public async Task<TranslationItem> LookupAsync(string word, string source, string target, string context, CancellationToken token, AppSettings? configuration = null, bool preserveUnknownText = false)
     {
-        var result = await cache.TranslateAsync(Provider(configuration), new([word], source, target, context), CacheIdentity(configuration), token);
+        var result = await cache.TranslateAsync(Provider(configuration), new([word], source, target, context) { PreserveUnknownText = preserveUnknownText }, CacheIdentity(configuration), token);
+        token.ThrowIfCancellationRequested(); UsedDictionaryFallback = result.Any(r => r.IsDictionaryFallback);
         return result[0];
     }
     public async Task<(TranslationItem Item, bool Saved)> LookupWordAsync(string word, string source, string target, AppSettings configuration, CancellationToken token)
@@ -330,11 +342,11 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
         PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Слово {2:0} ms  ·  Первый результат {3:0} ms", session.Timings.CaptureMs, session.Timings.OcrMs, elapsedMs, totalMs);
         logger.LogInformation("Word translation ready in {WordMs:0} ms after OCR, total {TotalMs:0} ms", elapsedMs, totalMs);
     }
-    public async Task CompleteWordLookupContextAsync(TranslationSession session, string translation, double elapsedMs, CancellationToken token)
+    public async Task CompleteWordLookupContextAsync(TranslationSession session, string translation, double elapsedMs, CancellationToken token, bool dictionaryTranslation = false, bool dictionaryFallback = false)
     {
         token.ThrowIfCancellationRequested();
         if (session.CaptureType != "Word at cursor" || LastSession?.Id != session.Id || string.IsNullOrWhiteSpace(translation)) return;
-        var complete = session with { Blocks = session.Blocks.Select(b => b with { Translation = translation }).ToArray(), Timings = session.Timings with { TranslationMs = elapsedMs, TotalMs = session.Timings.TotalMs + elapsedMs } };
+        var complete = session with { Blocks = session.Blocks.Select(b => b with { Translation = translation }).ToArray(), Timings = session.Timings with { TranslationMs = elapsedMs, TotalMs = session.Timings.TotalMs + elapsedMs }, IsDictionaryTranslation = dictionaryTranslation, IsDictionaryFallback = dictionaryFallback, Provider = dictionaryTranslation ? ProviderCatalog.BuiltInDictionary : session.Provider == ProviderCatalog.BuiltInDictionary ? EffectiveProviderName(SettingsForSession(session)) : session.Provider };
         LastSession = complete; OutputText = translation;
         if (Settings.SaveHistory)
         {

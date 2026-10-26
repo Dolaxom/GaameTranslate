@@ -5,6 +5,8 @@ public static class ProviderCatalog
 {
     public const string BuiltInDictionary = "Built-in dictionary";
     public const string DictionaryShortWarning = "No provider configured · built-in English–Russian dictionary. Basic word-by-word translation; context and grammar may be wrong.";
+    public const string DictionaryFallbackWarning = "The translation service failed or took too long. Using the built-in English–Russian dictionary instead. This is a basic word-by-word translation; context and grammar may be wrong. Your provider settings have been kept.";
+    public const string DictionaryFallbackShortWarning = "Service failed · using the built-in English–Russian dictionary. Quality is limited; context and grammar may be wrong.";
     public const string DictionaryWarning = "No translation provider is set up. Using the built-in English–Russian dictionary: word-by-word hints, without sentence context or grammar. Quality is limited; unknown words stay unchanged. Set up a provider in Settings for a full translation.";
     public static readonly IReadOnlyList<ProviderInfo> All = [
         new(BuiltInDictionary, "Offline English–Russian word dictionary · no setup needed", false, false),

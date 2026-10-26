@@ -141,7 +141,7 @@ public sealed class TranslationCache
     private readonly ConcurrentDictionary<string, TranslationItem> cache = new();
     public async Task<IReadOnlyList<TranslationItem>> TranslateAsync(ITranslationProvider provider, TranslationRequest request, string configurationIdentity, CancellationToken token)
     {
-        var keys = request.Texts.Select(t => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new[] { provider.Name, configurationIdentity, request.Source, request.Target, request.Context, t }))))).ToArray();
+        var keys = request.Texts.Select(t => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new[] { provider.Name, configurationIdentity, request.Source, request.Target, request.Context, request.PreserveUnknownText ? "preserve-unknown" : "strict-word", t }))))).ToArray();
         // Read hits before adding; clearing the bounded cache cannot invalidate a result in flight.
         var results = keys.Select(k => cache.TryGetValue(k, out var hit) ? hit : null).ToArray();
         var missing = Enumerable.Range(0, keys.Length).Where(i => results[i] is null).ToArray();
@@ -150,7 +150,12 @@ public sealed class TranslationCache
             var fetched = await provider.TranslateAsync(request with { Texts = missing.Select(i => request.Texts[i]).ToArray() }, token).ConfigureAwait(false);
             if (fetched.Count != missing.Length) throw new UserFacingException("The provider returned an unexpected number of translations.");
             if (cache.Count + missing.Length > 2000) cache.Clear();
-            for (var j = 0; j < missing.Length; j++) { cache[keys[missing[j]]] = fetched[j]; results[missing[j]] = fetched[j]; }
+            for (var j = 0; j < missing.Length; j++)
+            {
+                // A temporary fallback must not mask the recovered provider behind a permanent cache hit.
+                if (!fetched[j].IsDictionaryFallback) cache[keys[missing[j]]] = fetched[j];
+                results[missing[j]] = fetched[j];
+            }
         }
         token.ThrowIfCancellationRequested();
         return results.Select(r => r!).ToArray();

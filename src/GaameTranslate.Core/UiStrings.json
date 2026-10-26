@@ -2646,5 +2646,25 @@
   "No provider configured · built-in English–Russian dictionary. Basic word-by-word translation; context and grammar may be wrong.": {
     "en": "No provider configured · built-in English–Russian dictionary. Basic word-by-word translation; context and grammar may be wrong.",
     "ru": "Сервис не настроен · встроенный англо-русский словарь. Пословный перевод: возможны ошибки смысла и грамматики."
+  },
+  "The translation service failed or took too long. Using the built-in English–Russian dictionary instead. This is a basic word-by-word translation; context and grammar may be wrong. Your provider settings have been kept.": {
+    "ru": "Сервис перевода вернул ошибку или не ответил вовремя. Используется встроенный англо-русский словарь. Это базовый пословный перевод: возможны ошибки смысла и грамматики. Настройки вашего сервиса сохранены.",
+    "en": "The translation service failed or took too long. Using the built-in English–Russian dictionary instead. This is a basic word-by-word translation; context and grammar may be wrong. Your provider settings have been kept."
+  },
+  "Service failed · using the built-in English–Russian dictionary. Quality is limited; context and grammar may be wrong.": {
+    "ru": "Сервис недоступен · перевод через встроенный англо-русский словарь. Качество ограничено: возможны ошибки смысла и грамматики.",
+    "en": "Service failed · using the built-in English–Russian dictionary. Quality is limited; context and grammar may be wrong."
+  },
+  "Backup translation · English → Russian": {
+    "ru": "Запасной перевод · английский → русский",
+    "en": "Backup translation · English → Russian"
+  },
+  "The translation service failed, and the built-in dictionary could not translate this selection. {0}": {
+    "en": "The translation service failed, and the built-in dictionary could not translate this selection. {0}",
+    "ru": "Сервис перевода не сработал, и встроенный словарь не смог перевести выбранный фрагмент. {0}"
+  },
+  "If translation fails or takes over 5 seconds, English → Russian uses the built-in dictionary. The service is retried after 15 seconds. Connection tests use the configured timeout.": {
+    "en": "If translation fails or takes over 5 seconds, English → Russian uses the built-in dictionary. The service is retried after 15 seconds. Connection tests use the configured timeout.",
+    "ru": "При ошибке или ожидании дольше 5 секунд перевод с английского на русский выполняет встроенный словарь. Через 15 секунд приложение снова попробует сервис. Проверка подключения использует настроенный тайм-аут."
   }
 }

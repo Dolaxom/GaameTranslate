@@ -13,7 +13,7 @@ public sealed partial class SettingsView
         private readonly StackPanel body = new(), keySlot = new(), keyArea = new();
         private readonly Dictionary<string, StackPanel> services = new();
         private readonly PasswordBox key;
-        private readonly TextBlock description, keyState, result;
+        private readonly TextBlock description, keyState, result, fallbackHint;
         private readonly Button test, remove;
         private readonly Expander optionalKey;
         private CancellationTokenSource? checking;
@@ -28,6 +28,7 @@ public sealed partial class SettingsView
             if (helper) available = new[] { new LanguageChoice("None", "Без AI-помощника") }.Concat(available);
             selector = owner.Choice(parent, helper ? "assistant" : "provider", helper ? "Помощник" : "Сервис", available, helper ? s.AssistantProvider : s.Provider);
             description = Muted(""); description.FontSize = 12; parent.Children.Add(description); parent.Children.Add(body);
+            fallbackHint = Muted("If translation fails or takes over 5 seconds, English → Russian uses the built-in dictionary. The service is retried after 15 seconds. Connection tests use the configured timeout.", new(0, 10, 0, 0)); fallbackHint.FontSize = 12; parent.Children.Add(fallbackHint);
             body.Children.Add(keySlot);
             Label(keyArea, "API-ключ"); key = new PasswordBox { Style = (Style)owner.FindResource("SettingsPassword"), Margin = new(0, 0, 0, 6) }; owner.Track(key, prefix + "key", "API-ключ"); keyArea.Children.Add(key);
             keyState = Muted("", new(0, 0, 0, 6)); keyState.FontSize = 12; keyArea.Children.Add(keyState);
@@ -75,6 +76,7 @@ public sealed partial class SettingsView
         {
             foreach (var service in services) service.Value.Visibility = service.Key == Name ? Visibility.Visible : Visibility.Collapsed;
             body.Visibility = Name is "None" or ProviderCatalog.BuiltInDictionary ? Visibility.Collapsed : Visibility.Visible;
+            fallbackHint.Visibility = !helper && Name != ProviderCatalog.BuiltInDictionary ? Visibility.Visible : Visibility.Collapsed;
             Ui.SetText(description, Name switch
             {
                 "None" => "Доступны обычный перевод слова и импортированные словари.",

@@ -30,7 +30,7 @@ That's it! Windowed or borderless games work best.
 
 > **Prefer Russian?** Go to **Settings → Application → Interface language** and choose **Русский**. You can switch back to English anytime, without restarting.
 >
-> **A quick heads-up:** the built-in dictionary gives basic word-by-word hints. It cannot understand sentence context or produce correct grammar, and unknown words stay unchanged. The app labels this mode clearly. For full translations, connect a provider in Settings.
+> **A quick heads-up:** the built-in dictionary gives basic word-by-word hints. It cannot understand sentence context or produce correct grammar, and unknown words stay unchanged. The app labels this mode clearly. For full translations, connect a provider in Settings. If that service fails or takes over five seconds, English–Russian translation falls back to the dictionary automatically. The next request after a 15-second pause tries the service again; your settings stay intact.
 
 ## ✨ A little tour
 
@@ -131,7 +131,7 @@ You'll need Windows and the **.NET 10 SDK**.
 
 Find the app in `artifacts/publish/win-x64` and the ZIP in `artifacts`.
 
-More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.3.0.md) · [localization](docs/LOCALIZATION.md).
+More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.3.2.md) · [localization](docs/LOCALIZATION.md).
 
 </details>
 
