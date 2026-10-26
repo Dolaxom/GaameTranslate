@@ -14,7 +14,8 @@ try {
     $userScripts=Join-Path $destination 'scripts'
     New-Item -ItemType Directory -Path $userScripts -Force | Out-Null
     Copy-Item -LiteralPath (Join-Path $root 'scripts/Start-LocalModels.ps1') -Destination $userScripts -Force
-    $archive=Join-Path $root 'artifacts/GaameTranslate-0.2.0-win-x64.zip'
+    $packageVersion=([xml](Get-Content -LiteralPath (Join-Path $root 'Directory.Build.props') -Raw)).Project.PropertyGroup.Version
+    $archive=Join-Path $root "artifacts/GaameTranslate-$packageVersion-win-x64.zip"
     Compress-Archive -Path (Join-Path $destination '*') -DestinationPath $archive -Force
     $digest=Get-FileHash -LiteralPath $archive -Algorithm SHA256
     Set-Content -LiteralPath ($archive+'.sha256') -Value ($digest.Hash.ToLowerInvariant()+'  '+[System.IO.Path]::GetFileName($archive)) -Encoding ascii

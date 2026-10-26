@@ -68,6 +68,13 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public event Action<TranslationSession>? SessionReady;
     public event Action<string, TranslationSession, TranslatedBlock>? WordLookupRequested;
     public event Action? SettingsChanged;
+    public event Action<bool>? ShortcutRecordingChanged;
+    public bool IsRecordingShortcut { get; private set; }
+    public void SetShortcutRecording(bool recording)
+    {
+        if (recording == IsRecordingShortcut) return;
+        IsRecordingShortcut = recording; ShortcutRecordingChanged?.Invoke(recording);
+    }
     public event Action? ToggleOverlayRequested;
     public event Action? InteractionRequested;
     public event Action<string>? OperationFailed;
@@ -242,10 +249,29 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     {
         value.Validate(); GlobalHotkeys.Validate(value.Hotkeys); await settingsStore.SaveAsync(value);
         if (removeKey) credentials.Delete(value.Provider); else if (!string.IsNullOrWhiteSpace(newKey)) credentials.Write(value.Provider, newKey.Trim());
-        Settings = value; lastProfileSettings = null; OnPropertyChanged(nameof(NeedsProviderSetup)); cache.Clear(); SettingsChanged?.Invoke(); Status = "Settings saved. Shortcuts and overlay preferences are active.";
+        Settings = value; lastProfileSettings = null; OnPropertyChanged(nameof(NeedsProviderSetup)); cache.Clear(); Status = "Настройки сохранены."; SettingsChanged?.Invoke();
     }
     public bool HasKey(string provider) { try { return !string.IsNullOrWhiteSpace(credentials.Read(provider)); } catch (UserFacingException) { return false; } }
     public void SaveAssistantKey(string provider, string key) { if (!string.IsNullOrWhiteSpace(key) && provider != "None") credentials.Write(provider, key.Trim()); }
+    public void UpdateProviderCredential(string provider, string key, bool remove)
+    {
+        if (!ProviderCatalog.All.Any(p => p.Name == provider)) throw new UserFacingException("Выберите сервис перевода.");
+        if (remove) credentials.Delete(provider); else if (!string.IsNullOrWhiteSpace(key)) credentials.Write(provider, key.Trim());
+        OnPropertyChanged(nameof(NeedsProviderSetup));
+    }
+    public async Task<string> TestConnectionAsync(AppSettings configuration, string? draftKey, bool removeSavedKey, CancellationToken token)
+    {
+        configuration.Validate();
+        var keys = new PreviewCredentials(credentials, configuration.Provider, draftKey, removeSavedKey);
+        var result = await new TranslationProvider(http, configuration, keys).TranslateAsync(new(["Hello, traveler."], "en", configuration.TargetLanguage, configuration.ContextHint), token);
+        return result[0].Text;
+    }
+    private sealed class PreviewCredentials(ICredentialStore saved, string provider, string? draft, bool remove) : ICredentialStore
+    {
+        public string? Read(string name) => name == provider ? remove ? null : string.IsNullOrWhiteSpace(draft) ? saved.Read(name) : draft.Trim() : saved.Read(name);
+        public void Write(string name, string value) => throw new NotSupportedException();
+        public void Delete(string name) => throw new NotSupportedException();
+    }
     public async Task TestProviderAsync()
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(Settings.TranslationTimeoutSeconds));

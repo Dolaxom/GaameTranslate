@@ -12,6 +12,14 @@ External HTTP services use explicit test doubles; no API keys or network calls a
 
 ## Windows integration verification
 
+The settings redesign has a separate native UI suite:
+
+```powershell
+dotnet run --project tests/GaameTranslate.Windows.Verify -c Release -- artifacts/settings-ux --settings
+```
+
+It checks draft preservation across application navigation, service-specific fields, independent credential drafts, preview connection requests without persistence, cancellation, save/discard, validation without partial writes, shortcut entry, light appearance, and all six tabs at 960×650. HTTP replies are explicitly marked test doubles. Rendered PNGs and `results.json` are saved to the supplied output directory.
+
 On an unlocked interactive Windows desktop with the English OCR pack:
 
 ```powershell

@@ -11,12 +11,13 @@ namespace GaameTranslate.App;
 public partial class MainWindow : Window
 {
     private readonly MainViewModel vm;
+    private readonly SettingsView settingsView;
     private readonly DispatcherTimer searchTimer = new() { Interval = TimeSpan.FromMilliseconds(250) };
     public bool AllowClose { get; set; }
     public MainWindow(MainViewModel model)
     {
         vm = model; InitializeComponent(); DataContext = vm;
-        SettingsHost.Children.Add(new SettingsView(vm));
+        settingsView = new SettingsView(vm); SettingsHost.Children.Add(settingsView);
         VocabularyLanguage.ItemsSource = new List<LanguageChoice> { new("all", "All languages") }.Concat(Languages.Translation).ToArray(); VocabularyLanguage.SelectedIndex = 0;
         SourceInitialized += (_, _) => GaameTranslate.Windows.NativeMethods.StyleWindow(new WindowInteropHelper(this).Handle, !vm.Settings.LightTheme);
         Closing += OnClosing;
@@ -33,7 +34,7 @@ public partial class MainWindow : Window
     }
     private void OnModelChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MainViewModel.PageIndex) && vm.PageIndex == 5) { SettingsHost.Children.Clear(); SettingsHost.Children.Add(new SettingsView(vm)); }
+        if (e.PropertyName == nameof(MainViewModel.PageIndex) && vm.PageIndex == 5) settingsView.RefreshIfClean();
     }
     private void WordSearch_Changed(object sender, TextChangedEventArgs e) { if (!IsLoaded) return; searchTimer.Stop(); searchTimer.Start(); }
     private void HistorySearch_Changed(object sender, TextChangedEventArgs e) { if (!IsLoaded) return; searchTimer.Stop(); searchTimer.Start(); }

@@ -63,8 +63,15 @@ public partial class App : System.Windows.Application
             };
             hotkeys = new GlobalHotkeys(); hotkeys.Invoked += OnHotkey;
             controller = new ControllerShortcuts(); controller.Invoked += OnHotkey; controller.SetEnabled(vm.Settings.ControllerEnabled);
-            vm.SettingsChanged += () => { RegisterHotkeys(); controller.SetEnabled(!shortcutsPaused && vm.Settings.ControllerEnabled); ApplyTheme(vm.Settings.LightTheme); NativeMethods.StyleWindow(new WindowInteropHelper(main).EnsureHandle(), !vm.Settings.LightTheme); if (vm.LastSession is { CaptureType: not "Text" } last) overlays.Show(last); };
-            CreateTray(); RegisterHotkeys(); if (!vm.Settings.StartMinimized || e.Args.Contains("--show")) main.Show();
+            vm.ShortcutRecordingChanged += recording =>
+            {
+                if (exiting) return;
+                if (recording) hotkeys.Unregister(); else RegisterHotkeys();
+                controller.SetEnabled(!recording && !shortcutsPaused && vm.Settings.ControllerEnabled);
+            };
+            vm.SettingsChanged += () => { RegisterHotkeys(); controller.SetEnabled(!shortcutsPaused && !vm.IsRecordingShortcut && vm.Settings.ControllerEnabled); ApplyTheme(vm.Settings.LightTheme); NativeMethods.StyleWindow(new WindowInteropHelper(main).EnsureHandle(), !vm.Settings.LightTheme); if (vm.LastSession is { CaptureType: not "Text" } last) overlays.Show(last); };
+            CreateTray(); RegisterHotkeys(); if (e.Args.Contains("--settings")) vm.PageIndex = 5;
+            if (!vm.Settings.StartMinimized || e.Args.Contains("--show") || e.Args.Contains("--settings")) main.Show();
             if (e.Args.Contains("--smoke-test"))
             {
                 // Real native OCR, GDI and DPAPI diagnostic. Does not contact translation services.
@@ -84,12 +91,13 @@ public partial class App : System.Windows.Application
     }
     private void RegisterHotkeys()
     {
-        if (shortcutsPaused || hotkeys is null || vm is null) return;
-        var conflicts = hotkeys.Register(vm.Settings.Hotkeys); if (conflicts.Count > 0) vm.Status = "Shortcut conflict: " + string.Join("; ", conflicts) + ". Choose different combinations in Settings.";
+        if (shortcutsPaused || hotkeys is null || vm is null || vm.IsRecordingShortcut) return;
+        var conflicts = hotkeys.Register(vm.Settings.Hotkeys);
+        if (conflicts.Count > 0) vm.Status = "Сочетания заняты: " + string.Join(", ", conflicts.Select(c => c[(c.IndexOf(':') + 1)..].Trim())) + ". Выберите другие на вкладке «Клавиши».";
     }
     private async void OnHotkey(string action)
     {
-        if (vm is null || overlays is null) return;
+        if (vm is null || overlays is null || vm.IsRecordingShortcut) return;
         await vm.GuardAsync(async () =>
         {
             switch (action)
@@ -112,15 +120,15 @@ public partial class App : System.Windows.Application
         var menu = new Forms.ContextMenuStrip(); menu.Items.Add("Open GaameTranslate", null, (_, _) => ShowMain()); menu.Items.Add("Translate a region", null, (_, _) => OnHotkey("Region")); menu.Items.Add("Translate fullscreen", null, (_, _) => OnHotkey("Fullscreen")); menu.Items.Add("Repeat last region", null, (_, _) => OnHotkey("Repeat")); menu.Items.Add("Vocabulary", null, (_, _) => OnHotkey("Vocabulary"));
         menu.Items.Add("Show / hide overlay", null, (_, _) => overlays?.Toggle()); menu.Items.Add("Toggle overlay interaction", null, (_, _) => overlays?.ToggleInteraction()); menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Экранный переводчик", null, (_, _) => OnHotkey("ScreenTranslation")); menu.Items.Add("Слово под курсором", null, (_, _) => OnHotkey("WordLookup"));
-        var pause = new Forms.ToolStripMenuItem("Pause shortcuts"); pause.Click += (_, _) => { shortcutsPaused = !shortcutsPaused; pause.Text = shortcutsPaused ? "Resume shortcuts" : "Pause shortcuts"; controller?.SetEnabled(!shortcutsPaused && vm?.Settings.ControllerEnabled == true); if (shortcutsPaused) { hotkeys?.Unregister(); vm?.StopMonitoring(); } else RegisterHotkeys(); }; menu.Items.Add(pause);
+        var pause = new Forms.ToolStripMenuItem("Pause shortcuts"); pause.Click += (_, _) => { shortcutsPaused = !shortcutsPaused; pause.Text = shortcutsPaused ? "Resume shortcuts" : "Pause shortcuts"; controller?.SetEnabled(!shortcutsPaused && vm?.IsRecordingShortcut == false && vm.Settings.ControllerEnabled); if (shortcutsPaused) { hotkeys?.Unregister(); vm?.StopMonitoring(); } else RegisterHotkeys(); }; menu.Items.Add(pause);
         menu.Items.Add("Exit", null, (_, _) => ExitApplication()); trayIcon.ContextMenuStrip = menu; trayIcon.DoubleClick += (_, _) => ShowMain();
     }
     public void ShowMain() { if (main is null) return; main.Show(); main.WindowState = WindowState.Normal; main.Activate(); }
-    private void ApplyTheme(bool light)
+    public static void ApplyTheme(bool light)
     {
         var colors = light ? new Dictionary<string, string> { ["BackgroundBrush"] = "#F4F6F8", ["SidebarBrush"] = "#ECEFF3", ["SurfaceBrush"] = "#FFFFFF", ["HoverBrush"] = "#E3EBE8", ["BorderBrush"] = "#CDD5DD", ["TextBrush"] = "#17232D", ["MutedBrush"] = "#526471", ["AccentBrush"] = "#167550", ["AccentTextBrush"] = "#FFFFFF" }
             : new Dictionary<string, string> { ["BackgroundBrush"] = "#101318", ["SidebarBrush"] = "#14181F", ["SurfaceBrush"] = "#1A2029", ["HoverBrush"] = "#26313C", ["BorderBrush"] = "#2C3541", ["TextBrush"] = "#F0F3F6", ["MutedBrush"] = "#9FAEBE", ["AccentBrush"] = "#99E3C6", ["AccentTextBrush"] = "#112B22" };
-        foreach (var pair in colors) Resources[pair.Key] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(pair.Value));
+        foreach (var pair in colors) Current.Resources[pair.Key] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(pair.Value));
     }
     public async void ExitApplication()
     {
