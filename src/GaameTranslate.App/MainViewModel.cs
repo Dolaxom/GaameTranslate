@@ -195,7 +195,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             try
             {
                 Status = kind == "Region" ? "Drag over text. Press Esc to cancel." : "Capturing screen…";
-                CaptureVisibilityChanged?.Invoke(true); await Task.Delay(100, token);
+                CaptureVisibilityChanged?.Invoke(true); await Task.Delay(kind == "Word at cursor" ? 16 : 100, token);
                 if (kind == "Region") bounds = SelectRegion is null ? null : await SelectRegion(token);
                 else if (kind is "Repeat" or "Watch region") bounds = configuration.LastRegion ?? throw new UserFacingException("Select a region first. The repeat shortcut will reuse it.");
                 else if (kind == "Word at cursor") bounds = new PixelRect(cursor.X - 500, cursor.Y - 220, 1000, 440).Intersect(DesktopCapture.CursorDisplay().Bounds);
@@ -206,7 +206,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
                     bounds = configuration.MonitorIndex >= 0 && configuration.MonitorIndex < displays.Count ? displays[configuration.MonitorIndex].Bounds : DesktopCapture.CursorDisplay().Bounds;
                 }
                 if (bounds is null) { Status = "Selection cancelled."; return; }
-                token.ThrowIfCancellationRequested(); NativeMethods.SetForegroundWindow(prior); NativeMethods.DwmFlush(); await Task.Delay(80, token);
+                token.ThrowIfCancellationRequested(); NativeMethods.SetForegroundWindow(prior); NativeMethods.DwmFlush(); await Task.Delay(kind == "Word at cursor" ? 16 : 80, token);
                 clock.Restart(); frame = await capture.CaptureAsync(bounds.Value, token);
             }
             finally { CaptureVisibilityChanged?.Invoke(false); }
@@ -225,8 +225,21 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             var ocrMs = clock.Elapsed.TotalMilliseconds;
             if (document.Blocks.Count == 0) throw new UserFacingException("No text was found. Select a tighter area, choose the matching OCR language or enable small-text scaling in Settings.");
             if (kind == "Watch region" && document.Text == previousScreenText) { Status = "Автоперевод включён · текст не изменился"; return; }
-            Status = $"Перевод {document.Blocks.Count} реплик…"; clock.Restart();
             var source = configuration.SourceLanguage == "auto" ? Languages.Base(document.Language) : configuration.SourceLanguage;
+            if (selectedWord is not null)
+            {
+                token.ThrowIfCancellationRequested();
+                // Open as soon as the word is recognized. The popup owns its cancellable, progressive requests.
+                var lookupSession = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, source, configuration.TargetLanguage, configuration.Provider, kind,
+                    document.Blocks.Select(b => new TranslatedBlock(b, "")).ToArray(), new(captureMs, ocrMs, 0, total.Elapsed.TotalMilliseconds));
+                LastSession = lookupSession; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = document.Text; OutputText = "";
+                PipelineInfo = $"Capture {captureMs:0} ms  ·  OCR {ocrMs:0} ms  ·  Словарь открыт до перевода контекста";
+                WordLookupRequested?.Invoke(selectedWord.Text, lookupSession, lookupSession.Blocks[0]);
+                Status = "Слово распознано · сначала быстрый перевод, затем контекст";
+                logger.LogInformation("Word lookup opened after capture {CaptureMs:0} ms and OCR {OcrMs:0} ms", captureMs, ocrMs);
+                return;
+            }
+            Status = $"Перевод {document.Blocks.Count} реплик…"; clock.Restart();
             var result = await cache.TranslateAsync(Provider(configuration), new(document.Blocks.Select(b => b.Text).ToArray(), source, configuration.TargetLanguage,
                 string.Join("\n", new[] { configuration.ContextHint, document.Text[..Math.Min(document.Text.Length, 10000)] }).Trim()), CacheIdentity(configuration), token);
             var translationMs = clock.Elapsed.TotalMilliseconds; token.ThrowIfCancellationRequested();
@@ -234,7 +247,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
                 configuration.TargetLanguage, configuration.Provider, kind, document.Blocks.Select((b, i) => new TranslatedBlock(b, result[i].Text) { BackgroundColor = configuration.SampleOverlayBackground ? ScreenAnalysis.SampleBackground(frame, b.Bounds) : null }).ToArray(), new(captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds));
             LastSession = session; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = session.OriginalText; OutputText = session.TranslatedText;
             PipelineInfo = $"Capture {captureMs:0} ms  ·  OCR {ocrMs:0} ms  ·  Translate {translationMs:0} ms  ·  Total {total.Elapsed.TotalMilliseconds:0} ms";
-            if (selectedWord is not null) WordLookupRequested?.Invoke(selectedWord.Text, session, session.Blocks[0]); else SessionReady?.Invoke(session);
+            SessionReady?.Invoke(session);
             previousScreenText = document.Text;
             Status = IsMonitoring ? "Автоперевод области включён · нажмите Стоп для завершения" : $"Переведено реплик: {session.Blocks.Count}. {configuration.OcrEngine} · {configuration.Provider}";
             logger.LogInformation("Pipeline finished: {BlockCount} blocks, capture {CaptureMs:0} ms, OCR {OcrMs:0} ms, translation {TranslationMs:0} ms", session.Blocks.Count, captureMs, ocrMs, translationMs);
@@ -292,6 +305,35 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     {
         var result = await cache.TranslateAsync(Provider(configuration), new([word], source, target, context), CacheIdentity(configuration), token);
         return result[0];
+    }
+    public async Task<(TranslationItem Item, bool Saved)> LookupWordAsync(string word, string source, string target, AppSettings configuration, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        var saved = Words.FirstOrDefault(w => TextProcessing.WordKey(w.Word) == TextProcessing.WordKey(word) && Languages.Base(w.SourceLanguage) == Languages.Base(source) && w.TargetLanguage == target);
+        if (saved is not null) return (new(saved.Translation, saved.SourceLanguage), true);
+        // Context-free keys let a repeated word hit the cache even in a different game sentence.
+        return (await LookupAsync(word, source, target, "", token, configuration), false);
+    }
+    public void RecordWordLookupReady(TranslationSession session, double elapsedMs)
+    {
+        if (LastSession?.Id != session.Id || session.CaptureType != "Word at cursor") return;
+        var totalMs = session.Timings.TotalMs + elapsedMs;
+        PipelineInfo = $"Capture {session.Timings.CaptureMs:0} ms  ·  OCR {session.Timings.OcrMs:0} ms  ·  Слово {elapsedMs:0} ms  ·  Первый результат {totalMs:0} ms";
+        logger.LogInformation("Word translation ready in {WordMs:0} ms after OCR, total {TotalMs:0} ms", elapsedMs, totalMs);
+    }
+    public async Task CompleteWordLookupContextAsync(TranslationSession session, string translation, double elapsedMs, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        if (session.CaptureType != "Word at cursor" || LastSession?.Id != session.Id || string.IsNullOrWhiteSpace(translation)) return;
+        var complete = session with { Blocks = session.Blocks.Select(b => b with { Translation = translation }).ToArray(), Timings = session.Timings with { TranslationMs = elapsedMs, TotalMs = session.Timings.TotalMs + elapsedMs } };
+        LastSession = complete; OutputText = translation;
+        if (Settings.SaveHistory)
+        {
+            try { await Task.Run(() => database.AddHistoryAsync(complete, Settings.HistoryLimit, token), token); }
+            catch (Exception error) when (error is not OperationCanceledException) { logger.LogWarning("Word lookup history write failed: {ExceptionType}", error.GetType().Name); }
+        }
+        token.ThrowIfCancellationRequested();
+        if (LastSession?.Id == session.Id) await RefreshAsync();
     }
     public async Task<VocabularyEntry> SaveWordAsync(VocabularyEntry word) { var saved = await Task.Run(() => database.SaveWordAsync(word)); await RefreshAsync(); Status = saved.Encounters > 1 ? "Слово уже есть в словаре. Перевод и счётчик встреч обновлены." : "Слово добавлено в словарь."; return saved; }
     public async Task UpdateWordAsync(VocabularyEntry word) { await Task.Run(() => database.UpdateWordAsync(word)); await RefreshAsync(); Status = "Карточка обновлена."; }

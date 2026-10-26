@@ -16,6 +16,29 @@ public sealed class AdaptiveOcrProvider : IOcrProvider, IDisposable
     public bool UseGpu { get; set; } = true;
     public string LastEngine { get; private set; } = "";
     public IReadOnlyList<LanguageChoice> AvailableLanguages => new[] { new LanguageChoice("en", "English · PP-OCRv6"), new("ja", "日本語 · PP-OCRv6"), new("zh", "中文 · PP-OCRv6") }.Concat(windows.AvailableLanguages).DistinctBy(l => l.Code).ToArray();
+    public async Task WarmUpAsync(string engine, bool useGpu, string language, CancellationToken token)
+    {
+        if (engine == "Windows" || (language != "auto" && Languages.Base(language) is not ("en" or "ja" or "zh"))) return;
+        await gate.WaitAsync(token);
+        try { await EnsureLoadedAsync(engine, useGpu, token); }
+        finally { gate.Release(); }
+    }
+    private async Task EnsureLoadedAsync(string selected, bool gpu, CancellationToken token)
+    {
+        var identity = selected + "|" + gpu;
+        if (loaded == identity && paddle is not null) return;
+        paddle?.Dispose(); paddle = null; loaded = "";
+        var backend = gpu ? OcrBackend.Auto : OcrBackend.Cpu;
+        var configuration = new PaddleOcrOptions
+        {
+            LineWorkerCount = 2, DetIntraOpThreads = 4, UseDirectionClassification = true,
+            Detector = new() { Backend = backend, LimitSideLength = 1920, MaxSessionCacheEntries = 2, MaxPooledSessions = 2 },
+            Recognizer = new() { Backend = backend, MaxPooledSessions = 2 },
+            Classifier = new() { Backend = backend, MaxPooledSessions = 2 }
+        };
+        paddle = await Task.Run(() => PaddleOcrAll.Load(selected == "PP-OCRv6 Medium" ? ChineseV6MediumModels.Default : ChineseV6SmallModels.Default, configuration), token);
+        loaded = identity;
+    }
     public async Task<OcrDocument> RecognizeAsync(CapturedFrame frame, string language, PreprocessingOptions options, CancellationToken token)
     {
         // PP-OCRv6 Chinese models support Chinese/Japanese/English. Never advertise Cyrillic support they do not have.
@@ -24,27 +47,12 @@ public sealed class AdaptiveOcrProvider : IOcrProvider, IDisposable
         var selected = Engine; var gpu = UseGpu; await gate.WaitAsync(token);
         try
         {
-            var identity = selected + "|" + gpu;
-            if (loaded != identity || paddle is null)
-            {
-                paddle?.Dispose(); paddle = null; loaded = "";
-                var backend = gpu ? OcrBackend.Auto : OcrBackend.Cpu;
-                var configuration = new PaddleOcrOptions
-                {
-                    LineWorkerCount = 2,
-                    DetIntraOpThreads = 4,
-                    UseDirectionClassification = true,
-                    Detector = new() { Backend = backend, LimitSideLength = 1920, MaxSessionCacheEntries = 2, MaxPooledSessions = 2 },
-                    Recognizer = new() { Backend = backend, MaxPooledSessions = 2 },
-                    Classifier = new() { Backend = backend, MaxPooledSessions = 2 }
-                };
-                paddle = await Task.Run(() => PaddleOcrAll.Load(selected == "PP-OCRv6 Medium" ? ChineseV6MediumModels.Default : ChineseV6SmallModels.Default, configuration), token); loaded = identity;
-            }
+            await EnsureLoadedAsync(selected, gpu, token);
             var result = await Task.Run(() =>
             {
                 token.ThrowIfCancellationRequested(); var width = frame.Width; var height = frame.Height; var bytes = frame.Bgra;
                 if (options.Grayscale || options.EnhanceContrast || options.Threshold || options.Denoise) bytes = ImagePreprocessor.Process(frame, width, height, options, token);
-                var recognized = paddle.Run(bytes, width, height, returnCtcAlignment: true, format: ImagePixelFormat.Bgra32); token.ThrowIfCancellationRequested();
+                var recognized = paddle!.Run(bytes, width, height, returnCtcAlignment: true, format: ImagePixelFormat.Bgra32); token.ThrowIfCancellationRequested();
                 var blocks = new List<OcrBlock>();
                 PixelRect Map(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
                 {

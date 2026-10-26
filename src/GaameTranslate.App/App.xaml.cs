@@ -23,6 +23,8 @@ public partial class App : System.Windows.Application
     private MainViewModel? vm;
     private MainWindow? main;
     private bool exiting, shortcutsPaused, restoreMain;
+    private Task ocrWarmup = Task.CompletedTask;
+    private readonly CancellationTokenSource ocrWarmupLifetime = new();
     public static string DataDirectory { get; private set; } = "";
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -72,6 +74,7 @@ public partial class App : System.Windows.Application
             vm.SettingsChanged += () => { RegisterHotkeys(); controller.SetEnabled(!shortcutsPaused && !vm.IsRecordingShortcut && vm.Settings.ControllerEnabled); ApplyTheme(vm.Settings.LightTheme); NativeMethods.StyleWindow(new WindowInteropHelper(main).EnsureHandle(), !vm.Settings.LightTheme); if (vm.LastSession is { CaptureType: not "Text" } last) overlays.Show(last); };
             CreateTray(); RegisterHotkeys(); if (e.Args.Contains("--settings")) vm.PageIndex = 5; else if (e.Args.Contains("--vocabulary")) vm.PageIndex = 2;
             if (!vm.Settings.StartMinimized || e.Args.Contains("--show") || e.Args.Contains("--settings") || e.Args.Contains("--vocabulary")) main.Show();
+            ocrWarmup = WarmOcrAsync();
             if (e.Args.Contains("--smoke-test"))
             {
                 // Real native OCR, GDI and DPAPI diagnostic. Does not contact translation services.
@@ -88,6 +91,18 @@ public partial class App : System.Windows.Application
     {
         var index = Array.IndexOf(args, "--data-dir");
         return index >= 0 && index + 1 < args.Length ? Path.GetFullPath(args[index + 1]) : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GaameTranslate");
+    }
+    private async Task WarmOcrAsync()
+    {
+        if (host?.Services.GetRequiredService<IOcrProvider>() is not AdaptiveOcrProvider adaptive || vm is null) return;
+        try
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            await adaptive.WarmUpAsync(vm.Settings.OcrEngine, vm.Settings.OcrUseGpu, vm.Settings.OcrLanguage, ocrWarmupLifetime.Token);
+            host.Services.GetRequiredService<ILogger<App>>().LogInformation("OCR background preparation completed in {ElapsedMs:0} ms", watch.Elapsed.TotalMilliseconds);
+        }
+        catch (OperationCanceledException) when (ocrWarmupLifetime.IsCancellationRequested) { }
+        catch (Exception error) { host.Services.GetRequiredService<ILogger<App>>().LogWarning("OCR preparation failed: {ExceptionType}", error.GetType().Name); }
     }
     private void RegisterHotkeys()
     {
@@ -132,7 +147,7 @@ public partial class App : System.Windows.Application
     }
     public async void ExitApplication()
     {
-        if (exiting) return; exiting = true; hotkeys?.Dispose(); controller?.Dispose(); if (vm is not null) await vm.StopAsync(); overlays?.Dispose();
+        if (exiting) return; exiting = true; hotkeys?.Dispose(); controller?.Dispose(); ocrWarmupLifetime.Cancel(); if (vm is not null) await vm.StopAsync(); await ocrWarmup; overlays?.Dispose(); ocrWarmupLifetime.Dispose();
         if (trayIcon is not null) { trayIcon.Visible = false; var icon = trayIcon.Icon; var menu = trayIcon.ContextMenuStrip; trayIcon.Dispose(); icon?.Dispose(); menu?.Dispose(); }
         if (main is not null) { main.AllowClose = true; main.Close(); }
         activationWait?.Unregister(null); activation?.Dispose();

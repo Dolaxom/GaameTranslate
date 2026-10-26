@@ -18,6 +18,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
     public bool IsVisible => visible && windows.Count > 0;
     public void Show(TranslationSession session)
     {
+        if (string.IsNullOrWhiteSpace(session.TranslatedText)) return;
         Close(); preferences = vm.SettingsForSession(session); visible = true; interactive = !preferences.ClickThrough; var watch = Stopwatch.StartNew();
         if (session.CaptureType is "Screen translation" or "Watch region") ShowSpatial(session, true);
         else if (preferences.OverlayMode is OverlayMode.Floating or OverlayMode.SidePanel) ShowFloating(session);
