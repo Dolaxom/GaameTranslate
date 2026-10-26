@@ -21,6 +21,7 @@ public sealed record HotkeySettings
 }
 public sealed record AppSettings
 {
+    public string InterfaceLanguage { get; init; } = "ru";
     public string SourceLanguage { get; init; } = "auto";
     public string OcrLanguage { get; init; } = "auto";
     public string OcrEngine { get; init; } = "PP-OCRv6 Small";
@@ -72,6 +73,7 @@ public sealed record AppSettings
     public HotkeySettings Hotkeys { get; init; } = new();
     public AppSettings Validate()
     {
+        if (InterfaceLanguage is not ("ru" or "en")) throw new UserFacingException("Choose Russian or English for the interface.");
         if (Preprocessing is null || Hotkeys is null || string.IsNullOrWhiteSpace(OcrLanguage)) throw new UserFacingException("Settings are incomplete. Restore the OCR and shortcut settings.");
         if (OcrEngine is not ("Windows" or "PP-OCRv6 Small" or "PP-OCRv6 Medium")) throw new UserFacingException("Выберите доступный движок OCR.");
         if (ContextHint is null || ContextHint.Length > 1000) throw new UserFacingException("Keep the translation context hint under 1,000 characters.");

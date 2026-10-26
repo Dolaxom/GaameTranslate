@@ -21,11 +21,16 @@ public partial class VocabularyView : UserControl
         words = new CollectionViewSource { Source = vm.Words }.View;
         WordsList.ItemsSource = words;
         LanguageFilter.ItemsSource = new[] { new LanguageChoice("all", "Все языки") }.Concat(Languages.Translation).ToArray(); LanguageFilter.SelectedIndex = 0;
-        vm.Words.CollectionChanged += Words_Changed; vm.PropertyChanged += Model_Changed;
+        vm.Words.CollectionChanged += Words_Changed; vm.PropertyChanged += Model_Changed; L.State.PropertyChanged += Language_Changed;
         Loaded += (_, _) => RefreshView();
         RefreshView();
     }
-    public void Dispose() { vm.Words.CollectionChanged -= Words_Changed; vm.PropertyChanged -= Model_Changed; }
+    public void Dispose() { vm.Words.CollectionChanged -= Words_Changed; vm.PropertyChanged -= Model_Changed; L.State.PropertyChanged -= Language_Changed; }
+    private void Language_Changed(object? sender, PropertyChangedEventArgs e)
+    {
+        var confirming = DeleteConfirmation.Visibility == Visibility.Visible; RenderDetails();
+        if (confirming) { DeleteConfirmation.Visibility = Visibility.Visible; SelectionActions.Visibility = Visibility.Collapsed; }
+    }
     private Window OwnerWindow => Window.GetWindow(this);
     private void Model_Changed(object? sender, PropertyChangedEventArgs e)
     {
@@ -49,7 +54,7 @@ public partial class VocabularyView : UserControl
         }
         var visible = words.Cast<VocabularyEntry>().ToArray();
         WordsList.SelectedItem = visible.FirstOrDefault(w => w.Id == previous) ?? visible.FirstOrDefault();
-        ResultCount.Text = $"Карточек: {visible.Length}";
+        Ui.SetText(ResultCount, L.M("Карточек: {0}", visible.Length));
         EmptyCollection.Visibility = vm.WordCount == 0 && vm.Words.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         CollectionLayout.Visibility = EmptyCollection.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         NoResults.Visibility = visible.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -60,25 +65,26 @@ public partial class VocabularyView : UserControl
     {
         if (Details is null) return; Details.Children.Clear(); DeleteConfirmation.Visibility = Visibility.Collapsed; SelectionActions.Visibility = Visibility.Visible;
         Edit.IsEnabled = Delete.IsEnabled = vm.SelectedWord is not null;
-        if (vm.SelectedWord is not { } entry) { Details.Children.Add(Label("Выберите карточку", 22, true)); Details.Children.Add(Muted("Её перевод, контекст и заметки появятся здесь.")); return; }
-        var language = Label(VocabularyLabelConverter.Pair(entry), 11); language.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); Details.Children.Add(language);
+        if (vm.SelectedWord is not { } entry) { Details.Children.Add(LocalizedLabel("Выберите карточку", 22, true)); Details.Children.Add(LocalizedLabel("Её перевод, контекст и заметки появятся здесь.", 12)); return; }
+        var language = LocalizedLabel(VocabularyLabelConverter.Pair(entry), 11); language.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); Details.Children.Add(language);
         Details.Children.Add(Label(entry.Word, 30, true));
         if (!string.IsNullOrWhiteSpace(entry.Phonetic + entry.PartOfSpeech + entry.Level)) Details.Children.Add(Muted(string.Join("  ·  ", new[] { entry.Phonetic, entry.PartOfSpeech, entry.Level }.Where(s => !string.IsNullOrWhiteSpace(s)))));
         var translation = Label(entry.Translation, 21); translation.Margin = new(0, 12, 0, 12); Details.Children.Add(translation);
         Section("В игре", entry.Context, entry.TranslatedContext); Section("Значение", entry.Definition); Section("Объяснение", entry.Explanation); Section("Примеры", entry.Examples); Section("Синонимы", entry.Synonyms); Section("Мои заметки", entry.Notes);
         if (!string.IsNullOrWhiteSpace(entry.Tags)) Section("Теги", entry.Tags);
-        Details.Children.Add(Muted($"Добавлено {entry.AddedAt.LocalDateTime:d} · Встреч: {entry.Encounters}"));
-        Details.Children.Add(Muted(entry.DueAt <= DateTimeOffset.UtcNow ? "Готово к повторению" : $"Следующее повторение: {entry.DueAt.LocalDateTime:d}"));
+        Details.Children.Add(LocalizedLabel(L.M("Добавлено {0:d} · Встреч: {1}", entry.AddedAt.LocalDateTime, entry.Encounters), 12));
+        Details.Children.Add(LocalizedLabel(entry.DueAt <= DateTimeOffset.UtcNow ? new UiMessage("Готово к повторению") : L.M("Следующее повторение: {0:d}", entry.DueAt.LocalDateTime), 12));
         if (!string.IsNullOrWhiteSpace(entry.DictionarySource)) Details.Children.Add(Muted(entry.DictionarySource));
     }
     private void Section(string title, params string[] values)
     {
         if (values.All(string.IsNullOrWhiteSpace)) return;
-        var heading = Label(title, 12, true); heading.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); heading.Margin = new(0, 18, 0, 7); Details.Children.Add(heading);
+        var heading = LocalizedLabel(title, 12, true); heading.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); heading.Margin = new(0, 18, 0, 7); Details.Children.Add(heading);
         foreach (var text in values.Where(s => !string.IsNullOrWhiteSpace(s))) { var block = Label(text); block.Margin = new(0, 0, 0, 7); Details.Children.Add(block); }
     }
     private static TextBlock Label(string text, double size = 14, bool bold = false) => new() { Text = text, FontSize = size, FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal, TextWrapping = TextWrapping.Wrap, Margin = new(0, 3, 0, 4) };
     private static TextBlock Muted(string text) { var block = Label(text, 12); block.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); return block; }
+    private static TextBlock LocalizedLabel(UiMessage message, double size = 14, bool bold = false) { var text = Label("", size, bold); Ui.SetText(text, message); return text; }
     private void ClearSearch_Click(object sender, RoutedEventArgs e) { Search.Clear(); Search.Focus(); }
     private void Reset_Click(object sender, RoutedEventArgs e) { Search.Clear(); LanguageFilter.SelectedIndex = 0; Sort.SelectedIndex = 0; RefreshView(); }
     private void Add_Click(object sender, RoutedEventArgs e) => new WordEditorWindow(vm) { Owner = OwnerWindow }.ShowDialog();
@@ -91,7 +97,7 @@ public partial class VocabularyView : UserControl
     private void Tools_Click(object sender, RoutedEventArgs e) { var button = (Button)sender; button.ContextMenu.PlacementTarget = button; button.ContextMenu.IsOpen = true; }
     private async void Import_Click(object sender, RoutedEventArgs e) => await vm.GuardAsync(async () =>
     {
-        var dialog = new OpenFileDialog { Filter = "CSV (*.csv)|*.csv", Title = "Импорт словаря" }; if (dialog.ShowDialog(OwnerWindow) != true) return;
+        var dialog = new OpenFileDialog { Filter = "CSV (*.csv)|*.csv", Title = L.Get("Импорт словаря") }; if (dialog.ShowDialog(OwnerWindow) != true) return;
         if (new FileInfo(dialog.FileName).Length > 20 * 1024 * 1024) throw new UserFacingException("Выберите CSV-файл меньше 20 МБ.");
         await vm.ImportWordsAsync(VocabularyCsv.Import(await File.ReadAllTextAsync(dialog.FileName)));
     });
@@ -101,20 +107,20 @@ public partial class VocabularyView : UserControl
     private async Task ExportAsync(bool anki) => await vm.GuardAsync(async () =>
     {
         var entries = words.Cast<VocabularyEntry>().ToArray(); if (entries.Length == 0) { vm.Status = "Нет карточек для экспорта. Сбросьте фильтры или добавьте слово."; return; }
-        var dialog = new SaveFileDialog { Title = $"Экспорт карточек: {entries.Length}", Filter = anki ? "Anki (*.apkg)|*.apkg|Anki text (*.txt)|*.txt" : "CSV (*.csv)|*.csv", FileName = anki ? "GaameTranslate.apkg" : "GaameTranslate-vocabulary.csv" }; if (dialog.ShowDialog(OwnerWindow) != true) return;
+        var dialog = new SaveFileDialog { Title = L.Format("Экспорт карточек: {0}", entries.Length), Filter = anki ? L.Get("Anki (*.apkg)|*.apkg|Anki text (*.txt)|*.txt") : "CSV (*.csv)|*.csv", FileName = anki ? "GaameTranslate.apkg" : "GaameTranslate-vocabulary.csv" }; if (dialog.ShowDialog(OwnerWindow) != true) return;
         if (anki && Path.GetExtension(dialog.FileName).Equals(".apkg", StringComparison.OrdinalIgnoreCase)) await Task.Run(() => AnkiPackageExporter.ExportAsync(dialog.FileName, entries, vm.Media));
-        else await File.WriteAllTextAsync(dialog.FileName, anki ? VocabularyCsv.ExportAnki(entries) : VocabularyCsv.Export(entries), new System.Text.UTF8Encoding(true)); vm.Status = $"Экспортировано карточек: {entries.Length}.";
+        else await File.WriteAllTextAsync(dialog.FileName, anki ? VocabularyCsv.ExportAnki(entries) : VocabularyCsv.Export(entries), new System.Text.UTF8Encoding(true)); vm.Status = L.M("Экспортировано карточек: {0}.", entries.Length);
     });
 }
 
 public sealed class VocabularyLabelConverter : IValueConverter
 {
-    public static string Pair(VocabularyEntry entry) => $"{Language(entry.SourceLanguage)} → {Language(entry.TargetLanguage)}";
-    private static string Language(string code) => Languages.Translation.FirstOrDefault(l => l.Code == Languages.Base(code))?.Name ?? (code == "auto" ? "Авто" : code);
+    public static UiMessage Pair(VocabularyEntry entry) => L.M("{0} → {1}", Language(entry.SourceLanguage), Language(entry.TargetLanguage));
+    private static UiMessage Language(string code) => new(Languages.Translation.FirstOrDefault(l => l.Code == Languages.Base(code))?.Name ?? (code == "auto" ? "Авто" : code));
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value is not VocabularyEntry entry ? "" : (parameter as string) switch
     {
-        "language" => $"{entry.SourceLanguage.ToUpperInvariant()} → {entry.TargetLanguage.ToUpperInvariant()}",
-        _ => !string.IsNullOrWhiteSpace(entry.Context) ? entry.Context : !string.IsNullOrWhiteSpace(entry.Tags) ? entry.Tags : entry.DueAt <= DateTimeOffset.UtcNow ? "Готово к повторению" : $"Повторить {entry.DueAt.LocalDateTime:d}"
+        "language" => L.M("{0} → {1}", entry.SourceLanguage.ToUpperInvariant(), entry.TargetLanguage.ToUpperInvariant()),
+        _ => !string.IsNullOrWhiteSpace(entry.Context) ? L.M("{0}", entry.Context) : !string.IsNullOrWhiteSpace(entry.Tags) ? L.M("{0}", entry.Tags) : entry.DueAt <= DateTimeOffset.UtcNow ? new UiMessage("Готово к повторению") : L.M("Повторить {0:d}", entry.DueAt.LocalDateTime)
     };
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
 }

@@ -31,7 +31,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
     }
     private Window BaseWindow(string title)
     {
-        var window = new Window { Title = title, WindowStyle = WindowStyle.None, AllowsTransparency = true, Background = Brushes.Transparent, ResizeMode = ResizeMode.NoResize, ShowActivated = false, ShowInTaskbar = false, Topmost = true };
+        var window = Ui.Localize(new Window { Title = title, WindowStyle = WindowStyle.None, AllowsTransparency = true, Background = Brushes.Transparent, ResizeMode = ResizeMode.NoResize, ShowActivated = false, ShowInTaskbar = false, Topmost = true });
         window.SetResourceReference(FrameworkElement.StyleProperty, typeof(Window));
         window.SourceInitialized += (_, _) => { var hwnd = new WindowInteropHelper(window).Handle; NativeMethods.SetWindowDisplayAffinity(hwnd, 0x11); NativeMethods.ClickThrough(hwnd, !interactive); };
         window.PreviewKeyDown += (_, e) => { if (e.Key == Key.Escape) { Close(); e.Handled = true; } };
@@ -39,7 +39,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
     }
     private static Button SmallButton(string title, Action action)
     {
-        var button = new Button { Content = title, Padding = new(9, 5, 9, 5), Margin = new(5, 0, 0, 0), FontSize = 11, MinHeight = 28 };
+        var button = Ui.Localize(new Button { Content = title, Padding = new(9, 5, 9, 5), Margin = new(5, 0, 0, 0), FontSize = 11, MinHeight = 28 });
         button.Click += (_, _) => action(); return button;
     }
     private FrameworkElement Block(TranslatedBlock block, TranslationSession session, bool compact = false)
@@ -50,12 +50,12 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
         {
             var source = new TextBox { Text = block.Original.Text, IsReadOnly = true, TextWrapping = TextWrapping.Wrap, BorderThickness = new(0), Background = Brushes.Transparent, Padding = new(0), FontSize = 13, MinHeight = 0, Margin = new(0, 0, 0, 8) };
             source.SetResourceReference(Control.ForegroundProperty, "MutedBrush");
-            source.ToolTip = "Select text, then use Look up selection for custom Japanese/Chinese substrings."; panel.Children.Add(source);
+            Ui.Set(source, FrameworkElement.ToolTipProperty, "Select text, then use Look up selection for custom Japanese/Chinese substrings."); panel.Children.Add(source);
             var words = new WrapPanel();
             foreach (var word in block.Original.Words)
             {
                 var button = new Button { Content = word.Text, FontSize = 12, Padding = new(7, 4, 7, 4), Margin = new(0, 0, 5, 5), ToolTip = "Look up and save this recognized word" };
-                button.Click += (_, _) => Lookup(word.Text, session, block); words.Children.Add(button);
+                Ui.Set(button, FrameworkElement.ToolTipProperty, "Look up and save this recognized word"); button.Click += (_, _) => Lookup(word.Text, session, block); words.Children.Add(button);
             }
             panel.Children.Add(words);
             panel.Children.Add(SmallButton("Look up selection", () => Lookup(string.IsNullOrWhiteSpace(source.SelectedText) ? source.Text : source.SelectedText, session, block)));
@@ -64,7 +64,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
         {
             var original = new TextBlock { Text = block.Original.Text, FontSize = 11, MaxHeight = 36, TextTrimming = TextTrimming.CharacterEllipsis }; original.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); panel.Children.Add(original);
             panel.MouseLeftButtonUp += (_, e) => { Lookup(block.Original.Words.FirstOrDefault()?.Text ?? block.Original.Text, session, block); e.Handled = true; };
-            panel.ToolTip = "Click to look up a word. Edit the selection in the dictionary popup.";
+            Ui.Set(panel, FrameworkElement.ToolTipProperty, "Click to look up a word. Edit the selection in the dictionary popup.");
         }
         return panel;
     }
@@ -75,9 +75,9 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
         var root = new Grid(); root.RowDefinitions.Add(new() { Height = GridLength.Auto }); root.RowDefinitions.Add(new()); root.RowDefinitions.Add(new() { Height = GridLength.Auto });
         var chrome = new DockPanel { Margin = new(16, 13, 12, 10), LastChildFill = true };
         var actions = new StackPanel { Orientation = Orientation.Horizontal }; DockPanel.SetDock(actions, Dock.Right); chrome.Children.Add(actions);
-        var pin = SmallButton("Unpin", () => { }); pin.Click += (_, _) => { window.Topmost = !window.Topmost; pin.Content = window.Topmost ? "Unpin" : "Pin"; }; actions.Children.Add(pin);
+        var pin = SmallButton("Unpin", () => { }); pin.Click += (_, _) => { window.Topmost = !window.Topmost; Ui.SetContent(pin, window.Topmost ? "Unpin" : "Pin"); }; actions.Children.Add(pin);
         actions.Children.Add(SmallButton("Copy", () => vm.Copy(session.TranslatedText))); actions.Children.Add(SmallButton("Close", Close));
-        chrome.Children.Add(new TextBlock { Text = "GAAME  /  TRANSLATE", FontSize = 10, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, Foreground = (Brush)System.Windows.Application.Current.FindResource("AccentBrush") });
+        chrome.Children.Add(Ui.Localize(new TextBlock { Text = "GAAME  /  TRANSLATE", FontSize = 10, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, Foreground = (Brush)System.Windows.Application.Current.FindResource("AccentBrush") }));
         chrome.MouseLeftButtonDown += (_, e) => { if (e.OriginalSource is TextBlock or DockPanel) { try { window.DragMove(); } catch (InvalidOperationException) { } } }; root.Children.Add(chrome);
         var blocks = new StackPanel { Margin = new(18, 6, 18, 10) }; foreach (var block in session.Blocks)
         {
@@ -85,7 +85,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
         }
         var scroll = new ScrollViewer { Content = blocks, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetRow(scroll, 1); root.Children.Add(scroll);
         var footer = new DockPanel { Margin = new(18, 4, 18, 13) }; var interaction = SmallButton("Click through", () => SetInteractive(false)); DockPanel.SetDock(interaction, Dock.Right); footer.Children.Add(interaction);
-        footer.Children.Add(SettingsView.Muted($"{session.SourceLanguage} → {session.TargetLanguage}  ·  {session.Provider}", new(0, 5, 5, 0))); Grid.SetRow(footer, 2); root.Children.Add(footer);
+        footer.Children.Add(SettingsView.Muted(L.M("{0} → {1}  ·  {2}", session.SourceLanguage, session.TargetLanguage, session.Provider), new(0, 5, 5, 0))); Grid.SetRow(footer, 2); root.Children.Add(footer);
         window.Content = new Border { Background = Surface(), BorderBrush = (Brush)System.Windows.Application.Current.FindResource("BorderBrush"), BorderThickness = new(1), CornerRadius = new(12), Child = root };
         if (!side) { root.Measure(new Size(window.Width, double.PositiveInfinity)); window.Height = Math.Clamp(root.DesiredSize.Height + 12, 180, 510); }
         window.Show(); var hwnd = new WindowInteropHelper(window).Handle; var dpi = NativeMethods.GetDpiForWindow(hwnd) / 96d;
@@ -187,7 +187,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
     public void SetInteractive(bool enabled)
     {
         interactive = enabled; foreach (var w in windows) NativeMethods.ClickThrough(new WindowInteropHelper(w).Handle, !enabled);
-        vm.Status = enabled ? "Overlay is interactive. Click a word to look it up." : $"Overlay is click-through. Press {preferences.Hotkeys.Interaction} to interact again.";
+        vm.Status = enabled ? "Overlay is interactive. Click a word to look it up." : L.M("Overlay is click-through. Press {0} to interact again.", preferences.Hotkeys.Interaction);
     }
     public void ToggleInteraction() => SetInteractive(!interactive);
     public void Toggle()

@@ -20,6 +20,8 @@ public sealed class RegionSelector
         completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
         EventHandler displayChanged = (_, _) => System.Windows.Application.Current.Dispatcher.BeginInvoke(() => Complete(null));
         Microsoft.Win32.SystemEvents.DisplaySettingsChanged += displayChanged;
+        System.ComponentModel.PropertyChangedEventHandler languageChanged = (_, _) => { foreach (var window in windows) window.visual.InvalidateVisual(); };
+        L.State.PropertyChanged += languageChanged;
         using var registration = token.Register(() => System.Windows.Application.Current.Dispatcher.BeginInvoke(() => Complete(null)));
         try
         {
@@ -31,6 +33,7 @@ public sealed class RegionSelector
         finally
         {
             Microsoft.Win32.SystemEvents.DisplaySettingsChanged -= displayChanged;
+            L.State.PropertyChanged -= languageChanged;
             foreach (var window in windows) window.Close(); windows.Clear(); start = null; completion = null;
         }
     }
@@ -44,7 +47,7 @@ public sealed class RegionSelector
     private sealed class SelectionWindow : Window
     {
         private readonly RegionSelector owner;
-        private readonly SelectionVisual visual;
+        internal readonly SelectionVisual visual;
         public DisplayInfo Display { get; }
         public SelectionWindow(RegionSelector selector, DisplayInfo display)
         {
@@ -78,7 +81,7 @@ public sealed class RegionSelector
             }
         }
     }
-    private sealed class SelectionVisual : FrameworkElement
+    internal sealed class SelectionVisual : FrameworkElement
     {
         public Rect Selection { get; set; } = Rect.Empty;
         public string Dimensions { get; set; } = "";
@@ -92,7 +95,7 @@ public sealed class RegionSelector
                 dc.DrawRectangle(Brushes.Transparent, new Pen(new SolidColorBrush(Color.FromRgb(126, 221, 190)), 1.5), Selection);
                 DrawText(dc, Dimensions, Math.Clamp(Selection.Left, 12, Math.Max(12, ActualWidth - 180)), Math.Clamp(Selection.Bottom + 10, 10, Math.Max(10, ActualHeight - 42)));
             }
-            DrawText(dc, "Drag to translate   ·   Esc to cancel", 28, 28);
+            DrawText(dc, L.Get("Drag to translate   ·   Esc to cancel"), 28, 28);
         }
         private void DrawText(DrawingContext dc, string text, double x, double y)
         {

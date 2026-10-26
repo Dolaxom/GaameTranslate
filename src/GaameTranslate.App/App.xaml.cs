@@ -25,10 +25,12 @@ public partial class App : System.Windows.Application
     private bool exiting, shortcutsPaused, restoreMain;
     private Task ocrWarmup = Task.CompletedTask;
     private readonly CancellationTokenSource ocrWarmupLifetime = new();
+    private readonly Dictionary<Forms.ToolStripItem, UiMessage> trayLabels = [];
     public static string DataDirectory { get; private set; } = "";
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        L.SetLanguage(System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ru" ? "ru" : "en");
         // Named handles are scoped to this Windows login session; another launch activates the existing window.
         singleInstance = new Mutex(true, "Local\\GaameTranslate.Application.v1", out var created);
         if (!created)
@@ -52,7 +54,7 @@ public partial class App : System.Windows.Application
             builder.Services.AddSingleton<DictionaryService>();
             builder.Services.AddSingleton(_ => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = Timeout.InfiniteTimeSpan });
             builder.Services.AddSingleton<MainViewModel>(); builder.Services.AddSingleton<OverlayManager>(); host = builder.Build();
-            await host.StartAsync(); vm = host.Services.GetRequiredService<MainViewModel>(); await vm.InitializeAsync(); ApplyTheme(vm.Settings.LightTheme);
+            await host.StartAsync(); vm = host.Services.GetRequiredService<MainViewModel>(); await vm.InitializeAsync(); L.SetLanguage(vm.Settings.InterfaceLanguage); ApplyTheme(vm.Settings.LightTheme);
             main = new MainWindow(vm); MainWindow = main; overlays = host.Services.GetRequiredService<OverlayManager>(); var selector = new RegionSelector(); vm.SelectRegion = selector.SelectAsync;
             vm.SessionReady += overlays.Show; vm.ToggleOverlayRequested += overlays.Toggle; vm.InteractionRequested += overlays.ToggleInteraction;
             vm.WordLookupRequested += overlays.Lookup;
@@ -71,7 +73,7 @@ public partial class App : System.Windows.Application
                 if (recording) hotkeys.Unregister(); else RegisterHotkeys();
                 controller.SetEnabled(!recording && !shortcutsPaused && vm.Settings.ControllerEnabled);
             };
-            vm.SettingsChanged += () => { RegisterHotkeys(); controller.SetEnabled(!shortcutsPaused && !vm.IsRecordingShortcut && vm.Settings.ControllerEnabled); ApplyTheme(vm.Settings.LightTheme); NativeMethods.StyleWindow(new WindowInteropHelper(main).EnsureHandle(), !vm.Settings.LightTheme); if (vm.LastSession is { CaptureType: not "Text" } last) overlays.Show(last); };
+            vm.SettingsChanged += () => { RegisterHotkeys(); controller.SetEnabled(!shortcutsPaused && !vm.IsRecordingShortcut && vm.Settings.ControllerEnabled); ApplyTheme(vm.Settings.LightTheme); NativeMethods.StyleWindow(new WindowInteropHelper(main).EnsureHandle(), !vm.Settings.LightTheme); if (!vm.InterfaceOnlySettingsChange && vm.LastSession is { CaptureType: not "Text" } last) overlays.Show(last); };
             CreateTray(); RegisterHotkeys(); if (e.Args.Contains("--settings")) vm.PageIndex = 5; else if (e.Args.Contains("--vocabulary")) vm.PageIndex = 2;
             if (!vm.Settings.StartMinimized || e.Args.Contains("--show") || e.Args.Contains("--settings") || e.Args.Contains("--vocabulary")) main.Show();
             ocrWarmup = WarmOcrAsync();
@@ -84,7 +86,7 @@ public partial class App : System.Windows.Application
         }
         catch (Exception error)
         {
-            System.Windows.MessageBox.Show(error is UserFacingException ? error.Message : "GaameTranslate could not start. Check access to its data folder and try again.\n\n" + error.GetType().Name, "GaameTranslate", MessageBoxButton.OK, MessageBoxImage.Error); ExitApplication();
+            System.Windows.MessageBox.Show(error is UserFacingException ? error.Message : L.Format("GaameTranslate could not start. Check access to its data folder and try again.\n\n{0}", error.GetType().Name), "GaameTranslate", MessageBoxButton.OK, MessageBoxImage.Error); ExitApplication();
         }
     }
     private static string ReadDataDirectory(string[] args)
@@ -108,7 +110,7 @@ public partial class App : System.Windows.Application
     {
         if (shortcutsPaused || hotkeys is null || vm is null || vm.IsRecordingShortcut) return;
         var conflicts = hotkeys.Register(vm.Settings.Hotkeys);
-        if (conflicts.Count > 0) vm.Status = "Сочетания заняты: " + string.Join(", ", conflicts.Select(c => c[(c.IndexOf(':') + 1)..].Trim())) + ". Выберите другие на вкладке «Клавиши».";
+        if (conflicts.Count > 0) vm.Status = L.M("Сочетания заняты: {0}. Выберите другие на вкладке «Клавиши».", string.Join(", ", conflicts.Select(c => c[(c.IndexOf(':') + 1)..].Trim())));
     }
     private async void OnHotkey(string action)
     {
@@ -130,13 +132,21 @@ public partial class App : System.Windows.Application
     }
     private void CreateTray()
     {
-        trayIcon = new Forms.NotifyIcon { Text = "GaameTranslate · ready", Visible = true };
+        trayIcon = new Forms.NotifyIcon { Text = L.Get("GaameTranslate · ready"), Visible = true };
         using var process = System.Diagnostics.Process.GetCurrentProcess(); trayIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(process.MainModule!.FileName!) ?? System.Drawing.SystemIcons.Application;
-        var menu = new Forms.ContextMenuStrip(); menu.Items.Add("Open GaameTranslate", null, (_, _) => ShowMain()); menu.Items.Add("Translate a region", null, (_, _) => OnHotkey("Region")); menu.Items.Add("Translate fullscreen", null, (_, _) => OnHotkey("Fullscreen")); menu.Items.Add("Repeat last region", null, (_, _) => OnHotkey("Repeat")); menu.Items.Add("Vocabulary", null, (_, _) => OnHotkey("Vocabulary"));
-        menu.Items.Add("Show / hide overlay", null, (_, _) => overlays?.Toggle()); menu.Items.Add("Toggle overlay interaction", null, (_, _) => overlays?.ToggleInteraction()); menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add("Экранный переводчик", null, (_, _) => OnHotkey("ScreenTranslation")); menu.Items.Add("Слово под курсором", null, (_, _) => OnHotkey("WordLookup"));
-        var pause = new Forms.ToolStripMenuItem("Pause shortcuts"); pause.Click += (_, _) => { shortcutsPaused = !shortcutsPaused; pause.Text = shortcutsPaused ? "Resume shortcuts" : "Pause shortcuts"; controller?.SetEnabled(!shortcutsPaused && vm?.IsRecordingShortcut == false && vm.Settings.ControllerEnabled); if (shortcutsPaused) { hotkeys?.Unregister(); vm?.StopMonitoring(); } else RegisterHotkeys(); }; menu.Items.Add(pause);
-        menu.Items.Add("Exit", null, (_, _) => ExitApplication()); trayIcon.ContextMenuStrip = menu; trayIcon.DoubleClick += (_, _) => ShowMain();
+        var menu = new Forms.ContextMenuStrip();
+        Forms.ToolStripItem Item(string key, EventHandler handler) { var item = menu.Items.Add(L.Get(key), null, handler); trayLabels[item] = new(key); return item; }
+        Item("Open GaameTranslate", (_, _) => ShowMain()); Item("Translate a region", (_, _) => OnHotkey("Region")); Item("Translate fullscreen", (_, _) => OnHotkey("Fullscreen")); Item("Repeat last region", (_, _) => OnHotkey("Repeat")); Item("Vocabulary", (_, _) => OnHotkey("Vocabulary"));
+        Item("Show / hide overlay", (_, _) => overlays?.Toggle()); Item("Toggle overlay interaction", (_, _) => overlays?.ToggleInteraction()); menu.Items.Add(new Forms.ToolStripSeparator());
+        Item("Экранный переводчик", (_, _) => OnHotkey("ScreenTranslation")); Item("Слово под курсором", (_, _) => OnHotkey("WordLookup"));
+        var pause = Item("Pause shortcuts", (_, _) => { }); pause.Click += (_, _) => { shortcutsPaused = !shortcutsPaused; trayLabels[pause] = new(shortcutsPaused ? "Resume shortcuts" : "Pause shortcuts"); RefreshTrayLanguage(null, null); controller?.SetEnabled(!shortcutsPaused && vm?.IsRecordingShortcut == false && vm.Settings.ControllerEnabled); if (shortcutsPaused) { hotkeys?.Unregister(); vm?.StopMonitoring(); } else RegisterHotkeys(); };
+        Item("Exit", (_, _) => ExitApplication()); trayIcon.ContextMenuStrip = menu; trayIcon.DoubleClick += (_, _) => ShowMain();
+        L.State.PropertyChanged += RefreshTrayLanguage;
+    }
+    private void RefreshTrayLanguage(object? sender, System.ComponentModel.PropertyChangedEventArgs? e)
+    {
+        if (trayIcon is not null) trayIcon.Text = L.Get("GaameTranslate · ready");
+        foreach (var item in trayLabels) item.Key.Text = item.Value.Text;
     }
     public void ShowMain() { if (main is null) return; main.Show(); main.WindowState = WindowState.Normal; main.Activate(); }
     public static void ApplyTheme(bool light)
@@ -147,7 +157,7 @@ public partial class App : System.Windows.Application
     }
     public async void ExitApplication()
     {
-        if (exiting) return; exiting = true; hotkeys?.Dispose(); controller?.Dispose(); ocrWarmupLifetime.Cancel(); if (vm is not null) await vm.StopAsync(); await ocrWarmup; overlays?.Dispose(); ocrWarmupLifetime.Dispose();
+        if (exiting) return; exiting = true; L.State.PropertyChanged -= RefreshTrayLanguage; hotkeys?.Dispose(); controller?.Dispose(); ocrWarmupLifetime.Cancel(); if (vm is not null) await vm.StopAsync(); await ocrWarmup; overlays?.Dispose(); ocrWarmupLifetime.Dispose();
         if (trayIcon is not null) { trayIcon.Visible = false; var icon = trayIcon.Icon; var menu = trayIcon.ContextMenuStrip; trayIcon.Dispose(); icon?.Dispose(); menu?.Dispose(); }
         if (main is not null) { main.AllowClose = true; main.Close(); }
         activationWait?.Unregister(null); activation?.Dispose();

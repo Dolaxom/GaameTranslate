@@ -1,0 +1,2622 @@
+{
+  " pt": {
+    "en": " pt",
+    "ru": " пт"
+  },
+  " s": {
+    "en": " s",
+    "ru": " с"
+  },
+  " · Windows": {
+    "en": " · Windows",
+    "ru": " · Windows"
+  },
+  " пт": {
+    "en": " pt",
+    "ru": " пт"
+  },
+  " с": {
+    "en": " s",
+    "ru": " с"
+  },
+  "* Обязательные поля. Остальное можно добавить позже.": {
+    "en": "* Required fields. Everything else can be added later.",
+    "ru": "* Обязательные поля. Остальное можно добавить позже."
+  },
+  "A CSV row has the wrong number of columns. Check quoted fields.": {
+    "en": "A CSV row has the wrong number of columns. Check quoted fields.",
+    "ru": "В строке CSV неверное число столбцов. Проверьте поля в кавычках."
+  },
+  "A few words today. A little more fluency tomorrow.": {
+    "en": "A few words today. A little more fluency tomorrow.",
+    "ru": "Несколько слов сегодня — больше уверенности завтра."
+  },
+  "A little less guessing.": {
+    "en": "A little less guessing.",
+    "ru": "Меньше догадок."
+  },
+  "A shortcut needs Ctrl, Alt, Shift or Win plus a letter, number or function key.": {
+    "en": "A shortcut needs Ctrl, Alt, Shift or Win plus a letter, number or function key.",
+    "ru": "Нужно сочетание Ctrl, Alt, Shift или Win с буквой, цифрой или функциональной клавишей."
+  },
+  "A whole new world of understanding.": {
+    "en": "A whole new world of understanding.",
+    "ru": "Новый мир понимания."
+  },
+  "API-ключ": {
+    "en": "API key",
+    "ru": "API-ключ"
+  },
+  "API-ключ для защищённого сервера": {
+    "en": "API key for a protected server",
+    "ru": "API-ключ для защищённого сервера"
+  },
+  "Aa": {
+    "en": "Aa",
+    "ru": "Aa"
+  },
+  "Add your translation API key in Settings, or select a local LibreTranslate service.": {
+    "en": "Add your translation API key in Settings, or select a local LibreTranslate service.",
+    "ru": "Добавьте API-ключ в настройках или выберите локальный LibreTranslate."
+  },
+  "Again · 10 min": {
+    "en": "Again · 10 min",
+    "ru": "Снова · 10 мин"
+  },
+  "All monitors": {
+    "en": "All monitors",
+    "ru": "Все мониторы"
+  },
+  "Anki (*.apkg)|*.apkg|Anki text (*.txt)|*.txt": {
+    "en": "Anki (*.apkg)|*.apkg|Anki text (*.txt)|*.txt",
+    "ru": "Пакет Anki (*.apkg)|*.apkg|Текст Anki (*.txt)|*.txt"
+  },
+  "Anki и дополнение AnkiConnect должны быть запущены. Синхронизация доступна на странице словаря.": {
+    "en": "Anki and the AnkiConnect add-on must be running. Sync is available from the vocabulary page.",
+    "ru": "Anki и дополнение AnkiConnect должны быть запущены. Синхронизация доступна на странице словаря."
+  },
+  "Anki: добавлено {0}, обновлено {1}, помечено удалёнными {2}. Расписание повторений сохранено.": {
+    "en": "Anki: {0} added, {1} updated, {2} marked as removed. Review schedules are preserved.",
+    "ru": "Anki: добавлено {0}, обновлено {1}, помечено удалёнными {2}. Расписание повторений сохранено."
+  },
+  "AnkiConnect должен быть запущен на локальном компьютере.": {
+    "en": "AnkiConnect must be running on this computer.",
+    "ru": "AnkiConnect должен быть запущен на локальном компьютере."
+  },
+  "AnkiConnect должен работать на локальном компьютере.": {
+    "en": "AnkiConnect must run on this computer.",
+    "ru": "AnkiConnect должен работать на локальном компьютере."
+  },
+  "AnkiConnect должен работать на этом компьютере.": {
+    "en": "AnkiConnect must run on this computer.",
+    "ru": "AnkiConnect должен работать на этом компьютере."
+  },
+  "AnkiConnect не ответил. Проверьте окно Anki: возможно, оно ожидает подтверждения подключения.": {
+    "en": "AnkiConnect did not respond. Check whether Anki is waiting for connection approval.",
+    "ru": "AnkiConnect не ответил. Проверьте окно Anki: возможно, оно ожидает подтверждения подключения."
+  },
+  "AnkiConnect: ": {
+    "en": "AnkiConnect: ",
+    "ru": "AnkiConnect: "
+  },
+  "AnkiConnect: {0}": {
+    "en": "AnkiConnect: {0}",
+    "ru": "AnkiConnect: {0}"
+  },
+  "Auto": {
+    "en": "Auto",
+    "ru": "Автоматически"
+  },
+  "CSV (*.csv)|*.csv": {
+    "en": "CSV (*.csv)|*.csv",
+    "ru": "CSV (*.csv)|*.csv"
+  },
+  "CSV contains an unclosed quoted field.": {
+    "en": "CSV contains an unclosed quoted field.",
+    "ru": "В CSV есть незакрытое поле в кавычках."
+  },
+  "Cancel": {
+    "en": "Cancel",
+    "ru": "Отмена"
+  },
+  "Cancelled. Ready for your next capture.": {
+    "en": "Cancelled. Ready for your next capture.",
+    "ru": "Отменено. Можно начать новый захват."
+  },
+  "Cannot reach the translation provider. Check your connection or start your local LibreTranslate service.": {
+    "en": "Cannot reach the translation provider. Check your connection or start your local LibreTranslate service.",
+    "ru": "Нет связи с переводчиком. Проверьте подключение или запустите локальный LibreTranslate."
+  },
+  "Capture some screen text first.": {
+    "en": "Capture some screen text first.",
+    "ru": "Сначала захватите текст с экрана."
+  },
+  "Capture {0:0} ms  ·  OCR {1:0} ms  ·  Translate {2:0} ms  ·  Total {3:0} ms": {
+    "en": "Capture {0:0} ms  ·  OCR {1:0} ms  ·  Translate {2:0} ms  ·  Total {3:0} ms",
+    "ru": "Захват {0:0} мс  ·  OCR {1:0} мс  ·  Перевод {2:0} мс  ·  Всего {3:0} мс"
+  },
+  "Capture {0:0} ms  ·  OCR {1:0} ms  ·  Словарь открыт до перевода контекста": {
+    "en": "Capture {0:0} ms  ·  OCR {1:0} ms  ·  Dictionary opened before context translation",
+    "ru": "Захват {0:0} мс  ·  OCR {1:0} мс  ·  Словарь открыт до перевода контекста"
+  },
+  "Capture {0:0} ms  ·  OCR {1:0} ms  ·  Слово {2:0} ms  ·  Первый результат {3:0} ms": {
+    "en": "Capture {0:0} ms  ·  OCR {1:0} ms  ·  Word {2:0} ms  ·  First result {3:0} ms",
+    "ru": "Захват {0:0} мс  ·  OCR {1:0} мс  ·  Слово {2:0} мс  ·  Первый результат {3:0} мс"
+  },
+  "Capturing screen…": {
+    "en": "Capturing screen…",
+    "ru": "Захват экрана…"
+  },
+  "Choose Russian or English for the interface.": {
+    "en": "Choose Russian or English for the interface.",
+    "ru": "Выберите русский или английский язык интерфейса."
+  },
+  "Choose a CSV smaller than 20 MB.": {
+    "en": "Choose a CSV smaller than 20 MB.",
+    "ru": "Выберите CSV-файл меньше 20 МБ."
+  },
+  "Choose a language model for dictionary explanations.": {
+    "en": "Choose a language model for dictionary explanations.",
+    "ru": "Выберите языковую модель для объяснений в словаре."
+  },
+  "Choose a supported source language.": {
+    "en": "Choose a supported source language.",
+    "ru": "Выберите поддерживаемый язык оригинала."
+  },
+  "Choose a supported target language.": {
+    "en": "Choose a supported target language.",
+    "ru": "Выберите поддерживаемый язык перевода."
+  },
+  "Choose a translation provider.": {
+    "en": "Choose a translation provider.",
+    "ru": "Выберите сервис перевода."
+  },
+  "Choose a valid overlay mode.": {
+    "en": "Choose a valid overlay mode.",
+    "ru": "Выберите режим отображения перевода."
+  },
+  "Choose an explicit source language before swapping.": {
+    "en": "Choose an explicit source language before swapping.",
+    "ru": "Перед сменой языков выберите язык оригинала явно."
+  },
+  "Clear history": {
+    "en": "Clear history",
+    "ru": "Очистить историю"
+  },
+  "Clear translation history?": {
+    "en": "Clear translation history?",
+    "ru": "Очистить историю переводов?"
+  },
+  "Click through": {
+    "en": "Click through",
+    "ru": "Пропускать нажатия"
+  },
+  "Click to look up a word. Edit the selection in the dictionary popup.": {
+    "en": "Click to look up a word. Edit the selection in the dictionary popup.",
+    "ru": "Нажмите, чтобы открыть слово. Выражение можно исправить в окне словаря."
+  },
+  "Close": {
+    "en": "Close",
+    "ru": "Закрыть"
+  },
+  "Copied to clipboard.": {
+    "en": "Copied to clipboard.",
+    "ru": "Скопировано в буфер обмена."
+  },
+  "Copy": {
+    "en": "Copy",
+    "ru": "Копировать"
+  },
+  "Copy selected": {
+    "en": "Copy selected",
+    "ru": "Копировать выбранное"
+  },
+  "Copy translation": {
+    "en": "Copy translation",
+    "ru": "Копировать перевод"
+  },
+  "DeepL API Free · доступность зависит от региона": {
+    "en": "DeepL API Free · availability varies by region",
+    "ru": "DeepL API Free · доступность зависит от региона"
+  },
+  "DeepL API Pro · доступность зависит от региона": {
+    "en": "DeepL API Pro · availability varies by region",
+    "ru": "DeepL API Pro · доступность зависит от региона"
+  },
+  "DeepL Free": {
+    "en": "DeepL Free",
+    "ru": "DeepL Free"
+  },
+  "DeepL Pro": {
+    "en": "DeepL Pro",
+    "ru": "DeepL Pro"
+  },
+  "Delete": {
+    "en": "Delete",
+    "ru": "Удалить"
+  },
+  "Delete selected": {
+    "en": "Delete selected",
+    "ru": "Удалить выбранное"
+  },
+  "Detect automatically": {
+    "en": "Detect automatically",
+    "ru": "Определять автоматически"
+  },
+  "Deutsch": {
+    "en": "German",
+    "ru": "Немецкий"
+  },
+  "Drag over text. Press Esc to cancel.": {
+    "en": "Drag over text. Press Esc to cancel.",
+    "ru": "Выделите текст мышью. Esc — отмена."
+  },
+  "Drag to translate   ·   Esc to cancel": {
+    "en": "Drag to translate   ·   Esc to cancel",
+    "ru": "Выделите область   ·   Esc — отмена"
+  },
+  "Each action needs a different shortcut.": {
+    "en": "Each action needs a different shortcut.",
+    "ru": "Для каждого действия нужно отдельное сочетание."
+  },
+  "Easy": {
+    "en": "Easy",
+    "ru": "Легко"
+  },
+  "English": {
+    "en": "English",
+    "ru": "Английский"
+  },
+  "English · PP-OCRv6": {
+    "en": "English · PP-OCRv6",
+    "ru": "Английский · PP-OCRv6"
+  },
+  "Enter a word and its translation before saving.": {
+    "en": "Enter a word and its translation before saving.",
+    "ru": "Перед сохранением введите слово и перевод."
+  },
+  "Español": {
+    "en": "Spanish",
+    "ru": "Испанский"
+  },
+  "Every imported row needs a word and translation.": {
+    "en": "Every imported row needs a word and translation.",
+    "ru": "В каждой строке должны быть слово и перевод."
+  },
+  "Exit": {
+    "en": "Exit",
+    "ru": "Выход"
+  },
+  "Français": {
+    "en": "French",
+    "ru": "Французский"
+  },
+  "Free Dictionary API получает выбранное слово.": {
+    "en": "Free Dictionary API receives the selected word.",
+    "ru": "Free Dictionary API получает выбранное слово."
+  },
+  "From a game, a browser, or a thought.": {
+    "en": "From a game, a browser, or a thought.",
+    "ru": "Из игры, браузера или ваших мыслей."
+  },
+  "Full screen": {
+    "en": "Full screen",
+    "ru": "Весь экран"
+  },
+  "GAAME  /  TRANSLATE": {
+    "en": "GAAME  /  TRANSLATE",
+    "ru": "GAAME  /  ПЕРЕВОД"
+  },
+  "Gaame": {
+    "en": "Gaame",
+    "ru": "Gaame"
+  },
+  "GaameTranslate": {
+    "en": "GaameTranslate",
+    "ru": "GaameTranslate"
+  },
+  "GaameTranslate could not start. Check access to its data folder and try again.\n\n{0}": {
+    "en": "GaameTranslate could not start. Check access to its data folder and try again.\n\n{0}",
+    "ru": "Не удалось запустить GaameTranslate. Проверьте доступ к папке данных и попробуйте ещё раз.\n\n{0}"
+  },
+  "GaameTranslate · dictionary": {
+    "en": "GaameTranslate · dictionary",
+    "ru": "GaameTranslate · словарь"
+  },
+  "GaameTranslate · ready": {
+    "en": "GaameTranslate · ready",
+    "ru": "GaameTranslate · готов"
+  },
+  "GaameTranslate · spatial overlay": {
+    "en": "GaameTranslate · spatial overlay",
+    "ru": "GaameTranslate · экранный перевод"
+  },
+  "GaameTranslate · translation": {
+    "en": "GaameTranslate · translation",
+    "ru": "GaameTranslate · перевод"
+  },
+  "GigaChat не выдал токен. Проверьте ключ авторизации, scope и доступ API.": {
+    "en": "GigaChat did not issue a token. Check the authorization key, scope and API access.",
+    "ru": "GigaChat не выдал токен. Проверьте ключ авторизации, scope и доступ API."
+  },
+  "Good": {
+    "en": "Good",
+    "ru": "Хорошо"
+  },
+  "Hard": {
+    "en": "Hard",
+    "ru": "Трудно"
+  },
+  "Hello, traveler.": {
+    "en": "Hello, traveler.",
+    "ru": "Hello, traveler."
+  },
+  "History": {
+    "en": "History",
+    "ru": "История"
+  },
+  "History entry deleted.": {
+    "en": "History entry deleted.",
+    "ru": "Запись удалена из истории."
+  },
+  "History limit must be between 0 and 10,000.": {
+    "en": "History limit must be between 0 and 10,000.",
+    "ru": "Лимит истории должен быть от 0 до 10 000."
+  },
+  "Home": {
+    "en": "Home",
+    "ru": "Главная"
+  },
+  "ID каталога Yandex Cloud": {
+    "en": "Yandex Cloud folder ID",
+    "ru": "ID каталога Yandex Cloud"
+  },
+  "ID модели": {
+    "en": "Model ID",
+    "ru": "ID модели"
+  },
+  "Imported {0} words. Existing words update their encounter count.": {
+    "en": "Imported {0} words. Existing words update their encounter count.",
+    "ru": "Импортировано слов: {0}. У существующих слов обновлён счётчик встреч."
+  },
+  "Install an OCR language in Windows Settings → Time & language → Language & region.": {
+    "en": "Install an OCR language in Windows Settings → Time & language → Language & region.",
+    "ru": "Установите язык OCR: Параметры Windows → Время и язык → Язык и регион."
+  },
+  "Italiano": {
+    "en": "Italian",
+    "ru": "Итальянский"
+  },
+  "Keep the translation context hint under 1,000 characters.": {
+    "en": "Keep the translation context hint under 1,000 characters.",
+    "ru": "Описание контекста должно быть короче 1000 символов."
+  },
+  "LM Studio, DeepSeek и другие совместимые серверы": {
+    "en": "LM Studio, DeepSeek and other compatible servers",
+    "ru": "LM Studio, DeepSeek и другие совместимые серверы"
+  },
+  "Language pair and provider follow Settings.": {
+    "en": "Language pair and provider follow Settings.",
+    "ru": "Языки и сервис берутся из настроек."
+  },
+  "LibreTranslate · свой сервер": {
+    "en": "LibreTranslate · your own server",
+    "ru": "LibreTranslate · свой сервер"
+  },
+  "Look up and save this recognized word": {
+    "en": "Look up and save this recognized word",
+    "ru": "Открыть и сохранить распознанное слово"
+  },
+  "Look up selection": {
+    "en": "Look up selection",
+    "ru": "Открыть выделенное"
+  },
+  "Make it stick.": {
+    "en": "Make it stick.",
+    "ru": "Закрепите знания."
+  },
+  "Microsoft Azure": {
+    "en": "Microsoft Azure",
+    "ru": "Microsoft Azure"
+  },
+  "Microsoft Azure Translator": {
+    "en": "Microsoft Azure Translator",
+    "ru": "Microsoft Azure Translator"
+  },
+  "Monitoring interval must be between 500 and 10,000 ms.": {
+    "en": "Monitoring interval must be between 500 and 10,000 ms.",
+    "ru": "Интервал автоперевода должен быть от 500 до 10 000 мс."
+  },
+  "Next due card": {
+    "en": "Next due card",
+    "ru": "Следующая карточка"
+  },
+  "No OCR packs installed": {
+    "en": "No OCR packs installed",
+    "ru": "Нет установленных языков OCR"
+  },
+  "No capture yet": {
+    "en": "No capture yet",
+    "ru": "Захвата ещё не было"
+  },
+  "No text was found. Select a tighter area, choose the matching OCR language or enable small-text scaling in Settings.": {
+    "en": "No text was found. Select a tighter area, choose the matching OCR language or enable small-text scaling in Settings.",
+    "ru": "Текст не найден. Выделите область точнее, выберите язык OCR или увеличьте масштаб в настройках."
+  },
+  "No translations here yet.": {
+    "en": "No translations here yet.",
+    "ru": "Здесь пока нет переводов."
+  },
+  "No words saved yet. Click a recognized word in the translation overlay to start your collection.": {
+    "en": "No words saved yet. Click a recognized word in the translation overlay to start your collection.",
+    "ru": "Сохранённых слов пока нет. Нажмите на распознанное слово в переводе, чтобы начать свою коллекцию."
+  },
+  "OCR scale must be between 0.5 and 3.": {
+    "en": "OCR scale must be between 0.5 and 3.",
+    "ru": "Масштаб OCR должен быть от 0,5 до 3."
+  },
+  "OCR stays on this PC.": {
+    "en": "OCR stays on this PC.",
+    "ru": "Распознавание — на вашем ПК."
+  },
+  "Ollama · локальные модели": {
+    "en": "Ollama · local models",
+    "ru": "Ollama · локальные модели"
+  },
+  "One quick step before your first translation": {
+    "en": "One quick step before your first translation",
+    "ru": "Один шаг до первого перевода"
+  },
+  "Open GaameTranslate": {
+    "en": "Open GaameTranslate",
+    "ru": "Открыть GaameTranslate"
+  },
+  "Open vocabulary": {
+    "en": "Open vocabulary",
+    "ru": "Открыть словарь"
+  },
+  "OpenAI compatible": {
+    "en": "OpenAI compatible",
+    "ru": "Совместимый с OpenAI"
+  },
+  "Overlay is click-through. Press {0} to interact again.": {
+    "en": "Overlay is click-through. Press {0} to interact again.",
+    "ru": "Слой пропускает нажатия. Нажмите {0}, чтобы включить взаимодействие."
+  },
+  "Overlay is interactive. Click a word to look it up.": {
+    "en": "Overlay is interactive. Click a word to look it up.",
+    "ru": "Слой активен. Нажмите на слово, чтобы открыть словарь."
+  },
+  "Overlay opacity must be between 30% and 100%.": {
+    "en": "Overlay opacity must be between 30% and 100%.",
+    "ru": "Плотность подложки должна быть от 30% до 100%."
+  },
+  "Overlay text size must be between 12 and 40.": {
+    "en": "Overlay text size must be between 12 and 40.",
+    "ru": "Размер текста должен быть от 12 до 40."
+  },
+  "PLAY. CAPTURE. UNDERSTAND.": {
+    "en": "PLAY. CAPTURE. UNDERSTAND.",
+    "ru": "ИГРАЙТЕ. ЧИТАЙТЕ. ПОНИМАЙТЕ."
+  },
+  "PP-OCRv6 Medium": {
+    "en": "PP-OCRv6 Medium",
+    "ru": "PP-OCRv6 Medium"
+  },
+  "PP-OCRv6 Small": {
+    "en": "PP-OCRv6 Small",
+    "ru": "PP-OCRv6 Small"
+  },
+  "PP-OCRv6 поддерживает английский, японский и китайский. Для кириллицы выберите русский явно: будет использован Windows OCR.": {
+    "en": "PP-OCRv6 supports English, Japanese and Chinese. For Cyrillic, select Russian explicitly to use Windows OCR.",
+    "ru": "PP-OCRv6 поддерживает английский, японский и китайский. Для кириллицы выберите русский явно: будет использован Windows OCR."
+  },
+  "Pause shortcuts": {
+    "en": "Pause shortcuts",
+    "ru": "Приостановить сочетания"
+  },
+  "Pin": {
+    "en": "Pin",
+    "ru": "Закрепить"
+  },
+  "Polski": {
+    "en": "Polish",
+    "ru": "Польский"
+  },
+  "Português": {
+    "en": "Portuguese",
+    "ru": "Португальский"
+  },
+  "QUICK CAPTURE": {
+    "en": "QUICK CAPTURE",
+    "ru": "БЫСТРЫЙ ЗАХВАТ"
+  },
+  "Ready for a quick review?": {
+    "en": "Ready for a quick review?",
+    "ru": "Готовы повторить слова?"
+  },
+  "Ready when you are. Select an area to get started.": {
+    "en": "Ready when you are. Select an area to get started.",
+    "ru": "Всё готово. Выделите область для перевода."
+  },
+  "Recent translations": {
+    "en": "Recent translations",
+    "ru": "Недавние переводы"
+  },
+  "Reopen translation": {
+    "en": "Reopen translation",
+    "ru": "Открыть перевод"
+  },
+  "Repeat last region": {
+    "en": "Repeat last region",
+    "ru": "Повторить последнюю область"
+  },
+  "Repeat region": {
+    "en": "Repeat region",
+    "ru": "Повторить область"
+  },
+  "Request timeout must be between 10 and 600 seconds.": {
+    "en": "Request timeout must be between 10 and 600 seconds.",
+    "ru": "Время ожидания должно быть от 10 до 600 секунд."
+  },
+  "Resume shortcuts": {
+    "en": "Resume shortcuts",
+    "ru": "Возобновить сочетания"
+  },
+  "Reveal answer": {
+    "en": "Reveal answer",
+    "ru": "Показать ответ"
+  },
+  "Review": {
+    "en": "Review",
+    "ru": "Повторение"
+  },
+  "Running in the system tray. Your global shortcuts are active.": {
+    "en": "Running in the system tray. Your global shortcuts are active.",
+    "ru": "Приложение работает в трее. Глобальные сочетания активны."
+  },
+  "Scope": {
+    "en": "Scope",
+    "ru": "Область доступа"
+  },
+  "Screen translation": {
+    "en": "Screen translation",
+    "ru": "Экранный перевод"
+  },
+  "Search history": {
+    "en": "Search history",
+    "ru": "Поиск по истории"
+  },
+  "Select a region first. The repeat shortcut will reuse it.": {
+    "en": "Select a region first. The repeat shortcut will reuse it.",
+    "ru": "Сначала выделите область. Горячая клавиша будет повторять её перевод."
+  },
+  "Select region": {
+    "en": "Select region",
+    "ru": "Выбрать область"
+  },
+  "Select text anywhere on your screen. Read the translation, explore a word, and keep it for later.": {
+    "en": "Select text anywhere on your screen. Read the translation, explore a word, and keep it for later.",
+    "ru": "Выделите текст на экране. Читайте перевод, разбирайте слова и сохраняйте их для повторения."
+  },
+  "Select text, then use Look up selection for custom Japanese/Chinese substrings.": {
+    "en": "Select text, then use Look up selection for custom Japanese/Chinese substrings.",
+    "ru": "Выделите текст и нажмите «Открыть выделенное», чтобы выбрать часть японского или китайского выражения."
+  },
+  "Selection cancelled.": {
+    "en": "Selection cancelled.",
+    "ru": "Выделение отменено."
+  },
+  "Set up translation": {
+    "en": "Set up translation",
+    "ru": "Настроить перевод"
+  },
+  "Set up your translation provider in Settings. Windows OCR runs entirely on your PC.": {
+    "en": "Set up your translation provider in Settings. Windows OCR runs entirely on your PC.",
+    "ru": "Выберите переводчик в настройках. OCR работает на вашем компьютере."
+  },
+  "Settings are incomplete. Restore the OCR and shortcut settings.": {
+    "en": "Settings are incomplete. Restore the OCR and shortcut settings.",
+    "ru": "Настройки неполные. Восстановите настройки OCR и сочетаний клавиш."
+  },
+  "Settings could not be read. Your file has been preserved. Rename settings.json in the data folder to start with defaults.": {
+    "en": "Settings could not be read. Your file has been preserved. Rename settings.json in the data folder to start with defaults.",
+    "ru": "Не удалось прочитать настройки. Файл сохранён. Чтобы начать с настроек по умолчанию, переименуйте settings.json в папке данных."
+  },
+  "Show / hide overlay": {
+    "en": "Show / hide overlay",
+    "ru": "Показать / скрыть перевод"
+  },
+  "Source language": {
+    "en": "Source language",
+    "ru": "Язык оригинала"
+  },
+  "Source text": {
+    "en": "Source text",
+    "ru": "Исходный текст"
+  },
+  "Swap": {
+    "en": "Swap",
+    "ru": "Поменять местами"
+  },
+  "TRANSLATE · WINDOWS": {
+    "en": "TRANSLATE · WINDOWS",
+    "ru": "ПЕРЕВОДЧИК · WINDOWS"
+  },
+  "TRANSLATION": {
+    "en": "TRANSLATION",
+    "ru": "ПЕРЕВОД"
+  },
+  "Target language": {
+    "en": "Target language",
+    "ru": "Язык перевода"
+  },
+  "Target language: {0}": {
+    "en": "Target language: {0}",
+    "ru": "Язык перевода: {0}"
+  },
+  "Text translation": {
+    "en": "Text translation",
+    "ru": "Перевод текста"
+  },
+  "That word is already saved for this language pair.": {
+    "en": "That word is already saved for this language pair.",
+    "ru": "Такое слово уже сохранено для этой языковой пары."
+  },
+  "The OCR pack for '{0}' is not installed. Add it in Windows language settings, then restart GaameTranslate.": {
+    "en": "The OCR pack for '{0}' is not installed. Add it in Windows language settings, then restart GaameTranslate.",
+    "ru": "Язык OCR «{0}» не установлен. Добавьте его в параметрах языка Windows и перезапустите GaameTranslate."
+  },
+  "The clipboard is busy. Try again.": {
+    "en": "The clipboard is busy. Try again.",
+    "ru": "Буфер обмена занят. Попробуйте ещё раз."
+  },
+  "The operation could not be completed. Check your settings, connection and available disk space, then try again.": {
+    "en": "The operation could not be completed. Check your settings, connection and available disk space, then try again.",
+    "ru": "Не удалось выполнить действие. Проверьте настройки, подключение и свободное место."
+  },
+  "The provider is rate limiting requests. Wait a little before translating again.": {
+    "en": "The provider is rate limiting requests. Wait a little before translating again.",
+    "ru": "Сервис ограничивает частоту запросов. Немного подождите перед новым переводом."
+  },
+  "The provider rejected this language pair or text. Check the installed models or provider language support.": {
+    "en": "The provider rejected this language pair or text. Check the installed models or provider language support.",
+    "ru": "Сервис отклонил язык или текст. Проверьте установленные модели и поддержку языков."
+  },
+  "The provider returned an invalid response. Check the selected API endpoint.": {
+    "en": "The provider returned an invalid response. Check the selected API endpoint.",
+    "ru": "Сервис вернул неверный ответ. Проверьте адрес API."
+  },
+  "The provider returned an unexpected number of translations.": {
+    "en": "The provider returned an unexpected number of translations.",
+    "ru": "Сервис вернул неожиданное количество переводов."
+  },
+  "The provider returned incomplete translations. Try again with a smaller region.": {
+    "en": "The provider returned incomplete translations. Try again with a smaller region.",
+    "ru": "Сервис вернул неполный перевод. Попробуйте меньшую область."
+  },
+  "The saved key cannot be unlocked for this Windows account. Save it again in Settings.": {
+    "en": "The saved key cannot be unlocked for this Windows account. Save it again in Settings.",
+    "ru": "Не удалось открыть ключ для этой учётной записи Windows. Сохраните его заново в настройках."
+  },
+  "The screen has too many overlapping labels. Switched to a readable floating panel.": {
+    "en": "The screen has too many overlapping labels. Switched to a readable floating panel.",
+    "ru": "Надписи перекрываются. Перевод открыт в отдельном окне."
+  },
+  "The selected region is no longer on the desktop. Select a new area after changing monitors.": {
+    "en": "The selected region is no longer on the desktop. Select a new area after changing monitors.",
+    "ru": "Выбранная область больше не находится на экране. Выделите её заново после смены мониторов."
+  },
+  "The translation provider is rate limiting requests. Try again later.": {
+    "en": "The translation provider is rate limiting requests. Try again later.",
+    "ru": "Переводчик ограничивает частоту запросов. Попробуйте позже."
+  },
+  "The translation provider rejected the key. Check your provider, key and Azure region in Settings.": {
+    "en": "The translation provider rejected the key. Check your provider, key and Azure region in Settings.",
+    "ru": "Сервис отклонил ключ. Проверьте сервис, ключ и регион Azure в настройках."
+  },
+  "The translation provider returned HTTP {0}. Check its availability and your configuration.": {
+    "en": "The translation provider returned HTTP {0}. Check its availability and your configuration.",
+    "ru": "Переводчик вернул HTTP {0}. Проверьте его доступность и настройки."
+  },
+  "This capture is too large. Select a region or a single monitor (up to 40 megapixels).": {
+    "en": "This capture is too large. Select a region or a single monitor (up to 40 megapixels).",
+    "ru": "Область слишком большая. Выберите фрагмент или один монитор — до 40 мегапикселей."
+  },
+  "This permanently removes all locally saved translations. Vocabulary is kept.": {
+    "en": "This permanently removes all locally saved translations. Vocabulary is kept.",
+    "ru": "Все сохранённые переводы будут удалены. Словарь сохранится."
+  },
+  "This text block is too long. Select a smaller area (up to 15,000 characters per block).": {
+    "en": "This text block is too long. Select a smaller area (up to 15,000 characters per block).",
+    "ru": "Текстовый блок слишком длинный. Выберите меньшую область — до 15 000 символов на блок."
+  },
+  "Toggle click-through": {
+    "en": "Toggle click-through",
+    "ru": "Переключить пропуск нажатий"
+  },
+  "Toggle overlay interaction": {
+    "en": "Toggle overlay interaction",
+    "ru": "Переключить взаимодействие со слоем"
+  },
+  "Translate": {
+    "en": "Translate",
+    "ru": "Перевод"
+  },
+  "Translate a region": {
+    "en": "Translate a region",
+    "ru": "Перевести область"
+  },
+  "Translate fullscreen": {
+    "en": "Translate fullscreen",
+    "ru": "Перевести весь экран"
+  },
+  "Translate sentences separately": {
+    "en": "Translate sentences separately",
+    "ru": "Переводить предложения отдельно"
+  },
+  "Translate text": {
+    "en": "Translate text",
+    "ru": "Перевести текст"
+  },
+  "TranslateGemma предназначена для перевода. Для объяснений выберите универсальную модель, например qwen3:4b-instruct-2507-q4_K_M.": {
+    "en": "TranslateGemma is designed for translation. For explanations, choose a general model such as qwen3:4b-instruct-2507-q4_K_M.",
+    "ru": "TranslateGemma предназначена для перевода. Для объяснений выберите универсальную модель, например qwen3:4b-instruct-2507-q4_K_M."
+  },
+  "Translating text…": {
+    "en": "Translating text…",
+    "ru": "Переводим текст…"
+  },
+  "Translation": {
+    "en": "Translation",
+    "ru": "Перевод"
+  },
+  "Translation history": {
+    "en": "Translation history",
+    "ru": "История переводов"
+  },
+  "Translation ready, but history could not be saved. Check available disk space.": {
+    "en": "Translation ready, but history could not be saved. Check available disk space.",
+    "ru": "Перевод готов, но не удалось сохранить историю. Проверьте свободное место."
+  },
+  "Translation ready.": {
+    "en": "Translation ready.",
+    "ru": "Перевод готов."
+  },
+  "Translation result": {
+    "en": "Translation result",
+    "ru": "Результат перевода"
+  },
+  "Type or paste some text to translate.": {
+    "en": "Type or paste some text to translate.",
+    "ru": "Введите или вставьте текст для перевода."
+  },
+  "Unknown shortcut modifier '{0}'.": {
+    "en": "Unknown shortcut modifier '{0}'.",
+    "ru": "Неизвестный модификатор сочетания «{0}»."
+  },
+  "Unpin": {
+    "en": "Unpin",
+    "ru": "Открепить"
+  },
+  "Use a GaameTranslate CSV export with Word, Translation, SourceLanguage, TargetLanguage, Context, TranslatedContext, Notes, Tags columns.": {
+    "en": "Use a GaameTranslate CSV export with Word, Translation, SourceLanguage, TargetLanguage, Context, TranslatedContext, Notes, Tags columns.",
+    "ru": "Используйте CSV-экспорт GaameTranslate со столбцами Word, Translation, SourceLanguage, TargetLanguage, Context, TranslatedContext, Notes, Tags."
+  },
+  "Use a letter, number or F1–F24 as the shortcut key.": {
+    "en": "Use a letter, number or F1–F24 as the shortcut key.",
+    "ru": "Используйте букву, цифру или F1–F24 в сочетании."
+  },
+  "Use an HTTPS server address, or an HTTP loopback address such as http://127.0.0.1:5000. Credentials belong in the key field.": {
+    "en": "Use an HTTPS server address, or an HTTP loopback address such as http://127.0.0.1:5000. Credentials belong in the key field.",
+    "ru": "Укажите HTTPS-адрес или локальный HTTP-адрес, например http://127.0.0.1:5000. Ключ вводится в отдельном поле."
+  },
+  "Vocabulary": {
+    "en": "Vocabulary",
+    "ru": "Мой словарь"
+  },
+  "Watch region": {
+    "en": "Watch region",
+    "ru": "Автоперевод области"
+  },
+  "Windows could not capture this screen. Use a visible, borderless game window. Protected content and some exclusive fullscreen games cannot be captured.": {
+    "en": "Windows could not capture this screen. Use a visible, borderless game window. Protected content and some exclusive fullscreen games cannot be captured.",
+    "ru": "Windows не смогла захватить экран. Используйте видимое окно игры без рамки. Защищённый контент и некоторые полноэкранные игры недоступны для захвата."
+  },
+  "Windows could not load this OCR language pack. Reinstall it in Windows language settings.": {
+    "en": "Windows could not load this OCR language pack. Reinstall it in Windows language settings.",
+    "ru": "Windows не смогла загрузить язык OCR. Переустановите его в параметрах языка Windows."
+  },
+  "Windows profile language": {
+    "en": "Windows profile language",
+    "ru": "Язык профиля Windows"
+  },
+  "Word and translation cannot be empty.": {
+    "en": "Word and translation cannot be empty.",
+    "ru": "Слово и перевод не могут быть пустыми."
+  },
+  "Word at cursor": {
+    "en": "Word at cursor",
+    "ru": "Слово под курсором"
+  },
+  "Words worth keeping": {
+    "en": "Words worth keeping",
+    "ru": "Слова, которые стоит сохранить"
+  },
+  "Works while the app is in the tray": {
+    "en": "Works while the app is in the tray",
+    "ru": "Работает, пока приложение в трее"
+  },
+  "Y — перевести экран\nX — повторить перевод области\nB — показать или скрыть перевод": {
+    "en": "Y — translate screen\nX — repeat region translation\nB — show or hide translation",
+    "ru": "Y — перевести экран\nX — повторить перевод области\nB — показать или скрыть перевод"
+  },
+  "YOUR SCREEN. YOUR WORDS.": {
+    "en": "YOUR SCREEN. YOUR WORDS.",
+    "ru": "ВАШ ЭКРАН. ВАШИ СЛОВА."
+  },
+  "YOUR VOCABULARY": {
+    "en": "YOUR VOCABULARY",
+    "ru": "ВАШ СЛОВАРЬ"
+  },
+  "Yandex Translate": {
+    "en": "Yandex Translate",
+    "ru": "Яндекс Переводчик"
+  },
+  "YandexGPT · контекстный перевод": {
+    "en": "YandexGPT · contextual translation",
+    "ru": "YandexGPT · контекстный перевод"
+  },
+  "Yomitan ZIP, DSL, StarDict, Kaikki JSONL, CC-CEDICT.": {
+    "en": "Yomitan ZIP, DSL, StarDict, Kaikki JSONL, CC-CEDICT.",
+    "ru": "Yomitan ZIP, DSL, StarDict, Kaikki JSONL, CC-CEDICT."
+  },
+  "Your DeepL character quota has been used. Check your API plan.": {
+    "en": "Your DeepL character quota has been used. Check your API plan.",
+    "ru": "Квота символов DeepL исчерпана. Проверьте тариф API."
+  },
+  "Your next line of dialogue, translated.": {
+    "en": "Your next line of dialogue, translated.",
+    "ru": "Следующая реплика — уже с переводом."
+  },
+  "Your review schedule is saved locally and follows each word across sessions.": {
+    "en": "Your review schedule is saved locally and follows each word across sessions.",
+    "ru": "Расписание повторений хранится на компьютере и сохраняется между запусками."
+  },
+  "You’re all caught up. Save more words or come back when cards are due.": {
+    "en": "You’re all caught up. Save more words or come back when cards are due.",
+    "ru": "Все карточки повторены. Сохраните новые слова или вернитесь позже."
+  },
+  "v{0} · Экранный перевод и словарь": {
+    "en": "v{0} · Screen translation and vocabulary",
+    "ru": "v{0} · Экранный перевод и словарь"
+  },
+  "{0:0.##}{1}": {
+    "en": "{0:0.##}{1}",
+    "ru": "{0:0.##}{1}"
+  },
+  "{0:dd MMM · HH:mm}": {
+    "en": "{0:dd MMM · HH:mm}",
+    "ru": "{0:dd MMM · HH:mm}"
+  },
+  "{0}": {
+    "en": "{0}",
+    "ru": "{0}"
+  },
+  "{0} ready to review": {
+    "en": "{0} ready to review",
+    "ru": "К повторению: {0}"
+  },
+  "{0} saved words": {
+    "en": "Saved words: {0}",
+    "ru": "Сохранено слов: {0}"
+  },
+  "{0} words ready to review": {
+    "en": "Words ready to review: {0}",
+    "ru": "Слов к повторению: {0}"
+  },
+  "{0} · Windows": {
+    "en": "{0} · Windows",
+    "ru": "{0} · Windows"
+  },
+  "{0} · {1:N0} статей": {
+    "en": "{0} · {1:N0} entries",
+    "ru": "{0} · {1:N0} статей"
+  },
+  "{0} · сгенерированное объяснение": {
+    "en": "{0} · generated explanation",
+    "ru": "{0} · сгенерированное объяснение"
+  },
+  "{0} → {1}": {
+    "en": "{0} → {1}",
+    "ru": "{0} → {1}"
+  },
+  "{0} → {1}  ·  {2}": {
+    "en": "{0} → {1}  ·  {2}",
+    "ru": "{0} → {1}  ·  {2}"
+  },
+  "{0}{1}": {
+    "en": "{0}{1}",
+    "ru": "{0}{1}"
+  },
+  "АВТОПЕРЕВОД ВКЛЮЧЁН": {
+    "en": "AUTO TRANSLATION ON",
+    "ru": "АВТОПЕРЕВОД ВКЛЮЧЁН"
+  },
+  "Авто": {
+    "en": "Auto",
+    "ru": "Авто"
+  },
+  "Автоматически по выбранному движку": {
+    "en": "Automatically, using the selected engine",
+    "ru": "Автоматически по выбранному движку"
+  },
+  "Автоматически по языку": {
+    "en": "Automatic, based on language",
+    "ru": "Автоматически по языку"
+  },
+  "Автоперевод включён · текст не изменился": {
+    "en": "Auto translation is on · text has not changed",
+    "ru": "Автоперевод включён · текст не изменился"
+  },
+  "Автоперевод области / Стоп": {
+    "en": "Auto-translate region / Stop",
+    "ru": "Автоперевод области / Стоп"
+  },
+  "Автоперевод области включён · нажмите Стоп для завершения": {
+    "en": "Auto translation is on · press Stop to finish",
+    "ru": "Автоперевод области включён · нажмите Стоп для завершения"
+  },
+  "Автоперевод области запускается отдельно на странице перевода.": {
+    "en": "Region monitoring is started separately on the Translate page.",
+    "ru": "Автоперевод области запускается отдельно на странице перевода."
+  },
+  "Адрес API": {
+    "en": "API address",
+    "ru": "Адрес API"
+  },
+  "Адрес AnkiConnect": {
+    "en": "AnkiConnect address",
+    "ru": "Адрес AnkiConnect"
+  },
+  "Адрес AnkiConnect должен быть локальным, например http://127.0.0.1:8765.": {
+    "en": "AnkiConnect must use a local address, such as http://127.0.0.1:8765.",
+    "ru": "Адрес AnkiConnect должен быть локальным, например http://127.0.0.1:8765."
+  },
+  "Адрес LibreTranslate": {
+    "en": "LibreTranslate address",
+    "ru": "Адрес LibreTranslate"
+  },
+  "Адрес Ollama": {
+    "en": "Ollama address",
+    "ru": "Адрес Ollama"
+  },
+  "Адрес локального сервера": {
+    "en": "Local server address",
+    "ru": "Адрес локального сервера"
+  },
+  "Адрес сервера": {
+    "en": "Server address",
+    "ru": "Адрес сервера"
+  },
+  "Английский": {
+    "en": "English",
+    "ru": "Английский"
+  },
+  "Английский · Windows": {
+    "en": "English · Windows",
+    "ru": "Английский · Windows"
+  },
+  "Без AI-помощника": {
+    "en": "No AI assistant",
+    "ru": "Без AI-помощника"
+  },
+  "Быстро · PP-OCRv6 Small": {
+    "en": "Fast · PP-OCRv6 Small",
+    "ru": "Быстро · PP-OCRv6 Small"
+  },
+  "Быстрые действия для контроллеров с поддержкой XInput.": {
+    "en": "Quick actions for XInput-compatible controllers.",
+    "ru": "Быстрые действия для контроллеров с поддержкой XInput."
+  },
+  "Быстрый перевод · {0}": {
+    "en": "Quick translation · {0}",
+    "ru": "Быстрый перевод · {0}"
+  },
+  "Быстрый перевод недоступен. Пробуем получить значение из контекста.": {
+    "en": "Quick translation is unavailable. Trying to get the meaning from context.",
+    "ru": "Быстрый перевод недоступен. Пробуем получить значение из контекста."
+  },
+  "В архиве нет term_bank_*.json. Выберите словарь в формате Yomitan.": {
+    "en": "No term_bank_*.json files found. Choose a Yomitan dictionary.",
+    "ru": "В архиве нет term_bank_*.json. Выберите словарь в формате Yomitan."
+  },
+  "В игре": {
+    "en": "In the game",
+    "ru": "В игре"
+  },
+  "В истории можно хранить от 0 до 10 000 переводов.": {
+    "en": "History can hold between 0 and 10,000 translations.",
+    "ru": "В истории можно хранить от 0 до 10 000 переводов."
+  },
+  "В словаре не найдены текстовые статьи. Изменения отменены.": {
+    "en": "No text entries were found in the dictionary. Changes were cancelled.",
+    "ru": "В словаре не найдены текстовые статьи. Изменения отменены."
+  },
+  "В экранном переводе размер зависит от исходной реплики.": {
+    "en": "In screen translation, the size follows the original line of dialogue.",
+    "ru": "В экранном переводе размер зависит от исходной реплики."
+  },
+  "Введите имя процесса без пути, например disco.exe.": {
+    "en": "Enter the process name without a path, such as disco.exe.",
+    "ru": "Введите имя процесса без пути, например disco.exe."
+  },
+  "Введите название игры.": {
+    "en": "Enter a game name.",
+    "ru": "Введите название игры."
+  },
+  "Введите название колоды длиной до 120 символов.": {
+    "en": "Enter a deck name of up to 120 characters.",
+    "ru": "Введите название колоды длиной до 120 символов."
+  },
+  "Введите слово или выражение.": {
+    "en": "Enter a word or expression.",
+    "ru": "Введите слово или выражение."
+  },
+  "Вернуть сохранённые настройки": {
+    "en": "Restore saved settings",
+    "ru": "Вернуть сохранённые настройки"
+  },
+  "Вернуть стандартные сочетания": {
+    "en": "Restore default shortcuts",
+    "ru": "Вернуть стандартные сочетания"
+  },
+  "Взаимодействовать со слоем": {
+    "en": "Interact with the overlay",
+    "ru": "Взаимодействовать со слоем"
+  },
+  "Все изменения сохранены": {
+    "en": "All changes saved",
+    "ru": "Все изменения сохранены"
+  },
+  "Все языки": {
+    "en": "All languages",
+    "ru": "Все языки"
+  },
+  "Вставьте ключ авторизации из кабинета GigaChat API. Обычная подписка на чат его не заменяет.": {
+    "en": "Paste the authorization key from your GigaChat API account. A regular chat subscription does not provide it.",
+    "ru": "Вставьте ключ авторизации из кабинета GigaChat API. Обычная подписка на чат его не заменяет."
+  },
+  "Вставьте токен в поле API-ключа выше.": {
+    "en": "Paste the token into the API key field above.",
+    "ru": "Вставьте токен в поле API-ключа выше."
+  },
+  "Вставьте токен вместо API-ключа.": {
+    "en": "Paste the token instead of an API key.",
+    "ru": "Вставьте токен вместо API-ключа."
+  },
+  "Всё для удобного перевода — от подключения до любимых сочетаний клавиш.": {
+    "en": "Everything for comfortable translation, from connections to your favorite shortcuts.",
+    "ru": "Всё для удобного перевода — от подключения до любимых сочетаний клавиш."
+  },
+  "Выберите CSV-файл меньше 20 МБ.": {
+    "en": "Choose a CSV file smaller than 20 MB.",
+    "ru": "Выберите CSV-файл меньше 20 МБ."
+  },
+  "Выберите выражение целиком или исправьте OCR": {
+    "en": "Select a whole expression or correct the recognized text",
+    "ru": "Выберите выражение целиком или исправьте OCR"
+  },
+  "Выберите доступный движок OCR.": {
+    "en": "Choose an available OCR engine.",
+    "ru": "Выберите доступный движок OCR."
+  },
+  "Выберите карточку": {
+    "en": "Select a card",
+    "ru": "Выберите карточку"
+  },
+  "Выберите меньший фрагмент: до 50 000 символов за запрос к языковой модели.": {
+    "en": "Select less text: language model requests support up to 50,000 characters.",
+    "ru": "Выберите меньший фрагмент: до 50 000 символов за запрос к языковой модели."
+  },
+  "Выберите сервис перевода.": {
+    "en": "Choose a translation service.",
+    "ru": "Выберите сервис перевода."
+  },
+  "Выберите словарь размером до 256 МБ.": {
+    "en": "Choose a dictionary no larger than 256 MB.",
+    "ru": "Выберите словарь размером до 256 МБ."
+  },
+  "Выберите язык перевода.": {
+    "en": "Choose the translation language.",
+    "ru": "Выберите язык перевода."
+  },
+  "Выберите язык слова — он нужен для озвучки и повторения.": {
+    "en": "Choose the word's language for pronunciation and review.",
+    "ru": "Выберите язык слова — он нужен для озвучки и повторения."
+  },
+  "Выберите языковую модель: YandexGPT, GigaChat, Ollama или OpenAI compatible.": {
+    "en": "Choose a language model: YandexGPT, GigaChat, Ollama or OpenAI compatible.",
+    "ru": "Выберите языковую модель: YandexGPT, GigaChat, Ollama или OpenAI compatible."
+  },
+  "Выберите язык…": {
+    "en": "Choose a language…",
+    "ru": "Выберите язык…"
+  },
+  "Выбрать область": {
+    "en": "Select region",
+    "ru": "Выбрать область"
+  },
+  "Выбрать слово / перевод": {
+    "en": "Select word / translation",
+    "ru": "Выбрать слово / перевод"
+  },
+  "Выделить фрагмент экрана мышью": {
+    "en": "Select a screen area with the mouse",
+    "ru": "Выделить фрагмент экрана мышью"
+  },
+  "Выключите, чтобы использовать тёмную тему.": {
+    "en": "Turn off to use the dark theme.",
+    "ru": "Выключите, чтобы использовать тёмную тему."
+  },
+  "Геймпад": {
+    "en": "Controller",
+    "ru": "Геймпад"
+  },
+  "Голос для озвучки": {
+    "en": "Pronunciation voice",
+    "ru": "Голос для озвучки"
+  },
+  "Горячие клавиши продолжат работать в фоне.": {
+    "en": "Global shortcuts will keep working in the background.",
+    "ru": "Горячие клавиши продолжат работать в фоне."
+  },
+  "Готово к повторению": {
+    "en": "Ready to review",
+    "ru": "Готово к повторению"
+  },
+  "Для IAM-токена Яндекса укажите folder ID в настройках.": {
+    "en": "Enter a Yandex folder ID in Settings when using an IAM token.",
+    "ru": "Для IAM-токена Яндекса укажите folder ID в настройках."
+  },
+  "Для LM Studio обычно http://127.0.0.1:1234/v1": {
+    "en": "LM Studio usually uses http://127.0.0.1:1234/v1",
+    "ru": "Для LM Studio обычно http://127.0.0.1:1234/v1"
+  },
+  "Для StarDict нужны соседние .idx и .dict (либо .gz/.dz) файлы.": {
+    "en": "StarDict needs adjacent .idx and .dict files, or their .gz/.dz versions.",
+    "ru": "Для StarDict нужны соседние .idx и .dict (либо .gz/.dz) файлы."
+  },
+  "Для Яндекс Переводчика выберите фрагмент короче 9 000 символов или используйте языковую модель.": {
+    "en": "For Yandex Translate, select fewer than 9,000 characters or use a language model.",
+    "ru": "Для Яндекс Переводчика выберите фрагмент короче 9 000 символов или используйте языковую модель."
+  },
+  "Для бледных надписей на однородном фоне.": {
+    "en": "For faint text on a uniform background.",
+    "ru": "Для бледных надписей на однородном фоне."
+  },
+  "Для выбора слов включите взаимодействие горячей клавишей.": {
+    "en": "Use the interaction shortcut to select words.",
+    "ru": "Для выбора слов включите взаимодействие горячей клавишей."
+  },
+  "Для контекстного словаря выберите помощника в настройках: YandexGPT, GigaChat, Ollama или совместимый сервер.": {
+    "en": "Choose an assistant in Settings for the contextual dictionary: YandexGPT, GigaChat, Ollama or a compatible server.",
+    "ru": "Для контекстного словаря выберите помощника в настройках: YandexGPT, GigaChat, Ollama или совместимый сервер."
+  },
+  "Для личного аккаунта обычно GIGACHAT_API_PERS.": {
+    "en": "Personal accounts usually use GIGACHAT_API_PERS.",
+    "ru": "Для личного аккаунта обычно GIGACHAT_API_PERS."
+  },
+  "Для объяснений нужна универсальная модель, например Qwen.": {
+    "en": "Explanations need a general-purpose model such as Qwen.",
+    "ru": "Для объяснений нужна универсальная модель, например Qwen."
+  },
+  "Для озвучки выберите слово или короткую фразу до 2 000 символов.": {
+    "en": "Select a word or short phrase of up to 2,000 characters for pronunciation.",
+    "ru": "Для озвучки выберите слово или короткую фразу до 2 000 символов."
+  },
+  "Для сервера на этом компьютере: http://127.0.0.1:5000": {
+    "en": "For a server on this computer: http://127.0.0.1:5000",
+    "ru": "Для сервера на этом компьютере: http://127.0.0.1:5000"
+  },
+  "Для языка '{0}' нет установленного голоса Windows. Добавьте голос в параметрах речи Windows.": {
+    "en": "No Windows voice is installed for '{0}'. Add one in Windows speech settings.",
+    "ru": "Для языка '{0}' нет установленного голоса Windows. Добавьте голос в параметрах речи Windows."
+  },
+  "Добавить первое слово": {
+    "en": "Add your first word",
+    "ru": "Добавить первое слово"
+  },
+  "Добавить слово": {
+    "en": "Add word",
+    "ru": "Добавить слово"
+  },
+  "Добавлено {0:d} · Встреч: {1}": {
+    "en": "Added {0:d} · Encounters: {1}",
+    "ru": "Добавлено {0:d} · Встреч: {1}"
+  },
+  "Добавлять озвучку к карточке": {
+    "en": "Include a pronunciation recording",
+    "ru": "Добавлять озвучку к карточке"
+  },
+  "Добавлять снимок к карточке": {
+    "en": "Include a screenshot",
+    "ru": "Добавлять снимок к карточке"
+  },
+  "Добавьте API-ключ выбранного провайдера в настройках.": {
+    "en": "Add the selected provider's API key in Settings.",
+    "ru": "Добавьте API-ключ выбранного провайдера в настройках."
+  },
+  "Добавьте ключ авторизации GigaChat (Base64 client_id:client_secret) в настройках.": {
+    "en": "Add the GigaChat authorization key (Base64 client_id:client_secret) in Settings.",
+    "ru": "Добавьте ключ авторизации GigaChat (Base64 client_id:client_secret) в настройках."
+  },
+  "Добавьте перевод слова.": {
+    "en": "Add a translation for the word.",
+    "ru": "Добавьте перевод слова."
+  },
+  "Дополнять английские статьи из интернета": {
+    "en": "Add online English definitions",
+    "ru": "Дополнять английские статьи из интернета"
+  },
+  "Доступны обычный перевод слова и импортированные словари.": {
+    "en": "Basic word translation and imported dictionaries remain available.",
+    "ru": "Доступны обычный перевод слова и импортированные словари."
+  },
+  "Если оставить пустым, используется модель по умолчанию в вашем каталоге.": {
+    "en": "Leave blank to use the default model in your folder.",
+    "ru": "Если оставить пустым, используется модель по умолчанию в вашем каталоге."
+  },
+  "Есть несохранённые изменения": {
+    "en": "Unsaved changes",
+    "ru": "Есть несохранённые изменения"
+  },
+  "Её перевод, контекст и заметки появятся здесь.": {
+    "en": "Its translation, context and notes will appear here.",
+    "ru": "Её перевод, контекст и заметки появятся здесь."
+  },
+  "Ждать ответа переводчика": {
+    "en": "Translation request timeout",
+    "ru": "Ждать ответа переводчика"
+  },
+  "За эту неделю": {
+    "en": "This week",
+    "ru": "За эту неделю"
+  },
+  "Закрыть": {
+    "en": "Close",
+    "ru": "Закрыть"
+  },
+  "Заметки и теги": {
+    "en": "Notes and tags",
+    "ru": "Заметки и теги"
+  },
+  "Запускать свёрнутым": {
+    "en": "Start minimized",
+    "ru": "Запускать свёрнутым"
+  },
+  "Захватить весь экран": {
+    "en": "Capture full screen",
+    "ru": "Захватить весь экран"
+  },
+  "Звуковой файл сохраняется вместе со словом.": {
+    "en": "The audio file is saved with the word.",
+    "ru": "Звуковой файл сохраняется вместе со словом."
+  },
+  "Значение": {
+    "en": "Meaning",
+    "ru": "Значение"
+  },
+  "Значение в этой реплике · ": {
+    "en": "Meaning in this line · ",
+    "ru": "Значение в этой реплике · "
+  },
+  "Значение в этой реплике · {0}": {
+    "en": "Meaning in this line · {0}",
+    "ru": "Значение в этой реплике · {0}"
+  },
+  "Значение слова в контексте": {
+    "en": "Meaning in context",
+    "ru": "Значение слова в контексте"
+  },
+  "Игры": {
+    "en": "Games",
+    "ru": "Игры"
+  },
+  "Изменения применяются после сохранения.": {
+    "en": "Changes apply after saving.",
+    "ru": "Изменения применяются после сохранения."
+  },
+  "Изображение фиксируется, но сама игра продолжает работать.": {
+    "en": "The picture is frozen, but the game keeps running.",
+    "ru": "Изображение фиксируется, но сама игра продолжает работать."
+  },
+  "Импорт из CSV…": {
+    "en": "Import CSV…",
+    "ru": "Импорт из CSV…"
+  },
+  "Импорт словаря": {
+    "en": "Import dictionary",
+    "ru": "Импорт словаря"
+  },
+  "Импортируем словарь…": {
+    "en": "Importing dictionary…",
+    "ru": "Импортируем словарь…"
+  },
+  "Импортируйте словарь, чтобы получать статьи без интернета.": {
+    "en": "Import a dictionary to get definitions offline.",
+    "ru": "Импортируйте словарь, чтобы получать статьи без интернета."
+  },
+  "Имя процесса игры": {
+    "en": "Game process name",
+    "ru": "Имя процесса игры"
+  },
+  "Имя установленной модели, например translategemma:4b.": {
+    "en": "The name of an installed model, such as translategemma:4b.",
+    "ru": "Имя установленной модели, например translategemma:4b."
+  },
+  "Испанский": {
+    "en": "Spanish",
+    "ru": "Испанский"
+  },
+  "Использовать IAM-токен": {
+    "en": "Use an IAM token",
+    "ru": "Использовать IAM-токен"
+  },
+  "Использовать видеокарту": {
+    "en": "Use the GPU",
+    "ru": "Использовать видеокарту"
+  },
+  "Использовать сочетания геймпада": {
+    "en": "Enable controller shortcuts",
+    "ru": "Использовать сочетания геймпада"
+  },
+  "Использовать фон игрового изображения.": {
+    "en": "Use colors from the game image.",
+    "ru": "Использовать фон игрового изображения."
+  },
+  "Используйте API-ключ выбранного тарифа DeepL. Доступность сервиса зависит от региона.": {
+    "en": "Use the API key for your DeepL plan. Availability varies by region.",
+    "ru": "Используйте API-ключ выбранного тарифа DeepL. Доступность сервиса зависит от региона."
+  },
+  "История и данные": {
+    "en": "History and data",
+    "ru": "История и данные"
+  },
+  "История содержит текст. Снимки карточек сохраняются только по отдельной опции.": {
+    "en": "History stores text. Card screenshots are saved only when separately enabled.",
+    "ru": "История содержит текст. Снимки карточек сохраняются только по отдельной опции."
+  },
+  "История, словари и карточки хранятся на этом компьютере. Аналитики нет.": {
+    "en": "History, dictionaries and cards stay on this computer. No analytics.",
+    "ru": "История, словари и карточки хранятся на этом компьютере. Аналитики нет."
+  },
+  "Исходная реплика": {
+    "en": "Original line",
+    "ru": "Исходная реплика"
+  },
+  "Итальянский": {
+    "en": "Italian",
+    "ru": "Итальянский"
+  },
+  "К повторению: {0}": {
+    "en": "Due for review: {0}",
+    "ru": "К повторению: {0}"
+  },
+  "КОНТЕКСТ ИГРЫ": {
+    "en": "GAME CONTEXT",
+    "ru": "КОНТЕКСТ ИГРЫ"
+  },
+  "Каждому действию нужно своё сочетание: Ctrl, Alt, Shift или Win + буква, цифра или F1–F24.": {
+    "en": "Each action needs a unique shortcut: Ctrl, Alt, Shift or Win + a letter, number or F1–F24.",
+    "ru": "Каждому действию нужно своё сочетание: Ctrl, Alt, Shift или Win + буква, цифра или F1–F24."
+  },
+  "Как показывать перевод": {
+    "en": "How to show translation",
+    "ru": "Как показывать перевод"
+  },
+  "Карточек: {0}": {
+    "en": "Cards: {0}",
+    "ru": "Карточек: {0}"
+  },
+  "Карточка обновлена.": {
+    "en": "Card updated.",
+    "ru": "Карточка обновлена."
+  },
+  "Карточка сохранится в вашем словаре.": {
+    "en": "The card will be saved to your vocabulary.",
+    "ru": "Карточка сохранится в вашем словаре."
+  },
+  "Карточка удалена из словаря.": {
+    "en": "Card removed from vocabulary.",
+    "ru": "Карточка удалена из словаря."
+  },
+  "Качество распознавания": {
+    "en": "Recognition quality",
+    "ru": "Качество распознавания"
+  },
+  "Китайский": {
+    "en": "Chinese",
+    "ru": "Китайский"
+  },
+  "Клавиши": {
+    "en": "Shortcuts",
+    "ru": "Клавиши"
+  },
+  "Ключ будет защищён средствами Windows.": {
+    "en": "The key will be protected by Windows.",
+    "ru": "Ключ будет защищён средствами Windows."
+  },
+  "Ключ будет удалён после сохранения.": {
+    "en": "The key will be removed when you save.",
+    "ru": "Ключ будет удалён после сохранения."
+  },
+  "Ключ и регион из ресурса Microsoft Azure Translator.": {
+    "en": "The key and region from your Microsoft Azure Translator resource.",
+    "ru": "Ключ и регион из ресурса Microsoft Azure Translator."
+  },
+  "Ключ сохранён. Оставьте поле пустым, чтобы использовать его.": {
+    "en": "A key is saved. Leave this field blank to keep using it.",
+    "ru": "Ключ сохранён. Оставьте поле пустым, чтобы использовать его."
+  },
+  "Контекст игры и время ожидания": {
+    "en": "Game context and timeout",
+    "ru": "Контекст игры и время ожидания"
+  },
+  "Контекст из игры": {
+    "en": "Context from the game",
+    "ru": "Контекст из игры"
+  },
+  "Контекстный перевод и объяснения · Сбер GigaChat": {
+    "en": "Contextual translation and explanations · Sber GigaChat",
+    "ru": "Контекстный перевод и объяснения · Сбер GigaChat"
+  },
+  "Контекстный перевод и словарь · Yandex AI Studio": {
+    "en": "Contextual translation and dictionary · Yandex AI Studio",
+    "ru": "Контекстный перевод и словарь · Yandex AI Studio"
+  },
+  "Контекстный перевод через Yandex AI Studio. Нужны API-ключ и каталог с доступом к модели.": {
+    "en": "Contextual translation with Yandex AI Studio. An API key and a folder with model access are required.",
+    "ru": "Контекстный перевод через Yandex AI Studio. Нужны API-ключ и каталог с доступом к модели."
+  },
+  "Корейский": {
+    "en": "Korean",
+    "ru": "Корейский"
+  },
+  "Лимит истории должен быть целым числом.": {
+    "en": "The history limit must be a whole number.",
+    "ru": "Лимит истории должен быть целым числом."
+  },
+  "Локальная модель вернула пустой перевод.": {
+    "en": "The local model returned an empty translation.",
+    "ru": "Локальная модель вернула пустой перевод."
+  },
+  "Локальной модели может понадобиться больше времени при первом запуске.": {
+    "en": "A local model may take longer on its first request.",
+    "ru": "Локальной модели может понадобиться больше времени при первом запуске."
+  },
+  "Локальные модели. Нужен запущенный Ollama; для сервера на вашем компьютере ключ не требуется.": {
+    "en": "Local models. Ollama must be running; a server on this computer does not need a key.",
+    "ru": "Локальные модели. Нужен запущенный Ollama; для сервера на вашем компьютере ключ не требуется."
+  },
+  "Локальные модели: TranslateGemma, Qwen и другие": {
+    "en": "Local models: TranslateGemma, Qwen and others",
+    "ru": "Локальные модели: TranslateGemma, Qwen и другие"
+  },
+  "Локальные словари": {
+    "en": "Offline dictionaries",
+    "ru": "Локальные словари"
+  },
+  "Локальный Argos / LibreTranslate · без API-ключа": {
+    "en": "Local Argos / LibreTranslate · no API key",
+    "ru": "Локальный Argos / LibreTranslate · без API-ключа"
+  },
+  "Максимум переводов в истории": {
+    "en": "Maximum translations in history",
+    "ru": "Максимум переводов в истории"
+  },
+  "Модель": {
+    "en": "Model",
+    "ru": "Модель"
+  },
+  "Модель · необязательно": {
+    "en": "Model · optional",
+    "ru": "Модель · необязательно"
+  },
+  "Модель и тип доступа": {
+    "en": "Model and access type",
+    "ru": "Модель и тип доступа"
+  },
+  "Модель или API-адрес не найдены. Проверьте имя модели; для Ollama сначала выполните ollama pull <модель>.": {
+    "en": "Model or API address not found. Check the model name; for Ollama, run ollama pull <model> first.",
+    "ru": "Модель или API-адрес не найдены. Проверьте имя модели; для Ollama сначала выполните ollama pull <модель>."
+  },
+  "Модель не ответила за {0} с. Для локальных моделей увеличьте тайм-аут или уменьшите область.": {
+    "en": "The model did not respond within {0} s. Increase the timeout or select a smaller area for local models.",
+    "ru": "Модель не ответила за {0} с. Для локальных моделей увеличьте тайм-аут или уменьшите область."
+  },
+  "Может смягчить тонкие штрихи букв.": {
+    "en": "May soften thin letter strokes.",
+    "ru": "Может смягчить тонкие штрихи букв."
+  },
+  "Мои заметки": {
+    "en": "My notes",
+    "ru": "Мои заметки"
+  },
+  "Мой словарь": {
+    "en": "My vocabulary",
+    "ru": "Мой словарь"
+  },
+  "Монитор {0} · {1:0} × {2:0}": {
+    "en": "Monitor {0} · {1:0} × {2:0}",
+    "ru": "Монитор {0} · {1:0} × {2:0}"
+  },
+  "Монитор и тонкая настройка OCR": {
+    "en": "Monitor and advanced OCR options",
+    "ru": "Монитор и тонкая настройка OCR"
+  },
+  "Монитор под курсором": {
+    "en": "Monitor under the pointer",
+    "ru": "Монитор под курсором"
+  },
+  "Наведите курсор на слово и нажмите сочетание ещё раз.": {
+    "en": "Point to a word and press the shortcut again.",
+    "ru": "Наведите курсор на слово и нажмите сочетание ещё раз."
+  },
+  "Нажмите Ctrl, Alt, Shift или Win вместе с буквой, цифрой или F1–F24": {
+    "en": "Press Ctrl, Alt, Shift or Win with a letter, number or F1–F24",
+    "ru": "Нажмите Ctrl, Alt, Shift или Win вместе с буквой, цифрой или F1–F24"
+  },
+  "Нажмите на сочетание и введите новое. Tab переводит фокус к следующему полю.": {
+    "en": "Click a shortcut and press a new combination. Tab moves to the next field.",
+    "ru": "Нажмите на сочетание и введите новое. Tab переводит фокус к следующему полю."
+  },
+  "Название игры": {
+    "en": "Game name",
+    "ru": "Название игры"
+  },
+  "Название колоды": {
+    "en": "Deck name",
+    "ru": "Название колоды"
+  },
+  "Найти слово": {
+    "en": "Find a word",
+    "ru": "Найти слово"
+  },
+  "Например disco.exe. Имя можно посмотреть в диспетчере задач Windows.": {
+    "en": "For example, disco.exe. Find it in Windows Task Manager.",
+    "ru": "Например disco.exe. Имя можно посмотреть в диспетчере задач Windows."
+  },
+  "Например: Disco Elysium, диалоги, путешествия": {
+    "en": "For example: Disco Elysium, dialogue, travel",
+    "ru": "Например: Disco Elysium, диалоги, путешествия"
+  },
+  "Например: детектив, морские термины, вежливая речь персонажей. До 1000 символов.": {
+    "en": "For example: detective story, nautical terms, polite character speech. Up to 1,000 characters.",
+    "ru": "Например: детектив, морские термины, вежливая речь персонажей. До 1000 символов."
+  },
+  "Настройки": {
+    "en": "Settings",
+    "ru": "Настройки"
+  },
+  "Настройки для отдельных игр": {
+    "en": "Per-game settings",
+    "ru": "Настройки для отдельных игр"
+  },
+  "Настройки других игр и приложения сохраняются отдельно.": {
+    "en": "Other games and application settings are stored separately.",
+    "ru": "Настройки других игр и приложения сохраняются отдельно."
+  },
+  "Настройки и профиль сохранены": {
+    "en": "Settings and profile saved",
+    "ru": "Настройки и профиль сохранены"
+  },
+  "Настройки сохранены.": {
+    "en": "Settings saved.",
+    "ru": "Настройки сохранены."
+  },
+  "Начните с одного слова": {
+    "en": "Start with one word",
+    "ru": "Начните с одного слова"
+  },
+  "Не удалось выполнить действие. Проверьте подключение и доступ к папке данных.": {
+    "en": "The action could not be completed. Check your connection and access to the data folder.",
+    "ru": "Не удалось выполнить действие. Проверьте подключение и доступ к папке данных."
+  },
+  "Не удалось импортировать словарь.": {
+    "en": "The dictionary could not be imported.",
+    "ru": "Не удалось импортировать словарь."
+  },
+  "Не удалось перевести реплику. Перевод слова остаётся доступен.": {
+    "en": "The line could not be translated. The word translation is still available.",
+    "ru": "Не удалось перевести реплику. Перевод слова остаётся доступен."
+  },
+  "Не удалось подключиться. Проверьте адрес сервера и доступ к сети.": {
+    "en": "Could not connect. Check the server address and network access.",
+    "ru": "Не удалось подключиться. Проверьте адрес сервера и доступ к сети."
+  },
+  "Не удалось прочитать игровые профили.": {
+    "en": "Game profiles could not be read.",
+    "ru": "Не удалось прочитать игровые профили."
+  },
+  "Не удалось прочитать список словарей.": {
+    "en": "The dictionary list could not be read.",
+    "ru": "Не удалось прочитать список словарей."
+  },
+  "Не удалось сохранить карточку.": {
+    "en": "The card could not be saved.",
+    "ru": "Не удалось сохранить карточку."
+  },
+  "Не удалось сохранить карточку. Проверьте свободное место и попробуйте ещё раз.": {
+    "en": "The card could not be saved. Check available disk space and try again.",
+    "ru": "Не удалось сохранить карточку. Проверьте свободное место и попробуйте ещё раз."
+  },
+  "Немецкий": {
+    "en": "German",
+    "ru": "Немецкий"
+  },
+  "Нет карточек для экспорта. Сбросьте фильтры или добавьте слово.": {
+    "en": "There are no cards to export. Reset the filters or add a word.",
+    "ru": "Нет карточек для экспорта. Сбросьте фильтры или добавьте слово."
+  },
+  "Нет соединения с моделью. Проверьте сервер и TLS-сертификаты. Для GigaChat может потребоваться доверенный сертификат Минцифры в Windows; проверка TLS не отключается.": {
+    "en": "Cannot connect to the model. Check the server and TLS certificates. GigaChat may require a trusted Russian Ministry of Digital Development certificate in Windows; TLS validation remains enabled.",
+    "ru": "Нет соединения с моделью. Проверьте сервер и TLS-сертификаты. Для GigaChat может потребоваться доверенный сертификат Минцифры в Windows; проверка TLS не отключается."
+  },
+  "Ничего не найдено": {
+    "en": "No matches found",
+    "ru": "Ничего не найдено"
+  },
+  "Новый ключ будет сохранён вместе с настройками.": {
+    "en": "The new key will be stored when you save settings.",
+    "ru": "Новый ключ будет сохранён вместе с настройками."
+  },
+  "О чём игра? Необязательно": {
+    "en": "What is the game about? Optional",
+    "ru": "О чём игра? Необязательно"
+  },
+  "Область доступа": {
+    "en": "Access scope",
+    "ru": "Область доступа"
+  },
+  "Обновите дополнение AnkiConnect до API v6.": {
+    "en": "Update the AnkiConnect add-on to API v6.",
+    "ru": "Обновите дополнение AnkiConnect до API v6."
+  },
+  "Объединять строки в реплики": {
+    "en": "Group lines into dialogue",
+    "ru": "Объединять строки в реплики"
+  },
+  "Объяснение": {
+    "en": "Explanation",
+    "ru": "Объяснение"
+  },
+  "Объяснить в контексте": {
+    "en": "Explain in context",
+    "ru": "Объяснить в контексте"
+  },
+  "Объяснять при открытии слова": {
+    "en": "Explain when opening a word",
+    "ru": "Объяснять при открытии слова"
+  },
+  "Обычно http://127.0.0.1:11434": {
+    "en": "Usually http://127.0.0.1:11434",
+    "ru": "Обычно http://127.0.0.1:11434"
+  },
+  "Обязателен для пользовательского IAM-токена.": {
+    "en": "Required for a personal IAM token.",
+    "ru": "Обязателен для пользовательского IAM-токена."
+  },
+  "Озвучка и карточки": {
+    "en": "Pronunciation and cards",
+    "ru": "Озвучка и карточки"
+  },
+  "Озвучка недоступна.": {
+    "en": "Pronunciation is unavailable.",
+    "ru": "Озвучка недоступна."
+  },
+  "Описание игры должно быть не длиннее 1000 символов.": {
+    "en": "The game description must be no longer than 1,000 characters.",
+    "ru": "Описание игры должно быть не длиннее 1000 символов."
+  },
+  "Определение": {
+    "en": "Definition",
+    "ru": "Определение"
+  },
+  "Определять автоматически": {
+    "en": "Detect automatically",
+    "ru": "Определять автоматически"
+  },
+  "Оригинальная реплика": {
+    "en": "Original line",
+    "ru": "Оригинальная реплика"
+  },
+  "Оставить только светлое и тёмное": {
+    "en": "Keep only light and dark pixels",
+    "ru": "Оставить только светлое и тёмное"
+  },
+  "От 0 до 10 000. Сохранённые слова не входят в этот лимит.": {
+    "en": "From 0 to 10,000. Saved words do not count towards this limit.",
+    "ru": "От 0 до 10 000. Сохранённые слова не входят в этот лимит."
+  },
+  "Отдельное окно": {
+    "en": "Floating window",
+    "ru": "Отдельное окно"
+  },
+  "Отключение останавливает запись новых переводов.": {
+    "en": "Turning this off stops new translations from being recorded.",
+    "ru": "Отключение останавливает запись новых переводов."
+  },
+  "Откройте Anki и установите AnkiConnect (2055492159), затем разрешите локальное подключение.": {
+    "en": "Open Anki, install AnkiConnect (2055492159), then allow the local connection.",
+    "ru": "Откройте Anki и установите AnkiConnect (2055492159), затем разрешите локальное подключение."
+  },
+  "Открыть словарь": {
+    "en": "Open vocabulary",
+    "ru": "Открыть словарь"
+  },
+  "Отмена": {
+    "en": "Cancel",
+    "ru": "Отмена"
+  },
+  "Отменить": {
+    "en": "Discard",
+    "ru": "Отменить"
+  },
+  "Отменить изменения": {
+    "en": "Discard changes",
+    "ru": "Отменить изменения"
+  },
+  "Отменить проверку": {
+    "en": "Cancel check",
+    "ru": "Отменить проверку"
+  },
+  "Отменить удаление ключа": {
+    "en": "Keep the saved key",
+    "ru": "Отменить удаление ключа"
+  },
+  "Официальный API Яндекса. Нужен API-ключ сервисного аккаунта Yandex Cloud.": {
+    "en": "Official Yandex API. Requires a Yandex Cloud service account API key.",
+    "ru": "Официальный API Яндекса. Нужен API-ключ сервисного аккаунта Yandex Cloud."
+  },
+  "Очистить поиск": {
+    "en": "Clear search",
+    "ru": "Очистить поиск"
+  },
+  "ПРИМЕР ТЕКСТА": {
+    "en": "TEXT PREVIEW",
+    "ru": "ПРИМЕР ТЕКСТА"
+  },
+  "Панель сбоку": {
+    "en": "Side panel",
+    "ru": "Панель сбоку"
+  },
+  "Пауза между автопереводами": {
+    "en": "Pause between automatic translations",
+    "ru": "Пауза между автопереводами"
+  },
+  "Первый перевод: {0}": {
+    "en": "First translation: {0}",
+    "ru": "Первый перевод: {0}"
+  },
+  "Переведено реплик: {0}. {1} · {2}": {
+    "en": "Translated lines: {0}. {1} · {2}",
+    "ru": "Переведено реплик: {0}. {1} · {2}"
+  },
+  "Перевести": {
+    "en": "Translate",
+    "ru": "Перевести"
+  },
+  "Перевести тот же фрагмент ещё раз": {
+    "en": "Translate the same area again",
+    "ru": "Перевести тот же фрагмент ещё раз"
+  },
+  "Перевести экран": {
+    "en": "Translate screen",
+    "ru": "Перевести экран"
+  },
+  "Перевод": {
+    "en": "Translation",
+    "ru": "Перевод"
+  },
+  "Перевод *": {
+    "en": "Translation *",
+    "ru": "Перевод *"
+  },
+  "Перевод {0} реплик…": {
+    "en": "Translating {0} lines…",
+    "ru": "Перевод {0} реплик…"
+  },
+  "Перевод выбранной области": {
+    "en": "Selected area translation",
+    "ru": "Перевод выбранной области"
+  },
+  "Перевод пока недоступен": {
+    "en": "Translation is not available yet",
+    "ru": "Перевод пока недоступен"
+  },
+  "Перевод показан, но не удалось обновить историю.": {
+    "en": "Translation is shown, but history could not be updated.",
+    "ru": "Перевод показан, но не удалось обновить историю."
+  },
+  "Перевод реплики": {
+    "en": "Translated line",
+    "ru": "Перевод реплики"
+  },
+  "Перевод реплики появится после перевода слова.": {
+    "en": "The line will be translated after the word.",
+    "ru": "Перевод реплики появится после перевода слова."
+  },
+  "Перевод слова…": {
+    "en": "Translating word…",
+    "ru": "Перевод слова…"
+  },
+  "Перевод через ваш сервер. Для локального LibreTranslate API-ключ обычно не нужен.": {
+    "en": "Translation using your own server. A local LibreTranslate server usually does not need an API key.",
+    "ru": "Перевод через ваш сервер. Для локального LibreTranslate API-ключ обычно не нужен."
+  },
+  "Перевод, объяснение и сохранение слова": {
+    "en": "Translate, explain and save a word",
+    "ru": "Перевод, объяснение и сохранение слова"
+  },
+  "Переводим реплику…": {
+    "en": "Translating the line…",
+    "ru": "Переводим реплику…"
+  },
+  "Переводить на": {
+    "en": "Translate into",
+    "ru": "Переводить на"
+  },
+  "Переводчик": {
+    "en": "Translator",
+    "ru": "Переводчик"
+  },
+  "Переводчик не ответил за {0} с. Проверьте сервис или увеличьте тайм-аут.": {
+    "en": "The translator did not respond within {0} s. Check the service or increase the timeout.",
+    "ru": "Переводчик не ответил за {0} с. Проверьте сервис или увеличьте тайм-аут."
+  },
+  "Перейти к сохранённым словам": {
+    "en": "Go to your saved words",
+    "ru": "Перейти к сохранённым словам"
+  },
+  "Переключить видимость готового результата": {
+    "en": "Toggle the finished translation",
+    "ru": "Переключить видимость готового результата"
+  },
+  "Переключиться между выбором слов и игрой": {
+    "en": "Switch between selecting words and interacting with the game",
+    "ru": "Переключиться между выбором слов и игрой"
+  },
+  "Плотность подложки": {
+    "en": "Background opacity",
+    "ru": "Плотность подложки"
+  },
+  "По алфавиту": {
+    "en": "Alphabetical",
+    "ru": "По алфавиту"
+  },
+  "Поведение слоя": {
+    "en": "Overlay behavior",
+    "ru": "Поведение слоя"
+  },
+  "Поверх исходного текста": {
+    "en": "Over the original text",
+    "ru": "Поверх исходного текста"
+  },
+  "Повреждён индекс StarDict.": {
+    "en": "The StarDict index is damaged.",
+    "ru": "Повреждён индекс StarDict."
+  },
+  "Повторить {0:d}": {
+    "en": "Review on {0:d}",
+    "ru": "Повторить {0:d}"
+  },
+  "Повторить область": {
+    "en": "Repeat region",
+    "ru": "Повторить область"
+  },
+  "Повторить слова →": {
+    "en": "Review words →",
+    "ru": "Повторить слова →"
+  },
+  "Повторное нажатие закрывает перевод": {
+    "en": "Press again to close the translation",
+    "ru": "Повторное нажатие закрывает перевод"
+  },
+  "Подбирать размер по игре": {
+    "en": "Match the game's text size",
+    "ru": "Подбирать размер по игре"
+  },
+  "Подбирать цвет подложки": {
+    "en": "Match background colors",
+    "ru": "Подбирать цвет подложки"
+  },
+  "Поддерживаются Yomitan .zip, Lingvo .dsl, Kaikki .jsonl, CC-CEDICT .txt и StarDict .ifo с соседними .idx/.dict файлами.": {
+    "en": "Supported formats: Yomitan .zip, Lingvo .dsl, Kaikki .jsonl, CC-CEDICT .txt and StarDict .ifo with adjacent .idx/.dict files.",
+    "ru": "Поддерживаются Yomitan .zip, Lingvo .dsl, Kaikki .jsonl, CC-CEDICT .txt и StarDict .ifo с соседними .idx/.dict файлами."
+  },
+  "Подключаемся… Первый запуск локальной модели может занять больше времени.": {
+    "en": "Connecting… A local model's first request may take longer.",
+    "ru": "Подключаемся… Первый запуск локальной модели может занять больше времени."
+  },
+  "Подключение Anki": {
+    "en": "Anki connection",
+    "ru": "Подключение Anki"
+  },
+  "Подключение через IAM-токен": {
+    "en": "Connect with an IAM token",
+    "ru": "Подключение через IAM-токен"
+  },
+  "Подключите LM Studio или другой совместимый сервер. Для облачного API нужен ключ.": {
+    "en": "Connect LM Studio or another compatible server. Cloud APIs require a key.",
+    "ru": "Подключите LM Studio или другой совместимый сервер. Для облачного API нужен ключ."
+  },
+  "Подключите Яндекс, GigaChat, Ollama или другой сервис в настройках.": {
+    "en": "Connect Yandex, GigaChat, Ollama or another service in Settings.",
+    "ru": "Подключите Яндекс, GigaChat, Ollama или другой сервис в настройках."
+  },
+  "Подходит для простого контрастного текста.": {
+    "en": "Suitable for simple, high-contrast text.",
+    "ru": "Подходит для простого контрастного текста."
+  },
+  "Поиск по словарю": {
+    "en": "Search vocabulary",
+    "ru": "Поиск по словарю"
+  },
+  "Пока нет словарей. Поддерживаются Yomitan, DSL, StarDict, Kaikki и CC-CEDICT.": {
+    "en": "No dictionaries yet. Yomitan, DSL, StarDict, Kaikki and CC-CEDICT are supported.",
+    "ru": "Пока нет словарей. Поддерживаются Yomitan, DSL, StarDict, Kaikki и CC-CEDICT."
+  },
+  "Показать или скрыть перевод": {
+    "en": "Show or hide translation",
+    "ru": "Показать или скрыть перевод"
+  },
+  "Показать перевод в выбранном режиме": {
+    "en": "Show translation in the selected mode",
+    "ru": "Показать перевод в выбранном режиме"
+  },
+  "Показывать стоп-кадр": {
+    "en": "Show a frozen screenshot",
+    "ru": "Показывать стоп-кадр"
+  },
+  "Польский": {
+    "en": "Polish",
+    "ru": "Польский"
+  },
+  "Поменять языки местами": {
+    "en": "Swap languages",
+    "ru": "Поменять языки местами"
+  },
+  "Помогает сохранить смысл многострочных диалогов.": {
+    "en": "Helps preserve the meaning of multiline dialogue.",
+    "ru": "Помогает сохранить смысл многострочных диалогов."
+  },
+  "Помощник": {
+    "en": "Assistant",
+    "ru": "Помощник"
+  },
+  "Помощник вернул неполную словарную карточку. Попробуйте другую модель.": {
+    "en": "The assistant returned an incomplete dictionary card. Try a different model.",
+    "ru": "Помощник вернул неполную словарную карточку. Попробуйте другую модель."
+  },
+  "Помощник объясняет выражения и оттенки смысла в игровой реплике.": {
+    "en": "The assistant explains expressions and nuances in a line of game dialogue.",
+    "ru": "Помощник объясняет выражения и оттенки смысла в игровой реплике."
+  },
+  "Попробуйте другое слово или сбросьте фильтры.": {
+    "en": "Try another word or reset the filters.",
+    "ru": "Попробуйте другое слово или сбросьте фильтры."
+  },
+  "Пора повторить": {
+    "en": "Due first",
+    "ru": "Пора повторить"
+  },
+  "Португальский": {
+    "en": "Portuguese",
+    "ru": "Португальский"
+  },
+  "Порядок": {
+    "en": "Order",
+    "ru": "Порядок"
+  },
+  "Порядок карточек": {
+    "en": "Card order",
+    "ru": "Порядок карточек"
+  },
+  "Превышена квота или частота запросов. Повторите позже.": {
+    "en": "Quota or rate limit exceeded. Try again later.",
+    "ru": "Превышена квота или частота запросов. Повторите позже."
+  },
+  "При запуске будет виден только значок в трее.": {
+    "en": "Only the tray icon will be visible at startup.",
+    "ru": "При запуске будет виден только значок в трее."
+  },
+  "Привычный вид и поведение": {
+    "en": "Appearance and behavior",
+    "ru": "Привычный вид и поведение"
+  },
+  "Приложение": {
+    "en": "Application",
+    "ru": "Приложение"
+  },
+  "Применять игровые профили": {
+    "en": "Apply game profiles",
+    "ru": "Применять игровые профили"
+  },
+  "Пример: ": {
+    "en": "Example: ",
+    "ru": "Пример: "
+  },
+  "Примеры": {
+    "en": "Examples",
+    "ru": "Примеры"
+  },
+  "Провайдер вернул HTTP {0}. Проверьте настройки и доступность модели.": {
+    "en": "The provider returned HTTP {0}. Check the settings and model availability.",
+    "ru": "Провайдер вернул HTTP {0}. Проверьте настройки и доступность модели."
+  },
+  "Провайдер ограничил частоту запросов. Повторите позже.": {
+    "en": "The provider is rate limiting requests. Try again later.",
+    "ru": "Провайдер ограничил частоту запросов. Повторите позже."
+  },
+  "Провайдер отклонил авторизацию. Проверьте ключ, scope, folder ID и права доступа.": {
+    "en": "The provider rejected authorization. Check the key, scope, folder ID and access permissions.",
+    "ru": "Провайдер отклонил авторизацию. Проверьте ключ, scope, folder ID и права доступа."
+  },
+  "Проверить подключение": {
+    "en": "Check connection",
+    "ru": "Проверить подключение"
+  },
+  "Проверка отменена.": {
+    "en": "Connection check cancelled.",
+    "ru": "Проверка отменена."
+  },
+  "Произношение": {
+    "en": "Pronunciation",
+    "ru": "Произношение"
+  },
+  "Пропускать нажатия в игру": {
+    "en": "Pass clicks through to the game",
+    "ru": "Пропускать нажатия в игру"
+  },
+  "Профиль автоматически выбирается по запущенной игре перед захватом экрана.": {
+    "en": "The profile is selected automatically for the running game before a capture.",
+    "ru": "Профиль автоматически выбирается по запущенной игре перед захватом экрана."
+  },
+  "Путешествие начинается здесь.": {
+    "en": "Your journey begins here.",
+    "ru": "Путешествие начинается здесь."
+  },
+  "Размер текста в отдельном окне": {
+    "en": "Floating window text size",
+    "ru": "Размер текста в отдельном окне"
+  },
+  "Распакованный словарь слишком велик.": {
+    "en": "The extracted dictionary is too large.",
+    "ru": "Распакованный словарь слишком велик."
+  },
+  "Распознавание текста": {
+    "en": "Text recognition",
+    "ru": "Распознавание текста"
+  },
+  "Распознавание: {0}…": {
+    "en": "Recognizing: {0}…",
+    "ru": "Распознавание: {0}…"
+  },
+  "Регион ресурса Azure": {
+    "en": "Azure resource region",
+    "ru": "Регион ресурса Azure"
+  },
+  "Редактировать": {
+    "en": "Edit",
+    "ru": "Редактировать"
+  },
+  "Редактировать карточку": {
+    "en": "Edit card",
+    "ru": "Редактировать карточку"
+  },
+  "Результат проверки": {
+    "en": "Connection check result",
+    "ru": "Результат проверки"
+  },
+  "Русский": {
+    "en": "Russian",
+    "ru": "Русский"
+  },
+  "Рядом с репликами": {
+    "en": "Next to the dialogue",
+    "ru": "Рядом с репликами"
+  },
+  "С контекстом легче вспомнить, где встретилось слово.": {
+    "en": "Context makes it easier to remember where you met the word.",
+    "ru": "С контекстом легче вспомнить, где встретилось слово."
+  },
+  "СЛОВО ПОД КУРСОРОМ": {
+    "en": "WORD UNDER THE POINTER",
+    "ru": "СЛОВО ПОД КУРСОРОМ"
+  },
+  "Сбросить фильтры": {
+    "en": "Reset filters",
+    "ru": "Сбросить фильтры"
+  },
+  "Светлая тема": {
+    "en": "Light theme",
+    "ru": "Светлая тема"
+  },
+  "Сворачивать в трей при закрытии": {
+    "en": "Minimize to tray on close",
+    "ru": "Сворачивать в трей при закрытии"
+  },
+  "Сглаживать шум": {
+    "en": "Reduce noise",
+    "ru": "Сглаживать шум"
+  },
+  "Сервер вернул ответ неподдерживаемого формата. Проверьте адрес API и модель.": {
+    "en": "The server returned an unsupported response format. Check the API address and model.",
+    "ru": "Сервер вернул ответ неподдерживаемого формата. Проверьте адрес API и модель."
+  },
+  "Сервис": {
+    "en": "Service",
+    "ru": "Сервис"
+  },
+  "Синонимы": {
+    "en": "Synonyms",
+    "ru": "Синонимы"
+  },
+  "Синонимы: ": {
+    "en": "Synonyms: ",
+    "ru": "Синонимы: "
+  },
+  "Синхронизация Anki…": {
+    "en": "Syncing Anki…",
+    "ru": "Синхронизация Anki…"
+  },
+  "Синхронизировать весь словарь с Anki": {
+    "en": "Sync all vocabulary with Anki",
+    "ru": "Синхронизировать весь словарь с Anki"
+  },
+  "Системное · Windows OCR": {
+    "en": "System · Windows OCR",
+    "ru": "Системное · Windows OCR"
+  },
+  "Сколько хранить и что удалить": {
+    "en": "Retention and deletion",
+    "ru": "Сколько хранить и что удалить"
+  },
+  "Следующее повторение: {0:d}": {
+    "en": "Next review: {0:d}",
+    "ru": "Следующее повторение: {0:d}"
+  },
+  "Слишком большая статья JSONL.": {
+    "en": "A JSONL entry is too large.",
+    "ru": "Слишком большая статья JSONL."
+  },
+  "Слова из игр, которые хочется запомнить.": {
+    "en": "Words from games that you want to remember.",
+    "ru": "Слова из игр, которые хочется запомнить."
+  },
+  "Словари|*.zip;*.dsl;*.ifo;*.jsonl;*.txt|Все файлы|*.*": {
+    "en": "Dictionaries|*.zip;*.dsl;*.ifo;*.jsonl;*.txt|All files|*.*",
+    "ru": "Словари|*.zip;*.dsl;*.ifo;*.jsonl;*.txt|Все файлы|*.*"
+  },
+  "Словарные подробности": {
+    "en": "Dictionary details",
+    "ru": "Словарные подробности"
+  },
+  "Словарь": {
+    "en": "Dictionary",
+    "ru": "Словарь"
+  },
+  "Словарь очищен": {
+    "en": "Vocabulary cleared",
+    "ru": "Словарь очищен"
+  },
+  "Словарь содержит более миллиона статей. Импорт отменён.": {
+    "en": "The dictionary contains over a million entries. Import cancelled.",
+    "ru": "Словарь содержит более миллиона статей. Импорт отменён."
+  },
+  "Слово добавлено в словарь": {
+    "en": "Word added to vocabulary",
+    "ru": "Слово добавлено в словарь"
+  },
+  "Слово добавлено в словарь.": {
+    "en": "Word added to vocabulary.",
+    "ru": "Слово добавлено в словарь."
+  },
+  "Слово и реплика отправляются выбранному помощнику.": {
+    "en": "The word and line are sent to the selected assistant.",
+    "ru": "Слово и реплика отправляются выбранному помощнику."
+  },
+  "Слово или выражение": {
+    "en": "Word or expression",
+    "ru": "Слово или выражение"
+  },
+  "Слово или выражение *": {
+    "en": "Word or expression *",
+    "ru": "Слово или выражение *"
+  },
+  "Слово под курсором": {
+    "en": "Word under the pointer",
+    "ru": "Слово под курсором"
+  },
+  "Слово под курсором · Alt+W": {
+    "en": "Word under pointer · Alt+W",
+    "ru": "Слово под курсором · Alt+W"
+  },
+  "Слово распознано · сначала быстрый перевод, затем контекст": {
+    "en": "Word recognized · quick translation first, context next",
+    "ru": "Слово распознано · сначала быстрый перевод, затем контекст"
+  },
+  "Слово уже в словаре · счётчик встреч обновлён": {
+    "en": "The word is already saved · encounter count updated",
+    "ru": "Слово уже в словаре · счётчик встреч обновлён"
+  },
+  "Слово уже есть в словаре. Перевод и счётчик встреч обновлены.": {
+    "en": "The word is already saved. Translation and encounter count updated.",
+    "ru": "Слово уже есть в словаре. Перевод и счётчик встреч обновлены."
+  },
+  "Слово, перевод или тег…": {
+    "en": "Word, translation or tag…",
+    "ru": "Слово, перевод или тег…"
+  },
+  "Слово, перевод, контекст, заметка или тег": {
+    "en": "Word, translation, context, note or tag",
+    "ru": "Слово, перевод, контекст, заметка или тег"
+  },
+  "Сначала новые": {
+    "en": "Newest first",
+    "ru": "Сначала новые"
+  },
+  "Совместимый API · LM Studio, DeepSeek и другие": {
+    "en": "Compatible API · LM Studio, DeepSeek and others",
+    "ru": "Совместимый API · LM Studio, DeepSeek и другие"
+  },
+  "Состояние настроек": {
+    "en": "Settings status",
+    "ru": "Состояние настроек"
+  },
+  "Сохранение…": {
+    "en": "Saving…",
+    "ru": "Сохранение…"
+  },
+  "Сохранено · настройки уже применены": {
+    "en": "Saved · settings have been applied",
+    "ru": "Сохранено · настройки уже применены"
+  },
+  "Сохранено: {0}": {
+    "en": "Saved: {0}",
+    "ru": "Сохранено: {0}"
+  },
+  "Сохраните перевод, чтобы вернуться к нему позже.": {
+    "en": "Save a translation to come back to it later.",
+    "ru": "Сохраните перевод, чтобы вернуться к нему позже."
+  },
+  "Сохраните слово из экранного перевода или добавьте его вручную. Здесь будут перевод, контекст и заметки для повторения.": {
+    "en": "Save a word from screen translation or add it manually. Its translation, context and notes for review will be here.",
+    "ru": "Сохраните слово из экранного перевода или добавьте его вручную. Здесь будут перевод, контекст и заметки для повторения."
+  },
+  "Сохранить": {
+    "en": "Save",
+    "ru": "Сохранить"
+  },
+  "Сохранить изменения": {
+    "en": "Save changes",
+    "ru": "Сохранить изменения"
+  },
+  "Сохранить настройки": {
+    "en": "Save settings",
+    "ru": "Сохранить настройки"
+  },
+  "Сохранить настройки и профиль": {
+    "en": "Save settings and profile",
+    "ru": "Сохранить настройки и профиль"
+  },
+  "Сохранить профиль игры": {
+    "en": "Save game profile",
+    "ru": "Сохранить профиль игры"
+  },
+  "Сохраняется только фрагмент с выбранной репликой.": {
+    "en": "Only the area containing the selected line is saved.",
+    "ru": "Сохраняется только фрагмент с выбранной репликой."
+  },
+  "Сохранять историю переводов": {
+    "en": "Keep translation history",
+    "ru": "Сохранять историю переводов"
+  },
+  "Сохранённые слова": {
+    "en": "Saved words",
+    "ru": "Сохранённые слова"
+  },
+  "Сохранённые слова и расписание повторений будут удалены. Это действие нельзя отменить.": {
+    "en": "Saved words and review schedules will be deleted. This cannot be undone.",
+    "ru": "Сохранённые слова и расписание повторений будут удалены. Это действие нельзя отменить."
+  },
+  "Сохранённые слова остаются на этом компьютере.": {
+    "en": "Saved words stay on this computer.",
+    "ru": "Сохранённые слова остаются на этом компьютере."
+  },
+  "Сохранённый перевод": {
+    "en": "Saved translation",
+    "ru": "Сохранённый перевод"
+  },
+  "Сохранённых профилей пока нет.": {
+    "en": "No profiles saved yet.",
+    "ru": "Сохранённых профилей пока нет."
+  },
+  "Сочетания заняты": {
+    "en": "Shortcuts in use",
+    "ru": "Сочетания заняты"
+  },
+  "Сочетания заняты: ": {
+    "en": "Shortcuts in use: ",
+    "ru": "Сочетания заняты: "
+  },
+  "Сочетания заняты: {0}. Выберите другие на вкладке «Клавиши».": {
+    "en": "Shortcuts in use: {0}. Choose others on the Shortcuts tab.",
+    "ru": "Сочетания заняты: {0}. Выберите другие на вкладке «Клавиши»."
+  },
+  "Статья выходит за границы .dict.": {
+    "en": "An entry extends beyond the .dict file.",
+    "ru": "Статья выходит за границы .dict."
+  },
+  "Такая карточка уже есть для этих языков. Измените слово или отредактируйте существующую карточку.": {
+    "en": "This card already exists for these languages. Change the word or edit the existing card.",
+    "ru": "Такая карточка уже есть для этих языков. Измените слово или отредактируйте существующую карточку."
+  },
+  "Теги": {
+    "en": "Tags",
+    "ru": "Теги"
+  },
+  "Текст распознаётся на вашем компьютере.": {
+    "en": "Text is recognized on your computer.",
+    "ru": "Текст распознаётся на вашем компьютере."
+  },
+  "Тестовая фраза · без сохранения настроек": {
+    "en": "Test phrase · settings are not saved",
+    "ru": "Тестовая фраза · без сохранения настроек"
+  },
+  "Точнее · PP-OCRv6 Medium": {
+    "en": "Accurate · PP-OCRv6 Medium",
+    "ru": "Точнее · PP-OCRv6 Medium"
+  },
+  "Турецкий": {
+    "en": "Turkish",
+    "ru": "Турецкий"
+  },
+  "Убирает цвет перед распознаванием.": {
+    "en": "Removes color before recognition.",
+    "ru": "Убирает цвет перед распознаванием."
+  },
+  "Увеличение изображения": {
+    "en": "Image scale",
+    "ru": "Увеличение изображения"
+  },
+  "Удалить": {
+    "en": "Delete",
+    "ru": "Удалить"
+  },
+  "Удалить все слова?": {
+    "en": "Delete all words?",
+    "ru": "Удалить все слова?"
+  },
+  "Удалить все сохранённые слова…": {
+    "en": "Delete all saved words…",
+    "ru": "Удалить все сохранённые слова…"
+  },
+  "Удалить карточку": {
+    "en": "Delete card",
+    "ru": "Удалить карточку"
+  },
+  "Удалить сохранённый ключ": {
+    "en": "Remove saved key",
+    "ru": "Удалить сохранённый ключ"
+  },
+  "Удалить эту карточку из словаря?": {
+    "en": "Remove this card from your vocabulary?",
+    "ru": "Удалить эту карточку из словаря?"
+  },
+  "Удерживайте LB + RB и нажмите одну из кнопок ниже.": {
+    "en": "Hold LB + RB and press one of the buttons below.",
+    "ru": "Удерживайте LB + RB и нажмите одну из кнопок ниже."
+  },
+  "Укажите folder ID Яндекса в настройках.": {
+    "en": "Enter a Yandex folder ID in Settings.",
+    "ru": "Укажите folder ID Яндекса в настройках."
+  },
+  "Укажите имя колоды Anki до 120 символов.": {
+    "en": "Enter an Anki deck name of up to 120 characters.",
+    "ru": "Укажите имя колоды Anki до 120 символов."
+  },
+  "Укажите имя модели в настройках.": {
+    "en": "Enter a model name in Settings.",
+    "ru": "Укажите имя модели в настройках."
+  },
+  "Укажите имя профиля и имя процесса, например disco.exe.": {
+    "en": "Enter a profile name and process name, such as disco.exe.",
+    "ru": "Укажите имя профиля и имя процесса, например disco.exe."
+  },
+  "Укажите полный адрес сервера: HTTPS или HTTP для localhost.": {
+    "en": "Enter a full server address: HTTPS, or HTTP for localhost.",
+    "ru": "Укажите полный адрес сервера: HTTPS или HTTP для localhost."
+  },
+  "Укажите регион, если он требуется вашему ресурсу.": {
+    "en": "Enter the region if your resource requires one.",
+    "ru": "Укажите регион, если он требуется вашему ресурсу."
+  },
+  "Украинский": {
+    "en": "Ukrainian",
+    "ru": "Украинский"
+  },
+  "Українська": {
+    "en": "Ukrainian",
+    "ru": "Украинский"
+  },
+  "Управление без переключения из игры": {
+    "en": "Control without leaving the game",
+    "ru": "Управление без переключения из игры"
+  },
+  "Усилить контраст": {
+    "en": "Enhance contrast",
+    "ru": "Усилить контраст"
+  },
+  "Ускорение распознавания, если оно доступно.": {
+    "en": "Speed up recognition when supported.",
+    "ru": "Ускорение распознавания, если оно доступно."
+  },
+  "Уточнение недоступно. Быстрый перевод остаётся доступен.": {
+    "en": "Refinement is unavailable. The quick translation is still available.",
+    "ru": "Уточнение недоступно. Быстрый перевод остаётся доступен."
+  },
+  "Уточняем значение в реплике…": {
+    "en": "Refining the meaning in this line…",
+    "ru": "Уточняем значение в реплике…"
+  },
+  "Файл профилей слишком велик.": {
+    "en": "The profiles file is too large.",
+    "ru": "Файл профилей слишком велик."
+  },
+  "Файл словаря повреждён или имеет неподдерживаемую структуру. Предыдущие статьи сохранены.": {
+    "en": "The dictionary is damaged or has an unsupported structure. Existing entries are preserved.",
+    "ru": "Файл словаря повреждён или имеет неподдерживаемую структуру. Предыдущие статьи сохранены."
+  },
+  "Файлы и Anki ▾": {
+    "en": "Files and Anki ▾",
+    "ru": "Файлы и Anki ▾"
+  },
+  "Французский": {
+    "en": "French",
+    "ru": "Французский"
+  },
+  "Часть речи": {
+    "en": "Part of speech",
+    "ru": "Часть речи"
+  },
+  "Чёрно-белое изображение": {
+    "en": "Grayscale image",
+    "ru": "Чёрно-белое изображение"
+  },
+  "Экран": {
+    "en": "Screen",
+    "ru": "Экран"
+  },
+  "Экран для захвата": {
+    "en": "Capture monitor",
+    "ru": "Экран для захвата"
+  },
+  "Экранный перевод · Alt+Q": {
+    "en": "Screen translation · Alt+Q",
+    "ru": "Экранный перевод · Alt+Q"
+  },
+  "Экранный перевод по Alt+Q всегда размещает текст поверх реплик игры.": {
+    "en": "Screen translation with Alt+Q always places text over the game's dialogue.",
+    "ru": "Экранный перевод по Alt+Q всегда размещает текст поверх реплик игры."
+  },
+  "Экранный переводчик": {
+    "en": "Screen translator",
+    "ru": "Экранный переводчик"
+  },
+  "Экспорт видимых карточек в CSV…": {
+    "en": "Export visible cards to CSV…",
+    "ru": "Экспорт видимых карточек в CSV…"
+  },
+  "Экспорт видимых карточек для Anki…": {
+    "en": "Export visible cards for Anki…",
+    "ru": "Экспорт видимых карточек для Anki…"
+  },
+  "Экспорт карточек: {0}": {
+    "en": "Export cards: {0}",
+    "ru": "Экспорт карточек: {0}"
+  },
+  "Экспортировано карточек: {0}.": {
+    "en": "Cards exported: {0}.",
+    "ru": "Экспортировано карточек: {0}."
+  },
+  "Это сочетание уже используется. Выберите другое.": {
+    "en": "This shortcut is already in use. Choose another.",
+    "ru": "Это сочетание уже используется. Выберите другое."
+  },
+  "Этот StarDict содержит бинарные статьи. Используйте текстовый словарь.": {
+    "en": "This StarDict contains binary entries. Use a text dictionary.",
+    "ru": "Этот StarDict содержит бинарные статьи. Используйте текстовый словарь."
+  },
+  "Язык игры": {
+    "en": "Game language",
+    "ru": "Язык игры"
+  },
+  "Язык интерфейса / Interface language": {
+    "en": "Interface language",
+    "ru": "Язык интерфейса"
+  },
+  "Язык перевода": {
+    "en": "Translation language",
+    "ru": "Язык перевода"
+  },
+  "Язык распознавания": {
+    "en": "Recognition language",
+    "ru": "Язык распознавания"
+  },
+  "Язык слова": {
+    "en": "Word language",
+    "ru": "Язык слова"
+  },
+  "Языковая модель вернула неполный или неверный JSON. Выберите другую модель либо меньшую область. Результат не сохранён как успешный.": {
+    "en": "The language model returned incomplete or invalid JSON. Choose another model or a smaller area. The result was not saved as successful.",
+    "ru": "Языковая модель вернула неполный или неверный JSON. Выберите другую модель либо меньшую область. Результат не сохранён как успешный."
+  },
+  "Яндекс Cloud Translate · официальный API; API-ключ или IAM-токен": {
+    "en": "Yandex Cloud Translate · official API; API key or IAM token",
+    "ru": "Яндекс Cloud Translate · официальный API; API-ключ или IAM-токен"
+  },
+  "Яндекс Переводчик": {
+    "en": "Yandex Translate",
+    "ru": "Яндекс Переводчик"
+  },
+  "Японский": {
+    "en": "Japanese",
+    "ru": "Японский"
+  },
+  "▶ Озвучить": {
+    "en": "▶ Pronounce",
+    "ru": "▶ Озвучить"
+  },
+  "★ Сохранено": {
+    "en": "★ Saved",
+    "ru": "★ Сохранено"
+  },
+  "☆ Сохранить": {
+    "en": "☆ Save",
+    "ru": "☆ Сохранить"
+  },
+  "✓ Подключение работает\n{0}": {
+    "en": "✓ Connection works\n{0}",
+    "ru": "✓ Подключение работает\n{0}"
+  },
+  "中文": {
+    "en": "Chinese",
+    "ru": "Китайский"
+  },
+  "中文 · PP-OCRv6": {
+    "en": "Chinese · PP-OCRv6",
+    "ru": "Китайский · PP-OCRv6"
+  },
+  "日本語": {
+    "en": "Japanese",
+    "ru": "Японский"
+  },
+  "日本語 · PP-OCRv6": {
+    "en": "Japanese · PP-OCRv6",
+    "ru": "Японский · PP-OCRv6"
+  },
+  "한국어": {
+    "en": "Korean",
+    "ru": "Корейский"
+  },
+  "＋ Добавить слово": {
+    "en": "＋ Add word",
+    "ru": "＋ Добавить слово"
+  },
+  "＋ Импортировать словарь": {
+    "en": "＋ Import dictionary",
+    "ru": "＋ Импортировать словарь"
+  }
+}

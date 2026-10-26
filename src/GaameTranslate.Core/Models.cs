@@ -87,7 +87,9 @@ public sealed record DictionaryArticle(string Headword, string Definition, strin
 }
 public sealed record LanguageChoice(string Code, string Name)
 {
-    public override string ToString() => Name;
+    public UiMessage DisplayName { get; init; } = new(Name);
+    public LanguageChoice(string code, UiMessage label) : this(code, label.Key) { DisplayName = label; }
+    public override string ToString() => DisplayName.Text;
 }
 public static class Languages
 {
@@ -102,7 +104,7 @@ public static class Languages
         if (requested == "auto") return tags.FirstOrDefault() ?? throw new UserFacingException("Install an OCR language in Windows Settings → Time & language → Language & region.");
         return tags.FirstOrDefault(t => t.Equals(requested, StringComparison.OrdinalIgnoreCase))
             ?? tags.FirstOrDefault(t => Base(t) == Base(requested))
-            ?? throw new UserFacingException($"The OCR pack for '{requested}' is not installed. Add it in Windows language settings, then restart GaameTranslate.");
+            ?? throw new UserFacingException(L.M("The OCR pack for '{0}' is not installed. Add it in Windows language settings, then restart GaameTranslate.", requested));
     }
 }
 public static partial class TextProcessing
@@ -135,4 +137,8 @@ public static class ReviewScheduler
         return entry with { Reviews = entry.Reviews + 1, IntervalDays = days, Ease = ease, DueAt = now.AddDays(days) };
     }
 }
-public sealed class UserFacingException(string message, Exception? inner = null) : Exception(message, inner);
+public sealed class UserFacingException(UiMessage message, Exception? inner = null) : Exception(message.Text, inner)
+{
+    public UiMessage LocalizedMessage { get; } = message;
+    public override string Message => LocalizedMessage.Text;
+}

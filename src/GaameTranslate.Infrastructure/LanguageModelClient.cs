@@ -69,7 +69,7 @@ public sealed class LanguageModelClient(HttpClient http, ICredentialStore creden
                     HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden => "Провайдер отклонил авторизацию. Проверьте ключ, scope, folder ID и права доступа.",
                     HttpStatusCode.NotFound => "Модель или API-адрес не найдены. Проверьте имя модели; для Ollama сначала выполните ollama pull <модель>.",
                     HttpStatusCode.TooManyRequests => "Превышена квота или частота запросов. Повторите позже.",
-                    _ => $"Провайдер вернул HTTP {(int)response.StatusCode}. Проверьте настройки и доступность модели."
+                    _ => L.M("Провайдер вернул HTTP {0}. Проверьте настройки и доступность модели.", (int)response.StatusCode)
                 });
                 await response.Content.LoadIntoBufferAsync(4 * 1024 * 1024, timeout.Token);
                 using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(timeout.Token)); timeout.Token.ThrowIfCancellationRequested();
@@ -77,7 +77,7 @@ public sealed class LanguageModelClient(HttpClient http, ICredentialStore creden
                 return content ?? throw new JsonException();
             }
         }
-        catch (OperationCanceledException e) when (!cancellationToken.IsCancellationRequested) { throw new UserFacingException($"Модель не ответила за {settings.TranslationTimeoutSeconds} с. Для локальных моделей увеличьте тайм-аут или уменьшите область.", e); }
+        catch (OperationCanceledException e) when (!cancellationToken.IsCancellationRequested) { throw new UserFacingException(L.M("Модель не ответила за {0} с. Для локальных моделей увеличьте тайм-аут или уменьшите область.", settings.TranslationTimeoutSeconds), e); }
         catch (HttpRequestException e) { throw new UserFacingException("Нет соединения с моделью. Проверьте сервер и TLS-сертификаты. Для GigaChat может потребоваться доверенный сертификат Минцифры в Windows; проверка TLS не отключается.", e); }
         catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException) { throw new UserFacingException("Сервер вернул ответ неподдерживаемого формата. Проверьте адрес API и модель.", e); }
     }

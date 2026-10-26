@@ -18,7 +18,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     [NotifyPropertyChangedFor(nameof(SourceLanguage), nameof(TargetLanguage), nameof(LanguagePairLabel), nameof(NeedsProviderSetup))]
     private AppSettings settings = new();
     [ObservableProperty] private int pageIndex;
-    [ObservableProperty] private string status = "Ready when you are. Select an area to get started.";
+    [ObservableProperty] private UiMessage status = "Ready when you are. Select an area to get started.";
     [ObservableProperty] private bool isBusy;
     [ObservableProperty] private bool isMonitoring;
     [ObservableProperty] private string inputText = "";
@@ -32,27 +32,28 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     [ObservableProperty] private bool answerRevealed;
     [ObservableProperty] private int wordCount;
     [ObservableProperty] private int dueCount;
-    [ObservableProperty] private string pipelineInfo = "No capture yet";
+    [ObservableProperty] private UiMessage pipelineInfo = "No capture yet";
     public ObservableCollection<VocabularyEntry> Words { get; } = [];
     public ObservableCollection<VocabularyEntry> RecentWords { get; } = [];
     public ObservableCollection<TranslationSession> History { get; } = [];
     public ObservableCollection<TranslationSession> RecentHistory { get; } = [];
     public IReadOnlyList<LanguageChoice> SourceLanguages { get; } = [new("auto", "Detect automatically"), .. Languages.Translation];
     public IReadOnlyList<LanguageChoice> TargetLanguages => Languages.Translation;
+    public string ApplicationVersion => typeof(MainViewModel).Assembly.GetName().Version?.ToString(3) ?? "";
     public IReadOnlyList<LanguageChoice> OcrLanguages => [new("auto", "Windows profile language"), .. ocr.AvailableLanguages];
     public string OcrSummary => ocr.AvailableLanguages.Count == 0 ? "No OCR packs installed" : string.Join(", ", ocr.AvailableLanguages.Select(l => l.Name));
     public TranslationSession? LastSession { get; private set; }
     public CapturedFrame? LastFrame { get; private set; }
     private AppSettings? lastProfileSettings;
     public AppSettings SettingsForSession(TranslationSession session) => LastSession?.Id == session.Id && lastProfileSettings is { } profile
-        ? profile with { LightTheme = Settings.LightTheme, Hotkeys = Settings.Hotkeys, SaveWordScreenshots = Settings.SaveWordScreenshots, SaveWordAudio = Settings.SaveWordAudio }
+        ? profile with { InterfaceLanguage = Settings.InterfaceLanguage, LightTheme = Settings.LightTheme, Hotkeys = Settings.Hotkeys, SaveWordScreenshots = Settings.SaveWordScreenshots, SaveWordAudio = Settings.SaveWordAudio }
         : Settings;
     public DictionaryService Dictionary => dictionary;
     public ISpeechService Speech => speech;
     public LocalMediaStore Media => media;
     public GameProfileStore Profiles { get; } = new(Path.GetDirectoryName(media.DirectoryPath)!);
     public bool NeedsProviderSetup => ProviderCatalog.RequiresKey(Settings) && !HasKey(Settings.Provider);
-    public string LanguagePairLabel => $"{(Settings.SourceLanguage == "auto" ? "Auto" : Languages.Translation.FirstOrDefault(l => l.Code == Settings.SourceLanguage)?.Name ?? Settings.SourceLanguage)} → {Languages.Translation.FirstOrDefault(l => l.Code == Settings.TargetLanguage)?.Name ?? Settings.TargetLanguage}";
+    public UiMessage LanguagePairLabel => L.M("{0} → {1}", new UiMessage(Settings.SourceLanguage == "auto" ? "Auto" : Languages.Translation.FirstOrDefault(l => l.Code == Settings.SourceLanguage)?.Name ?? Settings.SourceLanguage), new UiMessage(Languages.Translation.FirstOrDefault(l => l.Code == Settings.TargetLanguage)?.Name ?? Settings.TargetLanguage));
     public string SourceLanguage
     {
         get => Settings.SourceLanguage;
@@ -68,6 +69,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public event Action<TranslationSession>? SessionReady;
     public event Action<string, TranslationSession, TranslatedBlock>? WordLookupRequested;
     public event Action? SettingsChanged;
+    public bool InterfaceOnlySettingsChange { get; private set; }
     public event Action<bool>? ShortcutRecordingChanged;
     public bool IsRecordingShortcut { get; private set; }
     public void SetShortcutRecording(bool recording)
@@ -106,8 +108,8 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
         catch (Exception e)
         {
             logger.LogWarning("Operation failed: {ExceptionType}", e.GetType().Name);
-            Status = e is UserFacingException ? e.Message : "The operation could not be completed. Check your settings, connection and available disk space, then try again.";
-            OperationFailed?.Invoke(Status);
+            Status = e is UserFacingException known ? known.LocalizedMessage : "The operation could not be completed. Check your settings, connection and available disk space, then try again.";
+            OperationFailed?.Invoke(Status.Text);
         }
     }
     [RelayCommand] private Task RegionAsync() => GuardAsync(() => RunCaptureAsync("Region"));
@@ -187,7 +189,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             if (configuration.AutoApplyGameProfiles)
             {
                 var profile = await Profiles.FindAsync(NativeMethods.ForegroundProcessName(), token);
-                if (profile is not null) { appliedProfile = true; configuration = profile.Settings with { AutoApplyGameProfiles = Settings.AutoApplyGameProfiles, SaveHistory = Settings.SaveHistory, SaveWordScreenshots = Settings.SaveWordScreenshots, SaveWordAudio = Settings.SaveWordAudio }; }
+                if (profile is not null) { appliedProfile = true; configuration = profile.Settings with { InterfaceLanguage = Settings.InterfaceLanguage, AutoApplyGameProfiles = Settings.AutoApplyGameProfiles, SaveHistory = Settings.SaveHistory, SaveWordScreenshots = Settings.SaveWordScreenshots, SaveWordAudio = Settings.SaveWordAudio }; }
             }
             var total = Stopwatch.StartNew(); var clock = Stopwatch.StartNew(); CapturedFrame frame; PixelRect? bounds = null;
             var prior = NativeMethods.GetForegroundWindow();
@@ -212,7 +214,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             finally { CaptureVisibilityChanged?.Invoke(false); }
             var captureMs = clock.Elapsed.TotalMilliseconds;
             if (kind == "Region") { Settings = Settings with { LastRegion = bounds }; await settingsStore.SaveAsync(Settings, token); }
-            Status = $"Распознавание: {configuration.OcrEngine}…"; clock.Restart();
+            Status = L.M("Распознавание: {0}…", configuration.OcrEngine); clock.Restart();
             if (ocr is AdaptiveOcrProvider adaptive) { adaptive.Engine = configuration.OcrEngine; adaptive.UseGpu = configuration.OcrUseGpu; }
             var document = await ocr.RecognizeAsync(frame, configuration.OcrLanguage, configuration.Preprocessing, token);
             if (configuration.GroupParagraphs) document = ScreenAnalysis.GroupParagraphs(document);
@@ -233,23 +235,23 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
                 var lookupSession = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, source, configuration.TargetLanguage, configuration.Provider, kind,
                     document.Blocks.Select(b => new TranslatedBlock(b, "")).ToArray(), new(captureMs, ocrMs, 0, total.Elapsed.TotalMilliseconds));
                 LastSession = lookupSession; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = document.Text; OutputText = "";
-                PipelineInfo = $"Capture {captureMs:0} ms  ·  OCR {ocrMs:0} ms  ·  Словарь открыт до перевода контекста";
+                PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Словарь открыт до перевода контекста", captureMs, ocrMs);
                 WordLookupRequested?.Invoke(selectedWord.Text, lookupSession, lookupSession.Blocks[0]);
                 Status = "Слово распознано · сначала быстрый перевод, затем контекст";
                 logger.LogInformation("Word lookup opened after capture {CaptureMs:0} ms and OCR {OcrMs:0} ms", captureMs, ocrMs);
                 return;
             }
-            Status = $"Перевод {document.Blocks.Count} реплик…"; clock.Restart();
+            Status = L.M("Перевод {0} реплик…", document.Blocks.Count); clock.Restart();
             var result = await cache.TranslateAsync(Provider(configuration), new(document.Blocks.Select(b => b.Text).ToArray(), source, configuration.TargetLanguage,
                 string.Join("\n", new[] { configuration.ContextHint, document.Text[..Math.Min(document.Text.Length, 10000)] }).Trim()), CacheIdentity(configuration), token);
             var translationMs = clock.Elapsed.TotalMilliseconds; token.ThrowIfCancellationRequested();
             var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, result.FirstOrDefault()?.SourceLanguage ?? document.Language,
                 configuration.TargetLanguage, configuration.Provider, kind, document.Blocks.Select((b, i) => new TranslatedBlock(b, result[i].Text) { BackgroundColor = configuration.SampleOverlayBackground ? ScreenAnalysis.SampleBackground(frame, b.Bounds) : null }).ToArray(), new(captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds));
             LastSession = session; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = session.OriginalText; OutputText = session.TranslatedText;
-            PipelineInfo = $"Capture {captureMs:0} ms  ·  OCR {ocrMs:0} ms  ·  Translate {translationMs:0} ms  ·  Total {total.Elapsed.TotalMilliseconds:0} ms";
+            PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Translate {2:0} ms  ·  Total {3:0} ms", captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds);
             SessionReady?.Invoke(session);
             previousScreenText = document.Text;
-            Status = IsMonitoring ? "Автоперевод области включён · нажмите Стоп для завершения" : $"Переведено реплик: {session.Blocks.Count}. {configuration.OcrEngine} · {configuration.Provider}";
+            Status = IsMonitoring ? new UiMessage("Автоперевод области включён · нажмите Стоп для завершения") : L.M("Переведено реплик: {0}. {1} · {2}", session.Blocks.Count, configuration.OcrEngine, configuration.Provider);
             logger.LogInformation("Pipeline finished: {BlockCount} blocks, capture {CaptureMs:0} ms, OCR {OcrMs:0} ms, translation {TranslationMs:0} ms", session.Blocks.Count, captureMs, ocrMs, translationMs);
             if (Settings.SaveHistory)
             {
@@ -261,9 +263,12 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     }
     public async Task SaveSettingsAsync(AppSettings value, string? newKey, bool removeKey)
     {
+        InterfaceOnlySettingsChange = value.InterfaceLanguage != Settings.InterfaceLanguage && (value with { InterfaceLanguage = Settings.InterfaceLanguage }) == Settings && string.IsNullOrWhiteSpace(newKey) && !removeKey;
         value.Validate(); GlobalHotkeys.Validate(value.Hotkeys); await settingsStore.SaveAsync(value);
         if (removeKey) credentials.Delete(value.Provider); else if (!string.IsNullOrWhiteSpace(newKey)) credentials.Write(value.Provider, newKey.Trim());
-        Settings = value; lastProfileSettings = null; OnPropertyChanged(nameof(NeedsProviderSetup)); cache.Clear(); Status = "Настройки сохранены."; SettingsChanged?.Invoke();
+        Settings = value; L.SetLanguage(value.InterfaceLanguage);
+        if (!InterfaceOnlySettingsChange) { lastProfileSettings = null; cache.Clear(); }
+        OnPropertyChanged(nameof(NeedsProviderSetup)); Status = "Настройки сохранены."; SettingsChanged?.Invoke();
     }
     public bool HasKey(string provider) { try { return !string.IsNullOrWhiteSpace(credentials.Read(provider)); } catch (UserFacingException) { return false; } }
     public void SaveAssistantKey(string provider, string key) { if (!string.IsNullOrWhiteSpace(key) && provider != "None") credentials.Write(provider, key.Trim()); }
@@ -271,6 +276,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     {
         if (!ProviderCatalog.All.Any(p => p.Name == provider)) throw new UserFacingException("Выберите сервис перевода.");
         if (remove) credentials.Delete(provider); else if (!string.IsNullOrWhiteSpace(key)) credentials.Write(provider, key.Trim());
+        if (remove || !string.IsNullOrWhiteSpace(key)) cache.Clear();
         OnPropertyChanged(nameof(NeedsProviderSetup));
     }
     public async Task<string> TestConnectionAsync(AppSettings configuration, string? draftKey, bool removeSavedKey, CancellationToken token)
@@ -290,7 +296,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(Settings.TranslationTimeoutSeconds));
         var result = await Provider().TranslateAsync(new(["Hello, traveler."], "en", Settings.TargetLanguage, Settings.ContextHint), timeout.Token);
-        Status = $"{Settings.Provider}: {result[0].Text}";
+        Status = L.M("{0}: {1}", Settings.Provider, result[0].Text);
     }
     public async Task SyncAnkiAsync()
     {
@@ -298,7 +304,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
         {
             Status = "Синхронизация Anki…";
             var words = await Task.Run(() => database.GetWordsAsync(token: token), token); var result = await new AnkiConnectClient(http, media).SyncAsync(Settings, words, token);
-            Status = $"Anki: добавлено {result.Added}, обновлено {result.Updated}, помечено удалёнными {result.MarkedRemoved}. Расписание повторений сохранено.";
+            Status = L.M("Anki: добавлено {0}, обновлено {1}, помечено удалёнными {2}. Расписание повторений сохранено.", result.Added, result.Updated, result.MarkedRemoved);
         });
     }
     public async Task<TranslationItem> LookupAsync(string word, string source, string target, string context, CancellationToken token, AppSettings? configuration = null)
@@ -318,7 +324,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     {
         if (LastSession?.Id != session.Id || session.CaptureType != "Word at cursor") return;
         var totalMs = session.Timings.TotalMs + elapsedMs;
-        PipelineInfo = $"Capture {session.Timings.CaptureMs:0} ms  ·  OCR {session.Timings.OcrMs:0} ms  ·  Слово {elapsedMs:0} ms  ·  Первый результат {totalMs:0} ms";
+        PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Слово {2:0} ms  ·  Первый результат {3:0} ms", session.Timings.CaptureMs, session.Timings.OcrMs, elapsedMs, totalMs);
         logger.LogInformation("Word translation ready in {WordMs:0} ms after OCR, total {TotalMs:0} ms", elapsedMs, totalMs);
     }
     public async Task CompleteWordLookupContextAsync(TranslationSession session, string translation, double elapsedMs, CancellationToken token)
@@ -357,7 +363,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public async Task ImportWordsAsync(IReadOnlyList<VocabularyEntry> entries) => await ExecutePipelineAsync(async token =>
     {
         await Task.Run(async () => { foreach (var entry in entries) { token.ThrowIfCancellationRequested(); await database.SaveWordAsync(entry, token); } }, token);
-        await RefreshAsync(); Status = $"Imported {entries.Count} words. Existing words update their encounter count.";
+        await RefreshAsync(); Status = L.M("Imported {0} words. Existing words update their encounter count.", entries.Count);
     });
     public async Task ClearWordsAsync() { await Task.Run(() => database.ClearVocabularyAsync()); await RefreshAsync(); ReviewCard = null; }
     public void ReopenHistory() { if (SelectedHistory is not { } session) return; InputText = session.OriginalText; OutputText = session.TranslatedText; LastSession = session; LastFrame = null; lastProfileSettings = null; if (session.CaptureType != "Text") SessionReady?.Invoke(session); PageIndex = 1; }

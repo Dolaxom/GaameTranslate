@@ -59,7 +59,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
                     HttpStatusCode.TooManyRequests => "The translation provider is rate limiting requests. Try again later.",
                     (HttpStatusCode)456 => "Your DeepL character quota has been used. Check your API plan.",
                     HttpStatusCode.BadRequest => "The provider rejected this language pair or text. Check the installed models or provider language support.",
-                    _ => $"The translation provider returned HTTP {(int)response.StatusCode}. Check its availability and your configuration."
+                    _ => L.M("The translation provider returned HTTP {0}. Check its availability and your configuration.", (int)response.StatusCode)
                 });
                 // Bound responses even when a local/custom server is misconfigured.
                 await response.Content.LoadIntoBufferAsync(4 * 1024 * 1024, timeout.Token).ConfigureAwait(false);
@@ -68,7 +68,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
                 return ParseResponse(json.RootElement, input);
             }
         }
-        catch (OperationCanceledException e) when (!cancellationToken.IsCancellationRequested) { throw new UserFacingException($"Переводчик не ответил за {settings.TranslationTimeoutSeconds} с. Проверьте сервис или увеличьте тайм-аут.", e); }
+        catch (OperationCanceledException e) when (!cancellationToken.IsCancellationRequested) { throw new UserFacingException(L.M("Переводчик не ответил за {0} с. Проверьте сервис или увеличьте тайм-аут.", settings.TranslationTimeoutSeconds), e); }
         catch (HttpRequestException e) { throw new UserFacingException("Cannot reach the translation provider. Check your connection or start your local LibreTranslate service.", e); }
         catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException)
         { throw new UserFacingException("The provider returned an invalid response. Check the selected API endpoint.", e); }

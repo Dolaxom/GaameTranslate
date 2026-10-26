@@ -31,8 +31,8 @@ public sealed partial class SettingsView
             body.Children.Add(keySlot);
             Label(keyArea, "API-ключ"); key = new PasswordBox { Style = (Style)owner.FindResource("SettingsPassword"), Margin = new(0, 0, 0, 6) }; owner.Track(key, prefix + "key", "API-ключ"); keyArea.Children.Add(key);
             keyState = Muted("", new(0, 0, 0, 6)); keyState.FontSize = 12; keyArea.Children.Add(keyState);
-            remove = new Button { Content = "Удалить сохранённый ключ", HorizontalAlignment = HorizontalAlignment.Left, FontSize = 11, Padding = new(8, 4, 8, 4), Margin = new(0, 0, 0, 10) }; Identify(remove, prefix + "remove-key", "Удалить сохранённый ключ"); keyArea.Children.Add(remove);
-            optionalKey = new Expander { Header = "API-ключ для защищённого сервера", Style = (Style)owner.FindResource("SettingsExpander"), Margin = new(0, 4, 0, 8) };
+            remove = Ui.Localize(new Button { Content = "Удалить сохранённый ключ", HorizontalAlignment = HorizontalAlignment.Left, FontSize = 11, Padding = new(8, 4, 8, 4), Margin = new(0, 0, 0, 10) }); Identify(remove, prefix + "remove-key", "Удалить сохранённый ключ"); keyArea.Children.Add(remove);
+            optionalKey = Ui.Localize(new Expander { Header = "API-ключ для защищённого сервера", Style = (Style)owner.FindResource("SettingsExpander"), Margin = new(0, 4, 0, 8) });
             StackPanel Service(string name) { var panel = new StackPanel { Visibility = Visibility.Collapsed }; services[name] = panel; body.Children.Add(panel); return panel; }
             var libre = Service("LibreTranslate");
             var libreOptions = owner.Advanced(libre, "Адрес сервера");
@@ -55,7 +55,7 @@ public sealed partial class SettingsView
             owner.Field(Service("Azure"), "azureRegion", "Регион ресурса Azure", s.AzureRegion, "Укажите регион, если он требуется вашему ресурсу.", prefix);
             Service("DeepL Free"); Service("DeepL Pro");
             var testRow = new WrapPanel { Margin = new(0, 12, 0, 0) };
-            test = new Button { Content = "Проверить подключение", Padding = new(14, 8, 14, 8), HorizontalAlignment = HorizontalAlignment.Left }; Identify(test, prefix + "test", "Проверить подключение"); testRow.Children.Add(test); body.Children.Add(testRow);
+            test = Ui.Localize(new Button { Content = "Проверить подключение", Padding = new(14, 8, 14, 8), HorizontalAlignment = HorizontalAlignment.Left }); Identify(test, prefix + "test", "Проверить подключение"); testRow.Children.Add(test); body.Children.Add(testRow);
             result = Muted("Тестовая фраза · без сохранения настроек", new(0, 8, 0, 0)); result.FontSize = 12; AutomationProperties.SetLiveSetting(result, AutomationLiveSetting.Polite); Identify(result, prefix + "result", "Результат проверки"); body.Children.Add(result);
             key.PasswordChanged += (_, _) =>
             {
@@ -75,7 +75,7 @@ public sealed partial class SettingsView
         {
             foreach (var service in services) service.Value.Visibility = service.Key == Name ? Visibility.Visible : Visibility.Collapsed;
             body.Visibility = Name == "None" ? Visibility.Collapsed : Visibility.Visible;
-            description.Text = Name switch
+            Ui.SetText(description, Name switch
             {
                 "None" => "Доступны обычный перевод слова и импортированные словари.",
                 "Ollama" => "Локальные модели. Нужен запущенный Ollama; для сервера на вашем компьютере ключ не требуется.",
@@ -86,7 +86,7 @@ public sealed partial class SettingsView
                 "OpenAI compatible" => "Подключите LM Studio или другой совместимый сервер. Для облачного API нужен ключ.",
                 "Azure" => "Ключ и регион из ресурса Microsoft Azure Translator.",
                 _ => "Используйте API-ключ выбранного тарифа DeepL. Доступность сервиса зависит от региона."
-            };
+            });
             PlaceKey(); RefreshKey(); InvalidateResult();
         }
 
@@ -105,9 +105,9 @@ public sealed partial class SettingsView
             try
             {
                 key.Password = owner.keyDrafts.GetValueOrDefault(Name, ""); var exists = owner.vm.HasKey(Name);
-                keyState.Text = owner.removedKeys.Contains(Name) ? "Ключ будет удалён после сохранения." : key.Password.Length > 0 ? "Новый ключ будет сохранён вместе с настройками." : exists ? "Ключ сохранён. Оставьте поле пустым, чтобы использовать его." : "Ключ будет защищён средствами Windows.";
+                Ui.SetText(keyState, owner.removedKeys.Contains(Name) ? "Ключ будет удалён после сохранения." : key.Password.Length > 0 ? "Новый ключ будет сохранён вместе с настройками." : exists ? "Ключ сохранён. Оставьте поле пустым, чтобы использовать его." : "Ключ будет защищён средствами Windows.");
                 remove.Visibility = exists || owner.removedKeys.Contains(Name) ? Visibility.Visible : Visibility.Collapsed;
-                remove.Content = owner.removedKeys.Contains(Name) ? "Отменить удаление ключа" : "Удалить сохранённый ключ";
+                Ui.SetContent(remove, owner.removedKeys.Contains(Name) ? "Отменить удаление ключа" : "Удалить сохранённый ключ");
             }
             finally { updatingKey = false; }
         }
@@ -117,25 +117,25 @@ public sealed partial class SettingsView
         {
             if (result is null) return;
             if (checking is not null) { checking.Cancel(); return; }
-            result.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); result.Text = "Тестовая фраза · без сохранения настроек";
+            result.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); Ui.SetText(result, "Тестовая фраза · без сохранения настроек");
         }
 
         private async Task TestAsync()
         {
             if (checking is not null) { checking.Cancel(); return; }
             using var cancellation = new CancellationTokenSource(); checking = cancellation; owner.runningChecks++; owner.UpdateActions();
-            test.Content = "Отменить проверку"; result.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); result.Text = "Подключаемся… Первый запуск локальной модели может занять больше времени.";
+            Ui.SetContent(test, "Отменить проверку"); result.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); Ui.SetText(result, "Подключаемся… Первый запуск локальной модели может занять больше времени.");
             try
             {
                 var settings = owner.ReadConnectionSettings();
                 if (helper) settings = settings with { Provider = settings.AssistantProvider, OllamaModel = settings.AssistantModel };
                 settings = settings with { AssistantProvider = "None" };
                 var translated = await owner.vm.TestConnectionAsync(settings, owner.keyDrafts.GetValueOrDefault(Name), owner.removedKeys.Contains(Name), cancellation.Token);
-                cancellation.Token.ThrowIfCancellationRequested(); result.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); result.Text = "✓ Подключение работает\n" + translated;
+                cancellation.Token.ThrowIfCancellationRequested(); result.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); Ui.SetText(result, L.M("✓ Подключение работает\n{0}", translated));
             }
-            catch (OperationCanceledException) { result.Text = "Проверка отменена."; }
-            catch (Exception error) { result.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush"); result.Text = error is UserFacingException ? error.Message : "Не удалось подключиться. Проверьте адрес сервера и доступ к сети."; }
-            finally { checking = null; owner.runningChecks--; owner.UpdateActions(); test.Content = "Проверить подключение"; }
+            catch (OperationCanceledException) { Ui.SetText(result, "Проверка отменена."); }
+            catch (Exception error) { result.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush"); Ui.Error(result, error, "Не удалось подключиться. Проверьте адрес сервера и доступ к сети."); }
+            finally { checking = null; owner.runningChecks--; owner.UpdateActions(); Ui.SetContent(test, "Проверить подключение"); }
         }
 
         private static string ProviderLabel(string name) => name switch

@@ -20,11 +20,11 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
     [ObservableProperty] private string word = "";
     [ObservableProperty] private string translation = "";
     [ObservableProperty] private string basicTranslation = "";
-    [ObservableProperty] private string translationSource = "";
+    [ObservableProperty] private UiMessage translationSource = "";
     [ObservableProperty] private string contextTranslation = "";
-    [ObservableProperty] private string wordStatus = "";
-    [ObservableProperty] private string contextStatus = "";
-    [ObservableProperty] private string explanationStatus = "";
+    [ObservableProperty] private UiMessage wordStatus = "";
+    [ObservableProperty] private UiMessage contextStatus = "";
+    [ObservableProperty] private UiMessage explanationStatus = "";
     [ObservableProperty] private bool isLoadingWord;
     [ObservableProperty] private bool isLoadingContext;
     [ObservableProperty] private bool isLoadingExplanation;
@@ -40,7 +40,7 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
         Word = selected; ContextTranslation = original.Translation;
         if (knownArticle is not null)
         {
-            HasInitialArticle = true; generated = knownArticle; Translation = BasicTranslation = knownArticle.Translation; TranslationSource = knownArticle.Source;
+            HasInitialArticle = true; generated = knownArticle; Translation = BasicTranslation = knownArticle.Translation; TranslationSource = L.M("{0}", knownArticle.Source);
             if (!string.IsNullOrWhiteSpace(knownArticle.ContextTranslation)) ContextTranslation = knownArticle.ContextTranslation;
         }
     }
@@ -66,7 +66,7 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
                 var quick = await vm.LookupWordAsync(selected, session.SourceLanguage, session.TargetLanguage, preferences, token);
                 if (!Current()) return;
                 BasicTranslation = quick.Item.Text; Translation = quick.Item.Text; ResultLanguage = quick.Item.SourceLanguage;
-                TranslationSource = quick.Saved ? "Сохранённый перевод" : "Быстрый перевод · " + preferences.Provider;
+                TranslationSource = quick.Saved ? "Сохранённый перевод" : L.M("Быстрый перевод · {0}", preferences.Provider);
                 vm.RecordWordLookupReady(session, started.Elapsed.TotalMilliseconds);
                 WordStatus = "";
             }
@@ -116,7 +116,7 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
             {
                 var article = await vm.Dictionary.ExplainAsync(preferences, selected, session.SourceLanguage, session.TargetLanguage, block.Original.Text, token);
                 if (!Current()) return;
-                generated = article; Translation = article.Translation; TranslationSource = "Значение в этой реплике · " + preferences.AssistantProvider;
+                generated = article; Translation = article.Translation; TranslationSource = L.M("Значение в этой реплике · {0}", preferences.AssistantProvider);
                 if (!string.IsNullOrWhiteSpace(article.ContextTranslation)) { ContextTranslation = article.ContextTranslation; ContextStatus = ""; }
                 WordStatus = ""; ArticlesChanged?.Invoke();
             }
@@ -132,6 +132,6 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
             catch { /* Online definitions supplement the first result; they are not required for saving. */ }
         }
     }
-    private static string Message(Exception error, string fallback) => error is UserFacingException ? error.Message : fallback;
+    private static UiMessage Message(Exception error, string fallback) => error is UserFacingException known ? known.LocalizedMessage : new(fallback);
     public void Dispose() { if (disposed) return; disposed = true; version++; lifetime.Cancel(); active?.Cancel(); lifetime.Dispose(); }
 }

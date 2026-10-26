@@ -36,7 +36,7 @@ public sealed class WindowsSpeechService : ISpeechService, IDisposable
         using var synthesizer = new System.Speech.Synthesis.SpeechSynthesizer();
         var installed = synthesizer.GetInstalledVoices().Where(v => v.Enabled && Languages.Base(v.VoiceInfo.Culture.Name) == Languages.Base(language)).Select(v => v.VoiceInfo).ToArray();
         var selected = installed.FirstOrDefault(v => "sapi:" + v.Name == voice) ?? installed.FirstOrDefault();
-        if (selected is null) throw new UserFacingException($"Для языка '{language}' нет установленного голоса Windows. Добавьте голос в параметрах речи Windows.");
+        if (selected is null) throw new UserFacingException(L.M("Для языка '{0}' нет установленного голоса Windows. Добавьте голос в параметрах речи Windows.", language));
         synthesizer.SelectVoice(selected.Name); using var stream = new MemoryStream(); synthesizer.SetOutputToWaveStream(stream);
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         synthesizer.SpeakCompleted += (_, e) => { if (e.Cancelled) completion.TrySetCanceled(token); else if (e.Error is { } error) completion.TrySetException(error); else completion.TrySetResult(); };

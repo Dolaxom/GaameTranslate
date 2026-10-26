@@ -47,7 +47,7 @@ public sealed partial class SettingsView : UserControl
         root.RowDefinitions.Add(new() { Height = GridLength.Auto }); root.RowDefinitions.Add(new() { Height = GridLength.Auto }); root.RowDefinitions.Add(new()); root.RowDefinitions.Add(new() { Height = GridLength.Auto });
         Content = root;
         var heading = new StackPanel { Margin = new(0, 0, 0, 14) };
-        heading.Children.Add(new TextBlock { Text = "Настройки", FontSize = 30, FontWeight = FontWeights.SemiBold });
+        heading.Children.Add(Ui.Localize(new TextBlock { Text = "Настройки", FontSize = 30, FontWeight = FontWeights.SemiBold }));
         heading.Children.Add(Muted("Всё для удобного перевода — от подключения до любимых сочетаний клавиш.", new(0, 6, 0, 0)));
         root.Children.Add(heading);
         var navigation = new WrapPanel { Margin = new(0, 0, 0, 10) }; Grid.SetRow(navigation, 1); root.Children.Add(navigation);
@@ -56,7 +56,7 @@ public sealed partial class SettingsView : UserControl
         Grid.SetRow(scroll, 2); root.Children.Add(scroll);
         foreach (var (id, title) in new[] { ("translation", "Перевод"), ("screen", "Экран"), ("dictionary", "Словарь"), ("shortcuts", "Клавиши"), ("games", "Игры"), ("app", "Приложение") })
         {
-            var button = new Button { Content = title, Style = (Style)FindResource("SettingsTab"), Tag = false }; Identify(button, "settings-tab-" + id, title);
+            var button = Ui.Localize(new Button { Content = title, Style = (Style)FindResource("SettingsTab"), Tag = false }); Identify(button, "settings-tab-" + id, title);
             button.Click += (_, _) => SelectPage(id); navigation.Children.Add(button); tabs[id] = button;
             var page = new StackPanel { Visibility = Visibility.Collapsed }; pages[id] = page; content.Children.Add(page);
         }
@@ -65,9 +65,9 @@ public sealed partial class SettingsView : UserControl
         footer.ColumnDefinitions.Add(new()); footer.ColumnDefinitions.Add(new() { Width = GridLength.Auto }); footer.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
         feedback = Muted("Все изменения сохранены", new(0, 0, 18, 0)); feedback.FontSize = 12; feedback.VerticalAlignment = VerticalAlignment.Center;
         AutomationProperties.SetLiveSetting(feedback, AutomationLiveSetting.Polite); Identify(feedback, "settings-feedback", "Состояние настроек"); footer.Children.Add(feedback);
-        discard = new Button { Content = "Отменить", Margin = new(0, 0, 10, 0), ToolTip = "Вернуть сохранённые настройки" }; Identify(discard, "settings-discard", "Отменить изменения");
+        discard = Ui.Localize(new Button { Content = "Отменить", Margin = new(0, 0, 10, 0), ToolTip = "Вернуть сохранённые настройки" }); Identify(discard, "settings-discard", "Отменить изменения");
         discard.Click += (_, _) => Build(); Grid.SetColumn(discard, 1); footer.Children.Add(discard);
-        save = new Button { Content = "Сохранить", Style = (Style)FindResource("PrimaryButton"), MinWidth = 128 }; Identify(save, "settings-save", "Сохранить настройки");
+        save = Ui.Localize(new Button { Content = "Сохранить", Style = (Style)FindResource("PrimaryButton"), MinWidth = 128 }); Identify(save, "settings-save", "Сохранить настройки");
         save.Click += async (_, _) => await SaveAsync(); Grid.SetColumn(save, 2); footer.Children.Add(save);
         var footerBorder = new Border { Child = footer, BorderThickness = new(0, 1, 0, 0), Padding = new(0, 0, 0, 2) };
         footerBorder.SetResourceReference(Border.BorderBrushProperty, "BorderBrush"); Grid.SetRow(footerBorder, 3); root.Children.Add(footerBorder);
@@ -88,7 +88,7 @@ public sealed partial class SettingsView : UserControl
         try { HasUnsavedChanges = ReadSettings() != vm.Settings || keyDrafts.Values.Any(k => k.Length > 0) || removedKeys.Count > 0; }
         catch (UserFacingException) { HasUnsavedChanges = true; }
         feedback.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush");
-        feedback.Text = HasUnsavedChanges ? "Есть несохранённые изменения" : "Все изменения сохранены";
+        Ui.SetText(feedback, HasUnsavedChanges ? "Есть несохранённые изменения" : "Все изменения сохранены");
         UpdateActions();
         foreach (var connection in connections) connection.InvalidateResult();
     }
@@ -108,25 +108,25 @@ public sealed partial class SettingsView : UserControl
         try
         {
             var next = ReadSettings(true); ValidateDraft(next);
-            saving = true; UpdateActions(); save.Content = "Сохранение…";
+            saving = true; UpdateActions(); Ui.SetContent(save, "Сохранение…");
             await vm.SaveSettingsAsync(next, null, false);
             foreach (var name in keyDrafts.Keys.Concat(removedKeys).Distinct().ToArray())
                 vm.UpdateProviderCredential(name, keyDrafts.GetValueOrDefault(name, ""), removedKeys.Contains(name));
             keyDrafts.Clear(); removedKeys.Clear();
             foreach (var connection in connections) connection.RefreshKey();
             HasUnsavedChanges = false; feedback.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush");
-            feedback.Text = vm.Status == "Настройки сохранены." ? "Сохранено · настройки уже применены" : vm.Status;
-            if (vm.Status.StartsWith("Сочетания заняты", StringComparison.Ordinal)) feedback.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush");
+            Ui.SetText(feedback, vm.Status.Key == "Настройки сохранены." ? new UiMessage("Сохранено · настройки уже применены") : vm.Status);
+            if (vm.Status.Key.StartsWith("Сочетания заняты", StringComparison.Ordinal)) feedback.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush");
             return true;
         }
         catch (Exception error) { ShowError(error); return false; }
-        finally { saving = false; save.Content = "Сохранить"; UpdateActions(); }
+        finally { saving = false; Ui.SetContent(save, "Сохранить"); UpdateActions(); }
     }
 
     private void ShowError(Exception error)
     {
         feedback.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush");
-        feedback.Text = error is UserFacingException ? error.Message : "Не удалось выполнить действие. Проверьте подключение и доступ к папке данных.";
+        Ui.Error(feedback, error, "Не удалось выполнить действие. Проверьте подключение и доступ к папке данных.");
     }
 
     private void Invalid(FrameworkElement control, string message)
@@ -186,6 +186,7 @@ public sealed partial class SettingsView : UserControl
         }
         return ReadConnectionSettings() with
         {
+            InterfaceLanguage = C("interfaceLanguage"),
             OcrEngine = C("engine"), OcrLanguage = C("ocr"), OcrUseGpu = F("gpu"), GroupParagraphs = F("paragraphs"), MonitorIndex = int.Parse(C("monitor"), CultureInfo.InvariantCulture), MonitoringIntervalMs = (int)(V("interval") * 1000),
             OverlayMode = Enum.Parse<OverlayMode>(C("overlay")), OverlayFontSize = V("font"), OverlayOpacity = V("opacity") / 100, ClickThrough = F("clickThrough"), MatchSourceTypography = F("typography"), SampleOverlayBackground = F("background"), FreezeImage = F("freeze"),
             EnableOnlineDictionary = F("online"), SaveWordScreenshots = F("screenshots"), SaveWordAudio = F("audio"), AutoExplainWords = F("autoExplain"), SpeechVoice = C("voice"), AnkiEndpoint = T("ankiEndpoint"), AnkiDeck = T("ankiDeck"),
@@ -197,7 +198,7 @@ public sealed partial class SettingsView : UserControl
 
     private StackPanel Page(string id) { buildingPage = id; return pages[id]; }
     private TControl Track<TControl>(TControl control, string id, string name) where TControl : FrameworkElement { Identify(control, id, name); owners[control] = buildingPage; return control; }
-    private static void Identify(DependencyObject control, string id, string name) { AutomationProperties.SetAutomationId(control, id); AutomationProperties.SetName(control, name); }
+    private static void Identify(DependencyObject control, string id, string name) { AutomationProperties.SetAutomationId(control, id); Ui.Set(control, AutomationProperties.NameProperty, new(name)); }
     private TextBox Field(Panel parent, string id, string label, string value, string? hint = null, string prefix = "")
     {
         var box = Text(parent, label, value); Track(box, prefix + id, label);
@@ -208,13 +209,13 @@ public sealed partial class SettingsView : UserControl
     private ComboBox Choice(Panel parent, string id, string label, IEnumerable<LanguageChoice> items, string selected)
     {
         Label(parent, label); var values = items.ToList(); if (!values.Any(i => i.Code == selected)) values.Add(new(selected, selected));
-        var box = new ComboBox { ItemsSource = values, DisplayMemberPath = "Name", SelectedValuePath = "Code", SelectedValue = selected, Margin = new(0, 0, 0, 12) };
+        var box = new ComboBox { ItemsSource = values, SelectedValuePath = "Code", SelectedValue = selected, Margin = new(0, 0, 0, 12) };
         choices[id] = Track(box, id, label); box.SelectionChanged += (_, _) => Changed(); parent.Children.Add(box); return box;
     }
     private CheckBox Toggle(Panel parent, string id, string title, string hint, bool value, string prefix = "")
     {
         var row = new Grid { Margin = new(0, 8, 0, 8) }; row.ColumnDefinitions.Add(new()); row.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
-        var copy = new StackPanel { Margin = new(0, 0, 20, 0), VerticalAlignment = VerticalAlignment.Center }; copy.Children.Add(new TextBlock { Text = title, FontWeight = FontWeights.Medium });
+        var copy = new StackPanel { Margin = new(0, 0, 20, 0), VerticalAlignment = VerticalAlignment.Center }; copy.Children.Add(Ui.Localize(new TextBlock { Text = title, FontWeight = FontWeights.Medium }));
         if (hint.Length > 0) { var help = Muted(hint, new(0, 3, 0, 0)); help.FontSize = 12; copy.Children.Add(help); } row.Children.Add(copy);
         var box = new CheckBox { IsChecked = value, Style = (Style)FindResource("SettingsSwitch"), VerticalAlignment = VerticalAlignment.Center };
         Track(box, prefix + id, title); if (flags.TryGetValue(id, out var original)) box.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckBox.IsChecked)) { Source = original, Mode = BindingMode.TwoWay }); else flags[id] = box;
@@ -223,23 +224,23 @@ public sealed partial class SettingsView : UserControl
     private Slider Range(Panel parent, string id, string title, double value, double minimum, double maximum, double step, string suffix)
     {
         var header = new DockPanel { Margin = new(0, 12, 0, 6) }; var number = new TextBlock { FontWeight = FontWeights.SemiBold }; number.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush");
-        DockPanel.SetDock(number, Dock.Right); header.Children.Add(number); header.Children.Add(new TextBlock { Text = title }); parent.Children.Add(header);
+        DockPanel.SetDock(number, Dock.Right); header.Children.Add(number); header.Children.Add(Ui.Text(title)); parent.Children.Add(header);
         var slider = new Slider { Minimum = minimum, Maximum = maximum, Value = value, TickFrequency = step, IsSnapToTickEnabled = true, SmallChange = step, LargeChange = step * 5, Style = (Style)FindResource("SettingsSlider"), Margin = new(0, 0, 0, 10) };
-        void Update() => number.Text = slider.Value.ToString("0.##", CultureInfo.CurrentCulture) + suffix;
+        void Update() => Ui.SetText(number, L.M("{0:0.##}{1}", slider.Value, new UiMessage(suffix)));
         sliders[id] = Track(slider, id, title); slider.ValueChanged += (_, _) => { Update(); Changed(); }; Update(); parent.Children.Add(slider); return slider;
     }
     private StackPanel Advanced(Panel parent, string title)
     {
         var body = new StackPanel { Margin = new(0, 10, 0, 2) };
-        parent.Children.Add(new Expander { Header = title, Content = body, Style = (Style)FindResource("SettingsExpander") }); return body;
+        parent.Children.Add(Ui.Localize(new Expander { Header = title, Content = body, Style = (Style)FindResource("SettingsExpander") })); return body;
     }
-    internal static TextBlock Muted(string text, Thickness? margin = null) { var block = new TextBlock { Text = text, Margin = margin ?? new Thickness(0, 0, 0, 12) }; block.SetResourceReference(StyleProperty, "Muted"); return block; }
+    internal static TextBlock Muted(UiMessage text, Thickness? margin = null) { var block = Ui.Text(text); block.Margin = margin ?? new Thickness(0, 0, 0, 12); block.SetResourceReference(StyleProperty, "Muted"); return block; }
     internal static StackPanel Section(Panel root, string title, string description)
     {
         var panel = new StackPanel(); var border = new Border { Child = panel, Padding = new(18), Margin = new(0, 0, 0, 16) }; border.SetResourceReference(StyleProperty, "Card"); root.Children.Add(border);
-        panel.Children.Add(new TextBlock { Text = title, FontSize = 18, FontWeight = FontWeights.SemiBold, Margin = new(0, 0, 0, 6) }); if (description.Length > 0) panel.Children.Add(Muted(description)); return panel;
+        panel.Children.Add(Ui.Localize(new TextBlock { Text = title, FontSize = 18, FontWeight = FontWeights.SemiBold, Margin = new(0, 0, 0, 6) })); if (description.Length > 0) panel.Children.Add(Muted(description)); return panel;
     }
     internal static void Label(Panel parent, string text) { var label = Muted(text, new(0, 6, 0, 7)); label.FontSize = 12; parent.Children.Add(label); }
-    internal static TextBox Text(Panel parent, string label, string value) { Label(parent, label); var box = new TextBox { Text = value, Margin = new(0, 0, 0, 12) }; AutomationProperties.SetName(box, label); parent.Children.Add(box); return box; }
-    internal static CheckBox Check(Panel parent, string label, bool value) { var box = new CheckBox { Content = new TextBlock { Text = label, TextWrapping = TextWrapping.Wrap }, IsChecked = value }; parent.Children.Add(box); return box; }
+    internal static TextBox Text(Panel parent, string label, string value) { Label(parent, label); var box = new TextBox { Text = value, Margin = new(0, 0, 0, 12) }; Ui.Set(box, AutomationProperties.NameProperty, new(label)); parent.Children.Add(box); return box; }
+    internal static CheckBox Check(Panel parent, string label, bool value) { var box = new CheckBox { Content = Ui.Localize(new TextBlock { Text = label, TextWrapping = TextWrapping.Wrap }), IsChecked = value }; parent.Children.Add(box); return box; }
 }

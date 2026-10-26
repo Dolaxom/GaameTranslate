@@ -1,1 +1,1 @@
-<Project Sdk="Microsoft.NET.Sdk" />
+<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><EmbeddedResource Include="UiStrings.json" /></ItemGroup></Project>

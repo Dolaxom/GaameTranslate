@@ -16,7 +16,7 @@ public sealed class GlobalHotkeys : IDisposable
         if (parts.Length < 2) throw new UserFacingException("A shortcut needs Ctrl, Alt, Shift or Win plus a letter, number or function key.");
         uint modifiers = 0;
         foreach (var part in parts[..^1]) modifiers |= part.ToLowerInvariant() switch
-        { "ctrl" => 2u, "shift" => 4u, "alt" => 1u, "win" => 8u, _ => throw new UserFacingException($"Unknown shortcut modifier '{part}'.") };
+        { "ctrl" => 2u, "shift" => 4u, "alt" => 1u, "win" => 8u, _ => throw new UserFacingException(L.M("Unknown shortcut modifier '{0}'.", part)) };
         if (!Enum.TryParse<Key>(parts[^1].Length == 1 && char.IsDigit(parts[^1][0]) ? "D" + parts[^1] : parts[^1], true, out var key)
             || !((key >= Key.A && key <= Key.Z) || (key >= Key.D0 && key <= Key.D9) || (key >= Key.F1 && key <= Key.F24)))
             throw new UserFacingException("Use a letter, number or F1–F24 as the shortcut key.");

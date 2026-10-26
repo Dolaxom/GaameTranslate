@@ -21,6 +21,7 @@ internal static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        UiText.SetLanguage("ru");
         var output = Path.GetFullPath(args.FirstOrDefault() ?? "artifacts/verification"); Directory.CreateDirectory(output);
         var application = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         application.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/GaameTranslate;component/Theme.xaml") });
@@ -28,7 +29,7 @@ internal static class Program
         var code = 1;
         application.Startup += async (_, _) =>
         {
-            try { if (args.Contains("--lookup-fixture")) await WordLookupVerification.ShowFixtureAsync(); else if (args.Contains("--lookup")) passed.AddRange(await WordLookupVerification.RunAsync(output, args.Contains("--live"), args.Contains("--real-ocr"), args.Contains("--warm-ocr"))); else if (args.Contains("--vocabulary")) passed.AddRange(await VocabularyVerification.RunAsync(output)); else if (args.Contains("--settings")) passed.AddRange(await SettingsVerification.RunAsync(output)); else if (args.Contains("--quality")) await ScreenQualityVerification.RunAsync(output, args.Contains("--live"), args.SkipWhile(a => a != "--images").Skip(1).ToArray()); else await VerifyAsync(output); code = 0; }
+            try { if (args.Contains("--localization")) passed.AddRange(await LocalizationVerification.RunAsync(output)); else if (args.Contains("--lookup-fixture")) await WordLookupVerification.ShowFixtureAsync(); else if (args.Contains("--lookup")) passed.AddRange(await WordLookupVerification.RunAsync(output, args.Contains("--live"), args.Contains("--real-ocr"), args.Contains("--warm-ocr"))); else if (args.Contains("--vocabulary")) passed.AddRange(await VocabularyVerification.RunAsync(output)); else if (args.Contains("--settings")) passed.AddRange(await SettingsVerification.RunAsync(output)); else if (args.Contains("--quality")) await ScreenQualityVerification.RunAsync(output, args.Contains("--live"), args.SkipWhile(a => a != "--images").Skip(1).ToArray()); else await VerifyAsync(output); code = 0; }
             catch (Exception e) { Console.Error.WriteLine(e); await File.WriteAllTextAsync(Path.Combine(output, "failure.txt"), e.ToString()); }
             finally { await File.WriteAllTextAsync(Path.Combine(output, "results.json"), JsonSerializer.Serialize(new { passed, exitCode = code, translation = args.Contains("--lookup-fixture") ? "Desktop text fixture only. No API used by this fixture process." : args.Contains("--lookup") && args.Contains("--live") ? "Live local LibreTranslate and Ollama; see live-first-word.json for OCR mode and timings, and live-complete.json." : args.Contains("--quality") ? args.Contains("--live") ? "Live Ollama models. See live-translation.json." : "OCR only. No translation API exercised." : "HTTP test double. No live translation API exercised." }, new JsonSerializerOptions { WriteIndented = true })); application.Shutdown(code); }
         };
@@ -86,7 +87,7 @@ internal static class Program
         await vm.RunCaptureAsync("Repeat");
         var profilePreferences = vm.SettingsForSession(vm.LastSession!);
         Check(profilePreferences.OverlayMode == OverlayMode.SidePanel && profilePreferences.OverlayFontSize == 27 && vm.Settings.OverlayMode == OverlayMode.Floating && !profilePreferences.SaveWordScreenshots, "Foreground game profile reaches overlay without changing global preferences or privacy");
-        Check(System.Windows.Application.Current.Windows.Cast<Window>().Any(w => w.IsVisible && w.Title == "GaameTranslate · translation" && w.Width == 390), "Game profile selects the actual side panel window");
+        Check(System.Windows.Application.Current.Windows.Cast<Window>().Any(w => w.IsVisible && w.Title == UiText.Get("GaameTranslate · translation") && w.Width == 390), "Game profile selects the actual side panel window");
         manager.Close(); await vm.SaveSettingsAsync(vm.Settings with { SaveWordScreenshots = true, SaveWordAudio = true }, null, false);
         var currentSession = vm.LastSession!;
         var popup = new WordLookupWindow(vm, "traveler", currentSession, currentSession.Blocks[0], new("traveler", "A person who travels.", "Native fixture") { Translation = "путник" });

@@ -100,3 +100,8 @@ The 67 unit tests, 34 settings checks and 31 general Windows integration checks 
 Add `--live` to exercise the actual local LibreTranslate and Ollama. The default OCR in this mode is explicitly a fixture. Add `--real-ocr` to use GDI capture and PP-OCRv6 Medium on a test window, positioned under the existing pointer without injecting mouse or keyboard input. Add `--warm-ocr` to complete the same model preparation used at startup. Results identify the OCR mode and write capture/OCR, first-word and full-result timings to JSON. Keep the pointer still during the real OCR fixture. These are repeatable fixture measurements, not a guarantee of latency for arbitrary games.
 
 Observed on the local setup: cold capture/OCR ~1.81 s and first word ~0.19 s later; after model preparation, capture/OCR ~0.82 s and first word ~0.17 s later (~0.99 s total). In both cases the first word was usable while sentence and assistant work remained pending. Warm preparation took ~0.48 s outside the first lookup. Model/server warmth, scene and hardware affect these numbers. This is a direct capture pipeline test; automated desktop hotkey input was not completed because the test-window app approval timed out.
+
+
+## Russian and English interface 0.3.0
+
+Run the verifier with --localization to check all six pages in both languages, live switching in existing card and dictionary windows, parameterized errors/statuses, draft preservation, vocabulary text and selection, saved language preferences, word-cache retention, screen overlay controls and resource coverage. Results and PNGs are in artifacts/localization. The locale suite has 25 checks; the unit suite has 75 tests. See docs/LOCALIZATION.md for adding future UI text.

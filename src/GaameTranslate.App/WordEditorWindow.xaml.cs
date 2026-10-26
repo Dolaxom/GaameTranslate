@@ -25,7 +25,7 @@ public partial class WordEditorWindow : Window
         OriginalContext.Text = entry?.Context ?? ""; TranslatedContext.Text = entry?.TranslatedContext ?? ""; Notes.Text = entry?.Notes ?? ""; Tags.Text = entry?.Tags ?? "";
         Field("phonetic", "Произношение", entry?.Phonetic); Field("grammar", "Часть речи", entry?.PartOfSpeech); Field("definition", "Определение", entry?.Definition, true); Field("examples", "Примеры", entry?.Examples, true); Field("explanation", "Объяснение", entry?.Explanation, true);
         ContextSection.IsExpanded = entry is not null && (!string.IsNullOrWhiteSpace(entry.Context) || !string.IsNullOrWhiteSpace(entry.TranslatedContext));
-        if (entry is not null) { Title = Heading.Text = "Редактировать карточку"; Save.Content = "Сохранить изменения"; }
+        if (entry is not null) { Ui.Set(this, Window.TitleProperty, "Редактировать карточку"); Ui.SetText(Heading, "Редактировать карточку"); Ui.SetContent(Save, "Сохранить изменения"); }
         MaxHeight = Math.Max(MinHeight, SystemParameters.WorkArea.Height - 30); MaxWidth = Math.Max(MinWidth, SystemParameters.WorkArea.Width - 30);
         Loaded += (_, _) => { Word.Focus(); Word.CaretIndex = Word.Text.Length; };
         SourceInitialized += (_, _) => NativeMethods.StyleWindow(new WindowInteropHelper(this).Handle, !vm.Settings.LightTheme);
@@ -36,15 +36,15 @@ public partial class WordEditorWindow : Window
     private static LanguageChoice[] Choices(string code) => Languages.Translation.Concat(code is not ("" or "auto") && Languages.Translation.All(l => l.Code != code) ? [new LanguageChoice(code, code)] : Array.Empty<LanguageChoice>()).ToArray();
     private void Field(string id, string label, string? text, bool multiline = false)
     {
-        ExtraFields.Children.Add(new TextBlock { Text = label, Style = (Style)FindResource("FieldLabel"), Margin = new(0, 12, 0, 7) });
+        ExtraFields.Children.Add(Ui.Localize(new TextBlock { Text = label, Style = (Style)FindResource("FieldLabel"), Margin = new(0, 12, 0, 7) }));
         var input = new TextBox { Text = text ?? "", AcceptsReturn = multiline, TextWrapping = multiline ? TextWrapping.Wrap : TextWrapping.NoWrap, MinHeight = multiline ? 80 : 40, MaxHeight = multiline ? 200 : double.PositiveInfinity, VerticalContentAlignment = multiline ? VerticalAlignment.Top : VerticalAlignment.Center, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        AutomationProperties.SetName(input, label); AutomationProperties.SetAutomationId(input, "word-editor-" + id); extras[id] = input; ExtraFields.Children.Add(input);
+        Ui.Set(input, AutomationProperties.NameProperty, new(label)); AutomationProperties.SetAutomationId(input, "word-editor-" + id); extras[id] = input; ExtraFields.Children.Add(input);
     }
     private void Word_Changed(object sender, TextChangedEventArgs e) { if (Feedback is not null) ClearFeedback(); }
     private void ClearFeedback() { Feedback.Visibility = Visibility.Collapsed; Word.SetResourceReference(Control.BorderBrushProperty, "BorderBrush"); Meaning.SetResourceReference(Control.BorderBrushProperty, "BorderBrush"); Source.SetResourceReference(Control.BorderBrushProperty, "BorderBrush"); Target.SetResourceReference(Control.BorderBrushProperty, "BorderBrush"); }
     private bool Invalid(Control field, string message)
     {
-        Feedback.Text = message; Feedback.Visibility = Visibility.Visible; field.SetResourceReference(Control.BorderBrushProperty, "SettingsErrorBrush"); field.BringIntoView(); field.Focus(); return false;
+        Ui.SetText(Feedback, message); Feedback.Visibility = Visibility.Visible; field.SetResourceReference(Control.BorderBrushProperty, "SettingsErrorBrush"); field.BringIntoView(); field.Focus(); return false;
     }
     private bool Validate()
     {
@@ -64,7 +64,7 @@ public partial class WordEditorWindow : Window
             Context = OriginalContext.Text, TranslatedContext = TranslatedContext.Text, Notes = Notes.Text, Tags = Tags.Text,
             Phonetic = extras["phonetic"].Text, PartOfSpeech = extras["grammar"].Text, Definition = extras["definition"].Text, Examples = extras["examples"].Text, Explanation = extras["explanation"].Text
         };
-        saving = true; Form.IsEnabled = false; Save.IsEnabled = Cancel.IsEnabled = false; Save.Content = "Сохранение…";
+        saving = true; Form.IsEnabled = false; Save.IsEnabled = Cancel.IsEnabled = false; Ui.SetContent(Save, "Сохранение…");
         try
         {
             if (original is null) SavedEntry = await vm.SaveWordAsync(next); else { await vm.UpdateWordAsync(next); SavedEntry = next; }
@@ -72,12 +72,12 @@ public partial class WordEditorWindow : Window
         }
         catch (Exception error)
         {
-            Feedback.Text = error is UserFacingException ? error.Message == "That word is already saved for this language pair."
-                ? "Такая карточка уже есть для этих языков. Измените слово или отредактируйте существующую карточку." : error.Message
-                : "Не удалось сохранить карточку. Проверьте свободное место и попробуйте ещё раз.";
+            Ui.SetText(Feedback, error is UserFacingException known ? known.LocalizedMessage.Key == "That word is already saved for this language pair."
+                ? new UiMessage("Такая карточка уже есть для этих языков. Измените слово или отредактируйте существующую карточку.") : known.LocalizedMessage
+                : new UiMessage("Не удалось сохранить карточку. Проверьте свободное место и попробуйте ещё раз."));
             Feedback.Visibility = Visibility.Visible;
         }
-        finally { saving = false; Form.IsEnabled = true; Save.IsEnabled = Cancel.IsEnabled = true; Save.Content = original is null ? "Добавить слово" : "Сохранить изменения"; }
+        finally { saving = false; Form.IsEnabled = true; Save.IsEnabled = Cancel.IsEnabled = true; Ui.SetContent(Save, original is null ? "Добавить слово" : "Сохранить изменения"); }
     }
     private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
 }
