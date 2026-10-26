@@ -86,3 +86,9 @@ Use an isolated data directory. Prepare an actual configured provider before eva
 | Exit during selection/OCR/network call | Pipeline cancels, no stranded overlay/tray icon or registered shortcut |
 
 For soak testing, repeat 100 captures and track process working set, private bytes, USER/GDI handles and idle CPU using Task Manager/Process Explorer. The app performs no capture at idle unless explicit region monitoring is enabled. Opt-in XInput polling checks button state without capture. Stage timings are displayed on Translate and in bounded diagnostics without recognized text or credentials.
+
+## Vocabulary and card editor 0.2.2
+
+Run `dotnet run --project tests/GaameTranslate.Windows.Verify -c Release --no-build -- artifacts/vocabulary-ux --vocabulary` after building. This uses a separate temporary data folder and real WPF controls, without contacting a translation API. The 21 checks cover empty and filtered collections; search, language and date filters; validation; explicit card languages; save/cancel; duplicate rename; selection retention; preservation of existing media and review data; the smallest supported windows; and light theme. PNGs and `results.json` are written to the output folder.
+
+The 67 unit tests, 34 settings checks and 31 general Windows integration checks also passed for this change. The general suite uses an explicitly labelled HTTP test double, real Windows OCR/capture/speech/DPAPI, and isolated test data. Native app inspection covers opening the card form and its supplementary sections and the files/Anki menu.

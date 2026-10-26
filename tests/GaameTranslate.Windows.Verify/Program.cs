@@ -28,7 +28,7 @@ internal static class Program
         var code = 1;
         application.Startup += async (_, _) =>
         {
-            try { if (args.Contains("--settings")) passed.AddRange(await SettingsVerification.RunAsync(output)); else if (args.Contains("--quality")) await ScreenQualityVerification.RunAsync(output, args.Contains("--live"), args.SkipWhile(a => a != "--images").Skip(1).ToArray()); else await VerifyAsync(output); code = 0; }
+            try { if (args.Contains("--vocabulary")) passed.AddRange(await VocabularyVerification.RunAsync(output)); else if (args.Contains("--settings")) passed.AddRange(await SettingsVerification.RunAsync(output)); else if (args.Contains("--quality")) await ScreenQualityVerification.RunAsync(output, args.Contains("--live"), args.SkipWhile(a => a != "--images").Skip(1).ToArray()); else await VerifyAsync(output); code = 0; }
             catch (Exception e) { Console.Error.WriteLine(e); await File.WriteAllTextAsync(Path.Combine(output, "failure.txt"), e.ToString()); }
             finally { await File.WriteAllTextAsync(Path.Combine(output, "results.json"), JsonSerializer.Serialize(new { passed, exitCode = code, translation = args.Contains("--quality") ? args.Contains("--live") ? "Live Ollama models. See live-translation.json." : "OCR only. No translation API exercised." : "HTTP test double. No live translation API exercised." }, new JsonSerializerOptions { WriteIndented = true })); application.Shutdown(code); }
         };

@@ -92,8 +92,9 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     }
     public async Task RefreshAsync()
     {
-        var words = await Task.Run(() => database.GetWordsAsync(WordSearch)); Replace(Words, words);
-        var all = await Task.Run(() => database.GetWordsAsync()); WordCount = all.Count; DueCount = all.Count(w => w.DueAt <= DateTimeOffset.UtcNow);
+        var selectedId = SelectedWord?.Id;
+        var all = await Task.Run(() => database.GetWordsAsync()); Replace(Words, all); SelectedWord = all.FirstOrDefault(w => w.Id == selectedId);
+        WordCount = all.Count; DueCount = all.Count(w => w.DueAt <= DateTimeOffset.UtcNow);
         Replace(RecentWords, all.Take(4));
         var history = await Task.Run(() => database.GetHistoryAsync(HistorySearch)); Replace(History, history); Replace(RecentHistory, (await Task.Run(() => database.GetHistoryAsync())).Take(3));
     }
@@ -292,9 +293,9 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
         var result = await cache.TranslateAsync(Provider(configuration), new([word], source, target, context), CacheIdentity(configuration), token);
         return result[0];
     }
-    public async Task<VocabularyEntry> SaveWordAsync(VocabularyEntry word) { var saved = await Task.Run(() => database.SaveWordAsync(word)); await RefreshAsync(); Status = saved.Encounters > 1 ? "Already saved. Encounter count updated." : "Added to your vocabulary."; return saved; }
-    public async Task UpdateWordAsync(VocabularyEntry word) { await Task.Run(() => database.UpdateWordAsync(word)); await RefreshAsync(); Status = "Word updated."; }
-    [RelayCommand] private async Task DeleteWordAsync() => await GuardAsync(async () => { if (SelectedWord is not { } word) return; await Task.Run(() => database.DeleteWordAsync(word.Id)); SelectedWord = null; await RefreshAsync(); Status = "Word deleted."; });
+    public async Task<VocabularyEntry> SaveWordAsync(VocabularyEntry word) { var saved = await Task.Run(() => database.SaveWordAsync(word)); await RefreshAsync(); Status = saved.Encounters > 1 ? "Слово уже есть в словаре. Перевод и счётчик встреч обновлены." : "Слово добавлено в словарь."; return saved; }
+    public async Task UpdateWordAsync(VocabularyEntry word) { await Task.Run(() => database.UpdateWordAsync(word)); await RefreshAsync(); Status = "Карточка обновлена."; }
+    [RelayCommand] private async Task DeleteWordAsync() => await GuardAsync(async () => { if (SelectedWord is not { } word) return; await Task.Run(() => database.DeleteWordAsync(word.Id)); SelectedWord = null; await RefreshAsync(); Status = "Карточка удалена из словаря."; });
     [RelayCommand] private async Task DeleteHistoryAsync() => await GuardAsync(async () => { if (SelectedHistory is not { } entry) return; await Task.Run(() => database.DeleteHistoryAsync(entry.Id)); SelectedHistory = null; await RefreshAsync(); Status = "History entry deleted."; });
     [RelayCommand]
     private async Task StartReviewAsync() => await GuardAsync(async () =>

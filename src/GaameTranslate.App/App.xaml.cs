@@ -70,8 +70,8 @@ public partial class App : System.Windows.Application
                 controller.SetEnabled(!recording && !shortcutsPaused && vm.Settings.ControllerEnabled);
             };
             vm.SettingsChanged += () => { RegisterHotkeys(); controller.SetEnabled(!shortcutsPaused && !vm.IsRecordingShortcut && vm.Settings.ControllerEnabled); ApplyTheme(vm.Settings.LightTheme); NativeMethods.StyleWindow(new WindowInteropHelper(main).EnsureHandle(), !vm.Settings.LightTheme); if (vm.LastSession is { CaptureType: not "Text" } last) overlays.Show(last); };
-            CreateTray(); RegisterHotkeys(); if (e.Args.Contains("--settings")) vm.PageIndex = 5;
-            if (!vm.Settings.StartMinimized || e.Args.Contains("--show") || e.Args.Contains("--settings")) main.Show();
+            CreateTray(); RegisterHotkeys(); if (e.Args.Contains("--settings")) vm.PageIndex = 5; else if (e.Args.Contains("--vocabulary")) vm.PageIndex = 2;
+            if (!vm.Settings.StartMinimized || e.Args.Contains("--show") || e.Args.Contains("--settings") || e.Args.Contains("--vocabulary")) main.Show();
             if (e.Args.Contains("--smoke-test"))
             {
                 // Real native OCR, GDI and DPAPI diagnostic. Does not contact translation services.
