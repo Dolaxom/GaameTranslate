@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">GaameTranslate — play, understand, remember</title>
+  <desc id="desc">An illustrated journey from game dialogue to a translation and a saved word.</desc>
+  <rect width="1200" height="300" rx="28" fill="#101318"/>
+  <circle cx="1090" cy="35" r="180" fill="#9de3cd" opacity=".05"/>
+  <circle cx="45" cy="300" r="140" fill="#9de3cd" opacity=".05"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <text x="56" y="62" fill="#9de3cd" font-size="14" letter-spacing="3">YOUR SCREEN. YOUR WORDS.</text>
+    <text x="56" y="110" fill="#eef1f4" font-size="34" font-weight="700">Stay in the story.</text>
+    <text x="56" y="146" fill="#a8b8c8" font-size="19">Let curiosity do the learning.</text>
+    <rect x="56" y="186" width="140" height="44" rx="12" fill="#9de3cd"/>
+    <text x="126" y="214" text-anchor="middle" fill="#10201e" font-size="16" font-weight="600">Alt + Q</text>
+    <text x="213" y="214" fill="#a8b8c8" font-size="16">Translate your screen</text>
+    <rect x="555" y="47" width="340" height="110" rx="18" fill="#1c222b" stroke="#34414c"/>
+    <text x="580" y="78" fill="#a8b8c8" font-size="12" letter-spacing="1">DISCOVER</text>
+    <text x="580" y="111" fill="#eef1f4" font-size="22">Your journey begins here.</text>
+    <path d="M725 164v29m-6-6 6 6 6-6" fill="none" stroke="#9de3cd" stroke-width="2"/>
+    <rect x="630" y="200" width="340" height="64" rx="16" fill="#1c222b" stroke="#9de3cd"/>
+    <text x="654" y="239" fill="#9de3cd" font-size="21" font-weight="600">journey</text>
+    <text x="773" y="239" fill="#eef1f4" font-size="18">путешествие</text>
+    <circle cx="1023" cy="229" r="23" fill="#9de3cd"/>
+    <path d="m1014 229 6 6 12-13" stroke="#10201e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="1000" y="276" fill="#a8b8c8" font-size="13">Keep it!</text>
+  </g>
+</svg>

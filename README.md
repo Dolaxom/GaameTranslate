@@ -1,101 +1,139 @@
+<div align="center">
+
 # GaameTranslate
 
-A Windows app for translating games and learning words as you play. Translate text on screen, look up a word under your cursor, and save it with context for later review.
+**Enjoy the game. Understand the dialogue. Keep the words you love.**
 
-Built with C#, .NET 10, and WPF. The interface supports **English and Russian**.
+A screen translator and vocabulary companion for Windows.
 
-## What it does
+Windows 11 · English / Русский · Local & cloud translation
 
-- **Screen translation** — select an area or translate the screen with an overlay. Automatically translate changes in a selected area.
-- **Word lookup** — get a word translation first, then load the surrounding sentence and optional AI explanations in the background.
-- **Personal vocabulary** — save words with context, notes, tags, and pronunciation. Review them with spaced repetition.
-- **Local dictionaries** — import Yomitan, DSL, StarDict, Kaikki, and CC-CEDICT dictionaries.
-- **Import and export** — use CSV, export to Anki, or sync through AnkiConnect.
-- **Game profiles** — keep different settings for different games.
+[Get started](#-your-first-translation) · [Take a look](#-a-little-tour) · [Choose a translator](#-choose-your-translator)
 
-![Vocabulary view](assets/screenshots/vocabulary.png)
+![Play, understand, remember](assets/readme-banner.svg)
 
-## Get started
+</div>
 
-Requires **Windows 11 x64**. Windowed or borderless games work best.
+## 👋 Meet your gaming companion
 
-1. Extract the app ZIP and run `GaameTranslate.exe`. Keep the extracted files together; the .NET runtime is included.
-2. Open **Settings → Translation** and choose a translation provider.
-3. Enter its connection details, select your languages, and click **Test connection**, then **Save**.
-4. Open a game and press **Alt+Q** to translate the screen or **Alt+W** to look up a word under the cursor.
+An unfamiliar word shouldn't interrupt a good story. Press **Alt+Q** to translate the screen, or point at a word and press **Alt+W** to explore it. Want to remember it? Save it with the sentence it came from and come back for a quick review later.
 
-To change the interface language, open **Settings → Application → Interface language**, choose **English** or **Русский**, and save. No restart is needed.
+![GaameTranslate home screen in English](assets/screenshots/home-en.png)
 
-The default provider is LibreTranslate at `http://127.0.0.1:5000`. It must be running separately, or you can select another provider.
+## 🚀 Your first translation
 
-## Default shortcuts
+1. **Unzip and open** `GaameTranslate.exe`. Keep the extracted files together — no separate .NET installation needed.
+2. **Pick your translator** in **Settings → Translation**. Enter its connection details and choose your languages.
+3. **Check connection → Save**, then open your game and try **Alt+Q**.
 
-| Shortcut | Action |
+That's it! Windowed or borderless games work best.
+
+> **Prefer Russian?** Go to **Settings → Application → Interface language** and choose **Русский**. You can switch back to English anytime, without restarting.
+>
+> **Using LibreTranslate?** The default address is `http://127.0.0.1:5000`. Start your server first, or choose another provider in Settings.
+
+## ✨ A little tour
+
+### A word, with the story around it
+
+Use **Alt+W** for a word under your cursor. The word translation arrives first; the surrounding sentence and optional AI explanation follow in the background. You can listen to pronunciation or save the word right from the popup.
+
+<img src="assets/screenshots/word-lookup-en.png" alt="Word lookup with a translation, sentence context, pronunciation and save actions" width="574">
+
+*Example entries show the English interface with Russian translations.*
+
+### Your own collection of discoveries
+
+Keep words, context, notes, and tags together. Search your collection, edit a card, or review words with spaced repetition. Take them with you using CSV, Anki export, or AnkiConnect sync.
+
+![Personal vocabulary with saved words and sentence context](assets/screenshots/vocabulary-en.png)
+
+<details>
+<summary><strong>Want to add a word yourself?</strong></summary>
+
+You only need a word and a translation. Add context and notes whenever you like.
+
+<img src="assets/screenshots/word-add-en.png" alt="Add word form with optional context, notes and dictionary details" width="580">
+
+</details>
+
+### Make it feel right for your games
+
+Choose your translator, adjust the overlay, set your shortcuts, and keep separate game profiles. You can also watch a selected screen area and translate its text as it changes.
+
+![Translation settings and provider selection](assets/screenshots/settings-en.png)
+
+## 🌍 Choose your translator
+
+Use a local model or connect a cloud service that works in your region.
+
+| Want to… | Try… |
 | --- | --- |
-| **Alt+Q** | Translate the screen; press again to close the overlay |
-| **Alt+W** | Look up the word under the cursor |
-| **Ctrl+Shift+T** | Select an area to translate |
-| **Ctrl+Shift+R** | Translate the last selected area again |
-| **Ctrl+Shift+O** | Show or hide the translation overlay |
-| **Ctrl+Shift+I** | Toggle clicking through the overlay |
-| **Escape** | Close the active translation window |
+| Run a local translation server | **LibreTranslate** |
+| Translate with local language models | **Ollama** or **LM Studio** through the OpenAI-compatible connector |
+| Connect Yandex services | **Yandex Translate** or **YandexGPT** |
+| Use another cloud provider | **GigaChat**, **Azure Translator**, **DeepL**, or an **OpenAI-compatible API** |
 
-Customize shortcuts in Settings. To fully quit the app, choose **Exit** from its system tray menu.
+Cloud services need their own API credentials and quota. An optional assistant for explanations is configured separately in **Settings → Dictionary**.
 
-## Translation providers
+<details>
+<summary><strong>Set up local models with Ollama — no Docker needed</strong></summary>
 
-Choose a provider that works in your region:
-
-| Provider | What you need |
-| --- | --- |
-| LibreTranslate | Server URL and an optional API key |
-| Ollama | Local server and a downloaded model |
-| OpenAI-compatible API | Server URL, model name, and API key when required; supports LM Studio |
-| Yandex Translate | Cloud API key or IAM token; folder ID when required |
-| YandexGPT | AI Studio credentials, folder ID, and model access |
-| GigaChat | Authorization key, OAuth scope, and model |
-| Azure Translator | API key and resource region |
-| DeepL Free / Pro | API key for the selected plan |
-
-Cloud providers may require a separate API account and quota. A consumer subscription does not necessarily include API access.
-
-An optional assistant can explain words in context. Configure it separately in **Settings → Dictionary**.
-
-### Run local models with Ollama
-
-From the project folder or extracted app folder, run in PowerShell:
+Run this in PowerShell from the project or extracted app folder:
 
 ```powershell
 ./scripts/Start-LocalModels.ps1 -Assistant
 ```
 
-This downloads portable Ollama, TranslateGemma 4B, and Qwen3 4B. Allow several gigabytes of disk space and download traffic. Docker is not required.
+The script downloads portable Ollama, TranslateGemma 4B, and Qwen3 4B. Allow several gigabytes for the download and models.
 
-In the app, select **Ollama** with URL `http://127.0.0.1:11434`. Use `translategemma:4b` for translation, or `qwen3:4b-instruct-2507-q4_K_M` for translation and dictionary explanations. Run the script again after restarting Windows to start the server.
+Select **Ollama** in Settings with URL `http://127.0.0.1:11434`:
 
-## OCR and privacy
+- Translation: `translategemma:4b` or `qwen3:4b-instruct-2507-q4_K_M`.
+- Dictionary explanations: `qwen3:4b-instruct-2507-q4_K_M`.
 
-Screen text recognition runs locally. Built-in PP-OCRv6 models support English, Japanese, and Chinese. Other explicitly selected languages use Windows OCR and may need the matching Windows language pack.
+Run the script again after restarting Windows to start the server. Models have their own licenses; translation quality and speed depend on your hardware and chosen model.
 
-Settings, vocabulary, and history are stored in `%LOCALAPPDATA%\GaameTranslate`. API keys are protected with Windows DPAPI. Vocabulary and media files are not encrypted. There is no telemetry.
+</details>
 
-When you request a cloud translation or explanation, the selected provider receives the recognized text and relevant context. Screenshots are not sent to translation APIs. Saving screenshots and audio with vocabulary cards is optional and off by default.
+## ⌨️ A few keys to remember
 
-Protected content and exclusive fullscreen games may prevent capture or overlays. The app does not inject code into games or read their memory.
+| Shortcut | What happens |
+| --- | --- |
+| **Alt+Q** | Translate the screen; press again to close the overlay |
+| **Alt+W** | Look up the word under your cursor |
+| **Ctrl+Shift+T** | Select an area to translate |
+| **Ctrl+Shift+R** | Translate that area again |
+| **Ctrl+Shift+O** | Show or hide the overlay |
+| **Ctrl+Shift+I** | Let clicks pass through the overlay |
+| **Escape** | Close the active translation window |
 
-## Build from source
+You can change shortcuts in Settings. To fully quit, choose **Exit** in the system tray menu.
 
-Install the **.NET 10 SDK** on Windows, then run:
+## 🔒 Your screen, your choice
+
+Text recognition runs on your PC. Built-in OCR supports English, Japanese, and Chinese; other explicitly selected languages use Windows OCR and may need a matching language pack.
+
+Your vocabulary and settings stay in `%LOCALAPPDATA%\GaameTranslate`. API keys use Windows DPAPI protection; vocabulary and media files aren't encrypted. There is no telemetry. Cloud translators receive recognized text and relevant context when you request a translation, not screenshots. Saving screenshots or audio with cards is optional and off by default.
+
+Protected content and exclusive fullscreen games may prevent capture or overlays. GaameTranslate doesn't inject code into games or read their memory.
+
+<details>
+<summary><strong>🛠️ Building from source</strong></summary>
+
+You'll need Windows and the **.NET 10 SDK**.
 
 ```powershell
 ./scripts/Build.ps1 -Configuration Release -NativeVerification
 ./scripts/Publish.ps1
 ```
 
-The runnable app is written to `artifacts/publish/win-x64`; the ZIP is created in `artifacts`.
+Find the app in `artifacts/publish/win-x64` and the ZIP in `artifacts`.
 
-See [testing notes](docs/TESTING.md), [release notes](docs/RELEASE-0.3.0.md), and the [localization guide](docs/LOCALIZATION.md) for more detail.
+More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.3.0.md) · [localization](docs/LOCALIZATION.md).
 
-## License
+</details>
 
-See [LICENSE](LICENSE). Downloaded models and imported dictionaries have their own licenses.
+---
+
+Built with C#, .NET 10, and WPF. See [LICENSE](LICENSE) for the app license. Imported dictionaries and downloaded models have their own licenses.
