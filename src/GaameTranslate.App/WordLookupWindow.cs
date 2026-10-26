@@ -23,6 +23,12 @@ public sealed class WordLookupWindow : Window
         var grammar = SettingsView.Muted("", new(0, 6, 0, 10)); root.Children.Add(grammar);
         var meaning = new TextBlock { FontSize = 22, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, Margin = new(0, 4, 0, 8) }; root.Children.Add(meaning); Identify(meaning, "lookup-translation"); AutomationProperties.SetLiveSetting(meaning, AutomationLiveSetting.Polite);
         var origin = SettingsView.Muted("", new(0, 0, 0, 8)); System.Windows.Data.BindingOperations.SetBinding(origin, TextBlock.TextProperty, Ui.Binding(new Binding(nameof(model.TranslationSource)))); root.Children.Add(origin);
+        if (model.DictionaryNotice.Length > 0)
+        {
+            var notice = SettingsView.Muted(model.DictionaryNotice, new(0, 8, 0, 12)); Identify(notice, "lookup-dictionary-notice"); root.Children.Add(notice);
+            var setup = Ui.Localize(new Button { Content = "Set up translation", HorizontalAlignment = HorizontalAlignment.Left, Margin = new(0, 0, 0, 12) });
+            setup.Click += (_, _) => { vm.OpenSettingsCommand.Execute(null); Close(); }; root.Children.Add(setup);
+        }
         var basic = SettingsView.Muted("", new(0, 0, 0, 8)); root.Children.Add(basic);
         var wordState = SettingsView.Muted("", new(0, 0, 0, 8)); root.Children.Add(wordState); Identify(wordState, "lookup-word-status");
         var explanationState = SettingsView.Muted("", new(0, 0, 0, 12)); root.Children.Add(explanationState); Identify(explanationState, "lookup-explanation-status");

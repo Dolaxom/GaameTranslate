@@ -33,6 +33,7 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
     public IReadOnlyList<DictionaryArticle> Articles => (generated is null ? Enumerable.Empty<DictionaryArticle>() : [generated]).Concat(local).Concat(online).ToArray();
     public bool CanSave => !string.IsNullOrWhiteSpace(Translation);
     public bool HasInitialArticle { get; }
+    public UiMessage DictionaryNotice => vm.UsesBuiltInDictionary(preferences) ? ProviderCatalog.DictionaryShortWarning : "";
     public event Action? ArticlesChanged;
     public WordLookupViewModel(MainViewModel model, string selected, TranslationSession origin, TranslatedBlock original, DictionaryArticle? knownArticle = null)
     {
@@ -66,7 +67,7 @@ public sealed partial class WordLookupViewModel : ObservableObject, IDisposable
                 var quick = await vm.LookupWordAsync(selected, session.SourceLanguage, session.TargetLanguage, preferences, token);
                 if (!Current()) return;
                 BasicTranslation = quick.Item.Text; Translation = quick.Item.Text; ResultLanguage = quick.Item.SourceLanguage;
-                TranslationSource = quick.Saved ? "Сохранённый перевод" : L.M("Быстрый перевод · {0}", preferences.Provider);
+                TranslationSource = quick.Saved ? "Сохранённый перевод" : quick.Item.IsDictionaryTranslation ? new UiMessage(ProviderCatalog.BuiltInDictionary) : L.M("Быстрый перевод · {0}", preferences.Provider);
                 vm.RecordWordLookupReady(session, started.Elapsed.TotalMilliseconds);
                 WordStatus = "";
             }

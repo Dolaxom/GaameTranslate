@@ -52,7 +52,9 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public ISpeechService Speech => speech;
     public LocalMediaStore Media => media;
     public GameProfileStore Profiles { get; } = new(Path.GetDirectoryName(media.DirectoryPath)!);
-    public bool NeedsProviderSetup => ProviderCatalog.RequiresKey(Settings) && !HasKey(Settings.Provider);
+    public bool UsesBuiltInDictionary(AppSettings configuration) => configuration.Provider == ProviderCatalog.BuiltInDictionary || ProviderCatalog.RequiresKey(configuration) && !HasKey(configuration.Provider);
+    public bool NeedsProviderSetup => UsesBuiltInDictionary(Settings);
+    public string EffectiveProviderName(AppSettings configuration) => UsesBuiltInDictionary(configuration) ? ProviderCatalog.BuiltInDictionary : configuration.Provider;
     public UiMessage LanguagePairLabel => L.M("{0} → {1}", new UiMessage(Settings.SourceLanguage == "auto" ? "Auto" : Languages.Translation.FirstOrDefault(l => l.Code == Settings.SourceLanguage)?.Name ?? Settings.SourceLanguage), new UiMessage(Languages.Translation.FirstOrDefault(l => l.Code == Settings.TargetLanguage)?.Name ?? Settings.TargetLanguage));
     public string SourceLanguage
     {
@@ -90,7 +92,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public async Task InitializeAsync()
     {
         await Task.Run(() => database.InitializeAsync()); Settings = await settingsStore.LoadAsync(); await RefreshAsync();
-        if (NeedsProviderSetup) Status = "Set up your translation provider in Settings. Windows OCR runs entirely on your PC.";
+        if (NeedsProviderSetup) Status = ProviderCatalog.DictionaryShortWarning;
     }
     public async Task RefreshAsync()
     {
@@ -141,7 +143,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public void StopMonitoring() { monitoring?.Cancel(); if (IsMonitoring) operation?.Cancel(); IsMonitoring = false; }
     [RelayCommand] private void ToggleOverlay() => ToggleOverlayRequested?.Invoke();
     [RelayCommand] private void ToggleInteraction() => InteractionRequested?.Invoke();
-    [RelayCommand] private void OpenSettings() => PageIndex = 5;
+    [RelayCommand] private void OpenSettings() { PageIndex = 5; if (System.Windows.Application.Current is App app) app.ShowMain(); }
     [RelayCommand] private void OpenVocabulary() => PageIndex = 2;
     [RelayCommand]
     private async Task SwapLanguagesAsync() => await GuardAsync(async () =>
@@ -164,13 +166,13 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             var texts = SplitSentences ? TextProcessing.SplitSentences(InputText) : new[] { TextProcessing.Normalize(InputText) };
             var provider = Provider(configuration);
             var result = await cache.TranslateAsync(provider, new(texts, configuration.SourceLanguage, configuration.TargetLanguage, configuration.ContextHint), CacheIdentity(configuration), token);
-            token.ThrowIfCancellationRequested(); OutputText = string.Join(Environment.NewLine, result.Select(r => r.Text)); Status = "Translation ready.";
+            token.ThrowIfCancellationRequested(); OutputText = string.Join(Environment.NewLine, result.Select(r => r.Text)); Status = result.Any(r => r.IsDictionaryTranslation) ? ProviderCatalog.DictionaryShortWarning : "Translation ready.";
             var blocks = texts.Select((t, i) => new TranslatedBlock(new(i, t, new(0, 0, 0, 0), []), result[i].Text)).ToArray();
-            var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, new(), result[0].SourceLanguage, configuration.TargetLanguage, configuration.Provider, "Text", blocks, new(0, 0, 0, 0));
+            var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, new(), result[0].SourceLanguage, configuration.TargetLanguage, EffectiveProviderName(configuration), "Text", blocks, new(0, 0, 0, 0)) { IsDictionaryTranslation = result.Any(r => r.IsDictionaryTranslation) };
             LastSession = session; LastFrame = null; lastProfileSettings = null; if (Settings.SaveHistory) await Task.Run(() => database.AddHistoryAsync(session, Settings.HistoryLimit, token), token); await RefreshAsync();
         });
     });
-    private ITranslationProvider Provider(AppSettings? configuration = null) => new TranslationProvider(http, configuration ?? Settings, credentials);
+    private ITranslationProvider Provider(AppSettings? configuration = null) => UsesBuiltInDictionary(configuration ?? Settings) ? new BuiltInDictionaryProvider() : new TranslationProvider(http, configuration ?? Settings, credentials);
     private string CacheIdentity(AppSettings? configuration = null) => ProviderCatalog.Identity(configuration ?? Settings);
     private async Task ExecutePipelineAsync(Func<CancellationToken, Task> work)
     {
@@ -232,12 +234,12 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
             {
                 token.ThrowIfCancellationRequested();
                 // Open as soon as the word is recognized. The popup owns its cancellable, progressive requests.
-                var lookupSession = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, source, configuration.TargetLanguage, configuration.Provider, kind,
-                    document.Blocks.Select(b => new TranslatedBlock(b, "")).ToArray(), new(captureMs, ocrMs, 0, total.Elapsed.TotalMilliseconds));
+                var lookupSession = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, source, configuration.TargetLanguage, EffectiveProviderName(configuration), kind,
+                    document.Blocks.Select(b => new TranslatedBlock(b, "")).ToArray(), new(captureMs, ocrMs, 0, total.Elapsed.TotalMilliseconds)) { IsDictionaryTranslation = UsesBuiltInDictionary(configuration) };
                 LastSession = lookupSession; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = document.Text; OutputText = "";
                 PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Словарь открыт до перевода контекста", captureMs, ocrMs);
                 WordLookupRequested?.Invoke(selectedWord.Text, lookupSession, lookupSession.Blocks[0]);
-                Status = "Слово распознано · сначала быстрый перевод, затем контекст";
+                Status = lookupSession.IsDictionaryTranslation ? ProviderCatalog.DictionaryShortWarning : "Слово распознано · сначала быстрый перевод, затем контекст";
                 logger.LogInformation("Word lookup opened after capture {CaptureMs:0} ms and OCR {OcrMs:0} ms", captureMs, ocrMs);
                 return;
             }
@@ -246,12 +248,13 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
                 string.Join("\n", new[] { configuration.ContextHint, document.Text[..Math.Min(document.Text.Length, 10000)] }).Trim()), CacheIdentity(configuration), token);
             var translationMs = clock.Elapsed.TotalMilliseconds; token.ThrowIfCancellationRequested();
             var session = new TranslationSession(Guid.NewGuid(), DateTimeOffset.UtcNow, frame.Bounds, result.FirstOrDefault()?.SourceLanguage ?? document.Language,
-                configuration.TargetLanguage, configuration.Provider, kind, document.Blocks.Select((b, i) => new TranslatedBlock(b, result[i].Text) { BackgroundColor = configuration.SampleOverlayBackground ? ScreenAnalysis.SampleBackground(frame, b.Bounds) : null }).ToArray(), new(captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds));
+                configuration.TargetLanguage, EffectiveProviderName(configuration), kind, document.Blocks.Select((b, i) => new TranslatedBlock(b, result[i].Text) { BackgroundColor = configuration.SampleOverlayBackground ? ScreenAnalysis.SampleBackground(frame, b.Bounds) : null }).ToArray(), new(captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds)) { IsDictionaryTranslation = result.Any(r => r.IsDictionaryTranslation) };
             LastSession = session; LastFrame = frame; lastProfileSettings = appliedProfile ? configuration : null; InputText = session.OriginalText; OutputText = session.TranslatedText;
             PipelineInfo = L.M("Capture {0:0} ms  ·  OCR {1:0} ms  ·  Translate {2:0} ms  ·  Total {3:0} ms", captureMs, ocrMs, translationMs, total.Elapsed.TotalMilliseconds);
             SessionReady?.Invoke(session);
             previousScreenText = document.Text;
             Status = IsMonitoring ? new UiMessage("Автоперевод области включён · нажмите Стоп для завершения") : L.M("Переведено реплик: {0}. {1} · {2}", session.Blocks.Count, configuration.OcrEngine, configuration.Provider);
+            if (session.IsDictionaryTranslation) Status = ProviderCatalog.DictionaryShortWarning;
             logger.LogInformation("Pipeline finished: {BlockCount} blocks, capture {CaptureMs:0} ms, OCR {OcrMs:0} ms, translation {TranslationMs:0} ms", session.Blocks.Count, captureMs, ocrMs, translationMs);
             if (Settings.SaveHistory)
             {

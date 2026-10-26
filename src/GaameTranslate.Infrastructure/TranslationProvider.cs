@@ -16,6 +16,7 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (request.Texts.Count == 0) return [];
+        if (Name == ProviderCatalog.BuiltInDictionary) return await new BuiltInDictionaryProvider().TranslateAsync(request, cancellationToken);
         if (ProviderCatalog.IsLanguageModel(Name)) return await new LanguageModelClient(client, credentials).TranslateAsync(settings, request, cancellationToken);
         if (Name == "Yandex Translate" && request.Texts.Any(t => t.Length > 9000)) throw new UserFacingException("Для Яндекс Переводчика выберите фрагмент короче 9 000 символов или используйте языковую модель.");
         if (request.Texts.Any(t => t.Length > 15000)) throw new UserFacingException("This text block is too long. Select a smaller area (up to 15,000 characters per block).");

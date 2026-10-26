@@ -23,14 +23,14 @@ An unfamiliar word shouldn't interrupt a good story. Press **Alt+Q** to translat
 ## 🚀 Your first translation
 
 1. **Unzip and open** `GaameTranslate.exe`. Keep the extracted files together — no separate .NET installation needed.
-2. **Pick your translator** in **Settings → Translation**. Enter its connection details and choose your languages.
-3. **Check connection → Save**, then open your game and try **Alt+Q**.
+2. **Try it right away:** open an English-language game and press **Alt+Q** for the screen or **Alt+W** for a word. The built-in English–Russian dictionary works without accounts, downloads, or a server.
+3. **Upgrade the translation when ready:** choose a provider in **Settings → Translation**, enter its connection details, then **Check connection → Save**.
 
 That's it! Windowed or borderless games work best.
 
 > **Prefer Russian?** Go to **Settings → Application → Interface language** and choose **Русский**. You can switch back to English anytime, without restarting.
 >
-> **Using LibreTranslate?** The default address is `http://127.0.0.1:5000`. Start your server first, or choose another provider in Settings.
+> **A quick heads-up:** the built-in dictionary gives basic word-by-word hints. It cannot understand sentence context or produce correct grammar, and unknown words stay unchanged. The app labels this mode clearly. For full translations, connect a provider in Settings.
 
 ## ✨ A little tour
 
@@ -69,6 +69,7 @@ Use a local model or connect a cloud service that works in your region.
 
 | Want to… | Try… |
 | --- | --- |
+| Start with no setup | **Built-in English–Russian dictionary** — basic lexical hints |
 | Run a local translation server | **LibreTranslate** |
 | Translate with local language models | **Ollama** or **LM Studio** through the OpenAI-compatible connector |
 | Connect Yandex services | **Yandex Translate** or **YandexGPT** |
@@ -136,4 +137,4 @@ More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.3.0.m
 
 ---
 
-Built with C#, .NET 10, and WPF. See [LICENSE](LICENSE) for the app license. Imported dictionaries and downloaded models have their own licenses.
+Built with C#, .NET 10, and WPF. See [LICENSE](LICENSE) for the app license. The bundled FreeDict/WikDict English–Russian dictionary contains 57,063 entries and is licensed under CC BY-SA 3.0; see [dictionary credits](docs/dictionaries/README.md). Other dictionaries and downloaded models have their own licenses.

@@ -74,10 +74,11 @@ public sealed partial class SettingsView
         private void Update()
         {
             foreach (var service in services) service.Value.Visibility = service.Key == Name ? Visibility.Visible : Visibility.Collapsed;
-            body.Visibility = Name == "None" ? Visibility.Collapsed : Visibility.Visible;
+            body.Visibility = Name is "None" or ProviderCatalog.BuiltInDictionary ? Visibility.Collapsed : Visibility.Visible;
             Ui.SetText(description, Name switch
             {
                 "None" => "Доступны обычный перевод слова и импортированные словари.",
+                ProviderCatalog.BuiltInDictionary => "Offline English–Russian word dictionary · no setup needed",
                 "Ollama" => "Локальные модели. Нужен запущенный Ollama; для сервера на вашем компьютере ключ не требуется.",
                 "LibreTranslate" => "Перевод через ваш сервер. Для локального LibreTranslate API-ключ обычно не нужен.",
                 "Yandex Translate" => "Официальный API Яндекса. Нужен API-ключ сервисного аккаунта Yandex Cloud.",
@@ -140,6 +141,7 @@ public sealed partial class SettingsView
 
         private static string ProviderLabel(string name) => name switch
         {
+            ProviderCatalog.BuiltInDictionary => "Built-in dictionary · English → Russian",
             "Yandex Translate" => "Яндекс Переводчик", "YandexGPT" => "YandexGPT · контекстный перевод", "GigaChat" => "GigaChat", "Ollama" => "Ollama · локальные модели", "LibreTranslate" => "LibreTranslate · свой сервер", "OpenAI compatible" => "Совместимый API · LM Studio, DeepSeek и другие", "Azure" => "Microsoft Azure", _ => name
         };
     }

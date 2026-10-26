@@ -27,7 +27,7 @@ public sealed record AppSettings
     public string OcrEngine { get; init; } = "PP-OCRv6 Small";
     public bool OcrUseGpu { get; init; } = true;
     public string TargetLanguage { get; init; } = "ru";
-    public string Provider { get; init; } = "LibreTranslate";
+    public string Provider { get; init; } = ProviderCatalog.BuiltInDictionary;
     public string LibreEndpoint { get; init; } = "http://127.0.0.1:5000";
     public string AzureRegion { get; init; } = "";
     public string ContextHint { get; init; } = "";

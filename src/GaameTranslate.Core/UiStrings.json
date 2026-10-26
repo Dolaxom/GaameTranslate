@@ -2618,5 +2618,33 @@
   "＋ Импортировать словарь": {
     "en": "＋ Import dictionary",
     "ru": "＋ Импортировать словарь"
+  },
+  "This word is not in the built-in dictionary. Check the spelling or set up a translation provider in Settings.": {
+    "ru": "Этого слова нет во встроенном словаре. Проверьте написание или подключите сервис перевода в настройках.",
+    "en": "This word is not in the built-in dictionary. Check the spelling or set up a translation provider in Settings."
+  },
+  "Built-in dictionary": {
+    "ru": "Встроенный словарь",
+    "en": "Built-in dictionary"
+  },
+  "The built-in dictionary supports English → Russian only. Choose these languages or set up a translation provider in Settings.": {
+    "ru": "Встроенный словарь поддерживает только перевод с английского на русский. Выберите эти языки или подключите сервис перевода в настройках.",
+    "en": "The built-in dictionary supports English → Russian only. Choose these languages or set up a translation provider in Settings."
+  },
+  "Built-in dictionary · English → Russian": {
+    "ru": "Встроенный словарь · английский → русский",
+    "en": "Built-in dictionary · English → Russian"
+  },
+  "No translation provider is set up. Using the built-in English–Russian dictionary: word-by-word hints, without sentence context or grammar. Quality is limited; unknown words stay unchanged. Set up a provider in Settings for a full translation.": {
+    "ru": "Сервис перевода не настроен. Используется встроенный англо-русский словарь: пословные подсказки без учёта контекста и грамматики. Качество ограничено, неизвестные слова остаются без перевода. Для полноценного перевода подключите сервис в настройках.",
+    "en": "No translation provider is set up. Using the built-in English–Russian dictionary: word-by-word hints, without sentence context or grammar. Quality is limited; unknown words stay unchanged. Set up a provider in Settings for a full translation."
+  },
+  "Offline English–Russian word dictionary · no setup needed": {
+    "ru": "Встроенный англо-русский словарь работает без интернета и настройки. Пословный перевод не учитывает контекст и грамматику. Для качественного перевода предложений выберите другой сервис.",
+    "en": "The built-in English–Russian dictionary works offline with no setup. Word-by-word hints do not account for context or grammar. Choose another service for full sentence translation."
+  },
+  "No provider configured · built-in English–Russian dictionary. Basic word-by-word translation; context and grammar may be wrong.": {
+    "en": "No provider configured · built-in English–Russian dictionary. Basic word-by-word translation; context and grammar may be wrong.",
+    "ru": "Сервис не настроен · встроенный англо-русский словарь. Пословный перевод: возможны ошибки смысла и грамматики."
   }
 }

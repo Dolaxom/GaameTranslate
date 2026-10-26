@@ -23,7 +23,7 @@ internal static class LocalizationVerification
         void Check(bool condition, string name) { if (!condition) throw new InvalidOperationException(name); passed.Add(name); Console.WriteLine("PASS " + name); }
         async Task Settle() { await System.Windows.Threading.Dispatcher.Yield(System.Windows.Threading.DispatcherPriority.ApplicationIdle); }
         var data = Path.Combine(output, "data-" + Guid.NewGuid().ToString("N")); var store = new SettingsStore(data); var keys = new Keys(); using var api = new Api(); using var http = new HttpClient(api); using var speech = new WindowsSpeechService();
-        await store.SaveAsync(new AppSettings { InterfaceLanguage = "ru", SourceLanguage = "auto", AssistantProvider = "None" });
+        await store.SaveAsync(new AppSettings { Provider = "LibreTranslate", InterfaceLanguage = "ru", SourceLanguage = "auto", AssistantProvider = "None" });
         var vm = new MainViewModel(new DesktopCapture(), new WindowsOcrProvider(), new LocalDatabase(data), store, keys, http, new TranslationCache(), NullLogger<MainViewModel>.Instance, new DictionaryService(http, keys, new OfflineDictionaryStore(Path.Combine(data, "dictionaries"))), speech, new LocalMediaStore(Path.Combine(data, "media")));
         await vm.InitializeAsync(); UiText.SetLanguage("ru");
         await vm.SaveWordAsync(new VocabularyEntry { Word = "Save", Translation = "Home", Context = "Do not translate user content.", Notes = "Моя заметка", SourceLanguage = "en", TargetLanguage = "ru" });

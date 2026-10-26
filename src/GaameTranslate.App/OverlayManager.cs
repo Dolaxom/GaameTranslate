@@ -68,6 +68,14 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
         }
         return panel;
     }
+    private Border DictionaryNotice()
+    {
+        var panel = new StackPanel(); var text = Ui.Text(ProviderCatalog.DictionaryShortWarning);
+        text.TextWrapping = TextWrapping.Wrap; text.FontSize = 12; panel.Children.Add(text);
+        panel.Children.Add(SmallButton("Set up translation", () => { Close(); vm.OpenSettingsCommand.Execute(null); }));
+        var notice = new Border { Background = Surface(), BorderBrush = (Brush)System.Windows.Application.Current.FindResource("AccentBrush"), BorderThickness = new(1), CornerRadius = new(8), Padding = new(14), MaxWidth = 440, Child = panel };
+        System.Windows.Automation.AutomationProperties.SetAutomationId(notice, "overlay-dictionary-notice"); return notice;
+    }
     private void ShowFloating(TranslationSession session)
     {
         var display = DisplayFor(session.CaptureBounds); var side = preferences.OverlayMode == OverlayMode.SidePanel;
@@ -79,7 +87,9 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
         actions.Children.Add(SmallButton("Copy", () => vm.Copy(session.TranslatedText))); actions.Children.Add(SmallButton("Close", Close));
         chrome.Children.Add(Ui.Localize(new TextBlock { Text = "GAAME  /  TRANSLATE", FontSize = 10, FontWeight = FontWeights.SemiBold, VerticalAlignment = VerticalAlignment.Center, Foreground = (Brush)System.Windows.Application.Current.FindResource("AccentBrush") }));
         chrome.MouseLeftButtonDown += (_, e) => { if (e.OriginalSource is TextBlock or DockPanel) { try { window.DragMove(); } catch (InvalidOperationException) { } } }; root.Children.Add(chrome);
-        var blocks = new StackPanel { Margin = new(18, 6, 18, 10) }; foreach (var block in session.Blocks)
+        var blocks = new StackPanel { Margin = new(18, 6, 18, 10) };
+        if (session.IsDictionaryTranslation) blocks.Children.Add(DictionaryNotice());
+        foreach (var block in session.Blocks)
         {
             var content = Block(block, session); content.Margin = new(0, 0, 0, 20); blocks.Children.Add(content);
         }
@@ -147,6 +157,7 @@ public sealed class OverlayManager(MainViewModel vm, ILogger<OverlayManager> log
                 });
                 Canvas.SetTop(selectWords, 12); Canvas.SetRight(selectWords, 145); canvas.Children.Add(selectWords);
             }
+            if (session.IsDictionaryTranslation) { var notice = DictionaryNotice(); Canvas.SetBottom(notice, 18); Canvas.SetRight(notice, 18); canvas.Children.Add(notice); }
             var close = SmallButton("Закрыть", Close); Canvas.SetTop(close, 12); Canvas.SetRight(close, 18); canvas.Children.Add(close); Fade(window);
         }
     }

@@ -28,7 +28,10 @@ public sealed record OcrDocument(IReadOnlyList<OcrBlock> Blocks, string Language
 {
     public string Text => string.Join(Environment.NewLine, Blocks.Select(b => b.Text));
 }
-public sealed record TranslationItem(string Text, string SourceLanguage);
+public sealed record TranslationItem(string Text, string SourceLanguage)
+{
+    public bool IsDictionaryTranslation { get; init; }
+}
 public sealed record TranslationRequest(IReadOnlyList<string> Texts, string Source, string Target, string Context = "");
 public sealed record TranslatedBlock(OcrBlock Original, string Translation)
 {
@@ -39,6 +42,7 @@ public sealed record TranslationSession(Guid Id, DateTimeOffset CreatedAt, Pixel
     string SourceLanguage, string TargetLanguage, string Provider, string CaptureType,
     IReadOnlyList<TranslatedBlock> Blocks, PipelineTimings Timings)
 {
+    public bool IsDictionaryTranslation { get; init; }
     public string OriginalText => string.Join(Environment.NewLine, Blocks.Select(b => b.Original.Text));
     public string TranslatedText => string.Join(Environment.NewLine, Blocks.Select(b => b.Translation));
 }
