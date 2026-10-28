@@ -55,13 +55,13 @@ public sealed partial class SettingsView : UserControl
         var content = new Grid();
         scroll = new ScrollViewer { Content = content, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, Padding = new(0, 0, 12, 0) };
         Grid.SetRow(scroll, 2); root.Children.Add(scroll);
-        foreach (var (id, title) in new[] { ("translation", "Перевод"), ("screen", "Экран"), ("dictionary", "Словарь"), ("shortcuts", "Клавиши"), ("games", "Игры"), ("app", "Приложение") })
+        foreach (var (id, title) in new[] { ("translation", "Перевод"), ("screen", "Экран"), ("assistant", "AI assistant"), ("dictionary", "Словарь"), ("shortcuts", "Клавиши"), ("games", "Игры"), ("app", "Приложение") })
         {
             var button = Ui.Localize(new Button { Content = title, Style = (Style)FindResource("SettingsTab"), Tag = false }); Identify(button, "settings-tab-" + id, title);
             button.Click += (_, _) => SelectPage(id); navigation.Children.Add(button); tabs[id] = button;
             var page = new StackPanel { Visibility = Visibility.Collapsed }; pages[id] = page; content.Children.Add(page);
         }
-        BuildTranslation(); BuildScreen(); BuildDictionary(); BuildShortcuts(); BuildGames(); BuildApplication();
+        BuildTranslation(); BuildScreen(); BuildAssistant(); BuildDictionary(); BuildShortcuts(); BuildGames(); BuildApplication();
         var footer = new Grid { Margin = new(0, 16, 0, 0) };
         footer.ColumnDefinitions.Add(new()); footer.ColumnDefinitions.Add(new() { Width = GridLength.Auto }); footer.ColumnDefinitions.Add(new() { Width = GridLength.Auto });
         feedback = Muted("Все изменения сохранены", new(0, 0, 18, 0)); feedback.FontSize = 12; feedback.VerticalAlignment = VerticalAlignment.Center;

@@ -84,7 +84,7 @@ Use a local model or connect a cloud service that works in your region.
 | Connect Yandex services | **Yandex Translate** or **YandexGPT** |
 | Use another cloud provider | **GigaChat**, **Azure Translator**, **DeepL**, or an **OpenAI-compatible API** |
 
-Cloud services need their own API credentials and quota. An optional assistant for explanations is configured separately in **Settings → Dictionary**.
+Cloud services need their own API credentials and quota. An optional assistant for explanations is configured separately in **Settings → AI assistant**.
 
 <details>
 <summary><strong>Set up local models with Ollama — no Docker needed</strong></summary>
@@ -140,7 +140,7 @@ You'll need Windows and the **.NET 10 SDK**.
 
 Find the app in `artifacts/publish/win-x64` and the ZIP in `artifacts`.
 
-More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.4.0.md) · [localization](docs/LOCALIZATION.md).
+More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.4.1.md) · [localization](docs/LOCALIZATION.md).
 
 </details>
 

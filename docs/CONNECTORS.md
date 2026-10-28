@@ -1,6 +1,6 @@
 # Connecting a translator
 
-Open **Settings → Translation**, choose a service, follow its three-step card, check the connection, then save. The assistant in **Settings → Dictionary** is optional and configured separately. Checking a connection sends a sample phrase to that selected service; startup and help do not contact it.
+Open **Settings → Translation**, choose a service, follow its three-step card, check the connection, then save. The assistant in **Settings → AI assistant** is optional and configured separately. Checking a connection sends a sample phrase to that selected service; startup and help do not contact it.
 
 | Connector | Setup guide |
 | --- | --- |

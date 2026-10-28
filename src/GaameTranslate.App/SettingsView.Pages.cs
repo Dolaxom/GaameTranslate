@@ -62,14 +62,19 @@ public sealed partial class SettingsView
         advanced.Children.Add(Muted("Автоперевод области запускается отдельно на странице перевода."));
     }
 
-    private void BuildDictionary()
+    private void BuildAssistant()
     {
-        var page = Page("dictionary"); var s = vm.Settings;
+        var page = Page("assistant"); var s = vm.Settings;
         var helper = Section(page, "Значение слова в контексте", "Помощник объясняет выражения и оттенки смысла в игровой реплике.");
         connections.Add(new ConnectionEditor(this, helper, true));
         var automatic = Toggle(helper, "autoExplain", "Объяснять при открытии слова", "Слово и реплика отправляются выбранному помощнику.", s.AutoExplainWords);
         void UpdateAssistant() { automatic.IsEnabled = (string?)choices["assistant"].SelectedValue != "None"; ((FrameworkElement)automatic.Parent).Visibility = automatic.IsEnabled ? Visibility.Visible : Visibility.Collapsed; }
         choices["assistant"].SelectionChanged += (_, _) => UpdateAssistant(); UpdateAssistant();
+    }
+
+    private void BuildDictionary()
+    {
+        var page = Page("dictionary"); var s = vm.Settings;
         var dictionaries = Section(page, "Локальные словари", "Импортируйте словарь, чтобы получать статьи без интернета.");
         var state = Muted("Yomitan ZIP, DSL, StarDict, Kaikki JSONL, CC-CEDICT."); dictionaries.Children.Add(state);
         var import = Ui.Localize(new Button { Content = "＋ Импортировать словарь", HorizontalAlignment = HorizontalAlignment.Left }); dictionaries.Children.Add(import);

@@ -31,7 +31,7 @@ public sealed class QuickStartWindow : Window
         Section("Your first minute", L.M("1. Use {0} for the screen or {1} for a word under your cursor.\n2. Save a useful word with its sentence.\n3. Open My vocabulary or Review when you want to practise. Escape closes a translation window.", vm.Settings.Hotkeys.ScreenTranslation, vm.Settings.Hotkeys.WordLookup));
         Section("Start with what you have", "The built-in English–Russian dictionary works offline, with no account or download. It gives word-by-word hints. It cannot understand a sentence or choose the right meaning every time.");
         Section("Connect a translator for better sentences", "Open Settings → Translation, choose a service, follow its three steps, check the connection, and save. A local service runs on your PC; a cloud service receives the text you ask it to translate and may require paid API access.");
-        Section("An assistant is optional", "Settings → Dictionary selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.");
+        Section("An assistant is optional", "Settings → AI assistant selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.");
         Section("If a service stops working", "For English → Russian, a failed or slow service falls back to the built-in dictionary. The app labels that lower-quality result and retries the service later. Unknown words remain in the original; other language pairs need a working service.");
         Content = root;
     }

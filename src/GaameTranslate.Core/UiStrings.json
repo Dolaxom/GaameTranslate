@@ -2695,10 +2695,6 @@
     "en": "An assistant is optional",
     "ru": "Помощник — по желанию"
   },
-  "Settings → Dictionary selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.": {
-    "en": "Settings → Dictionary selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.",
-    "ru": "В «Настройки → Словарь» выбирается AI-помощник для объяснений в контексте. Он настраивается отдельно от основного переводчика. Переводить слова и сохранять карточки можно и без него."
-  },
   "Your first minute": {
     "en": "Your first minute",
     "ru": "Попробуйте за минуту"
@@ -2946,5 +2942,13 @@
   "Your text has been kept. Press Translate text when you are ready.": {
     "en": "Your text has been kept. Press Translate text when you are ready.",
     "ru": "Ваш текст сохранён в поле. Когда будете готовы, нажмите «Перевести текст»."
+  },
+  "Settings → AI assistant selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.": {
+    "en": "Settings → AI assistant selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.",
+    "ru": "В «Настройки → ИИ-помощник» выбирается AI для объяснений в контексте. Он настраивается отдельно от основного переводчика. Переводить слова и сохранять карточки можно и без него."
+  },
+  "AI assistant": {
+    "en": "AI assistant",
+    "ru": "ИИ-помощник"
   }
 }

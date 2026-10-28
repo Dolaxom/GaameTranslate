@@ -32,7 +32,7 @@ public sealed partial class SettingsView
             var guidePanel = new StackPanel();
             guideCategory = Muted("", new(0, 0, 0, 8)); guideCategory.FontSize = 12; Identify(guideCategory, prefix + "guide-category", "Connection guide"); guidePanel.Children.Add(guideCategory);
             guideSteps = Muted("", new(0)); guideSteps.FontSize = 12; Identify(guideSteps, prefix + "guide-steps", "Connection guide"); guidePanel.Children.Add(guideSteps);
-            var details = Ui.Localize(new Expander { Header = "Before you connect", Margin = new(0, 8, 0, 0) }); guideNote = Muted("", new(0, 8, 0, 0)); var detailContent = new StackPanel(); detailContent.Children.Add(guideNote); details.Content = detailContent; guidePanel.Children.Add(details);
+            var details = Ui.Localize(new Expander { Header = "Before you connect", Style = (Style)owner.FindResource("SettingsExpander"), Margin = new(0, 8, 0, 0) }); Identify(details, prefix + "guide-details", "Before you connect"); guideNote = Muted("", new(0, 8, 0, 0)); var detailContent = new StackPanel(); detailContent.Children.Add(guideNote); details.Content = detailContent; guidePanel.Children.Add(details);
             documentation = Ui.Localize(new Button { Content = "Official setup guide ↗", HorizontalAlignment = HorizontalAlignment.Left, Padding = new(10, 5, 10, 5), Margin = new(0, 10, 0, 0) });
             Identify(documentation, prefix + "docs", "Official setup guide ↗"); documentation.Click += (_, _) =>
             {

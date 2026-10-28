@@ -39,7 +39,7 @@ internal static class SettingsVerification
         Check(!view.HasUnsavedChanges && !Find<Button>("settings-save").IsEnabled, "Opening settings does not create unsaved changes");
         Check(!Find<PasswordBox>("translation-key").IsVisible, "Local LibreTranslate hides optional credentials");
         Check((string)Find<Button>("settings-tab-translation").Tag == "selected", "Current settings tab has a visible selected state");
-        foreach (var page in new[] { "translation", "screen", "dictionary", "shortcuts", "games", "app" })
+        foreach (var page in new[] { "translation", "screen", "assistant", "dictionary", "shortcuts", "games", "app" })
         {
             Click("settings-tab-" + page); await Settle(); Save(window, Path.Combine(output, "settings-" + page + ".png"));
             var position = Find<Button>("settings-save").TranslatePoint(new Point(0, 0), window);
@@ -69,8 +69,8 @@ internal static class SettingsVerification
         provider.SelectedValue = "OpenAI compatible"; Find<TextBox>("translation-compatible").Text = "https://api.example.test/v1"; await Settle();
         Check(Find<PasswordBox>("translation-key").IsVisible, "Remote compatible APIs show required credentials directly");
         Find<TextBox>("translation-compatible").Text = "http://127.0.0.1:1234/v1";
-        Click("settings-tab-dictionary"); Find<ComboBox>("assistant").SelectedValue = "YandexGPT"; await Settle();
-        Check(Find<TextBox>("assistant-gpt-folder").IsVisible && !Find<TextBox>("assistant-assistantModel").IsVisible, "Dictionary assistant shows only its relevant connection fields");
+        Click("settings-tab-assistant"); Find<ComboBox>("assistant").SelectedValue = "YandexGPT"; await Settle();
+        Check(Find<TextBox>("assistant-gpt-folder").IsVisible && !Find<TextBox>("assistant-assistantModel").IsVisible, "AI assistant has its own tab and relevant connection fields");
         Find<ComboBox>("assistant").SelectedValue = "None"; Click("settings-tab-screen"); Find<Slider>("font").Value = 25; Find<Slider>("opacity").Value = 82;
         Click("settings-tab-translation"); provider.SelectedValue = "LibreTranslate"; Click("settings-save"); await WaitFor(() => !view.HasUnsavedChanges);
         var saved = await store.LoadAsync();
@@ -95,7 +95,7 @@ internal static class SettingsVerification
         Check(!view.HasUnsavedChanges, "Connection checks can be cancelled without changing settings");
         provider = Find<ComboBox>("provider"); provider.SelectedValue = "Ollama"; await Settle(); Save(window, Path.Combine(output, "settings-ollama.png"));
         window.Width = 960; window.Height = 650;
-        foreach (var page in new[] { "translation", "screen", "dictionary", "shortcuts", "games", "app" })
+        foreach (var page in new[] { "translation", "screen", "assistant", "dictionary", "shortcuts", "games", "app" })
         {
             Click("settings-tab-" + page); await Settle(); Save(window, Path.Combine(output, "settings-narrow-" + page + ".png"));
             var button = Find<Button>("settings-save"); var p = button.TranslatePoint(new Point(0, 0), window);
@@ -103,6 +103,21 @@ internal static class SettingsVerification
         }
         GaameTranslate.App.App.ApplyTheme(true); Click("settings-tab-translation"); await Settle(); Save(window, Path.Combine(output, "settings-light.png"));
         Check(((SolidColorBrush)window.Background).Color == Color.FromRgb(244, 246, 248), "Settings inherit the real light theme");
+        Click("settings-tab-dictionary"); await Settle();
+        Check(!Find<ComboBox>("assistant").IsVisible, "Dictionary tab contains dictionary settings rather than the AI connector");
+        Click("settings-tab-assistant"); Find<ComboBox>("assistant").SelectedValue = "None"; await Settle();
+        Check(Find<ComboBox>("assistant").IsVisible, "AI connector has a clearly separate assistant tab");
+        window.Width = 1180; window.Height = 820;
+        foreach (var light in new[] { false, true })
+        {
+            GaameTranslate.App.App.ApplyTheme(light); await Settle();
+            var details = Find<Expander>("assistant-guide-details"); details.ApplyTemplate();
+            var toggle = (System.Windows.Controls.Primitives.ToggleButton)details.Template.FindName("HeaderToggle", details); toggle.ApplyTemplate();
+            var presenter = Visuals(toggle).OfType<ContentPresenter>().Single();
+            var headerColor = ((SolidColorBrush)toggle.Foreground).Color;
+            Check(((SolidColorBrush)System.Windows.Documents.TextElement.GetForeground(presenter)).Color == headerColor && (headerColor == ((SolidColorBrush)window.FindResource("MutedBrush")).Color || headerColor == ((SolidColorBrush)window.FindResource("TextBrush")).Color), "Setup disclosure uses theme text colors in " + (light ? "light" : "dark") + " mode");
+            Save(window, Path.Combine(output, light ? "assistant-light.png" : "assistant-dark.png"));
+        }
         GaameTranslate.App.App.ApplyTheme(false); window.Close(); await vm.StopAsync(); return passed;
     }
 
@@ -110,6 +125,11 @@ internal static class SettingsVerification
     {
         yield return root;
         foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>()) foreach (var descendant in Descendants(child)) yield return descendant;
+    }
+    private static IEnumerable<DependencyObject> Visuals(DependencyObject root)
+    {
+        yield return root;
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) foreach (var child in Visuals(VisualTreeHelper.GetChild(root, i))) yield return child;
     }
     private static void Save(Window window, string path)
     {
