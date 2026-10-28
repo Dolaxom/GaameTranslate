@@ -13,7 +13,9 @@ public sealed partial class SettingsView
         private readonly StackPanel body = new(), keySlot = new(), keyArea = new();
         private readonly Dictionary<string, StackPanel> services = new();
         private readonly PasswordBox key;
-        private readonly TextBlock description, keyState, result, fallbackHint;
+        private readonly TextBlock description, keyState, result, fallbackHint, health, guideSteps, guideCategory, guideNote;
+        private readonly Button documentation;
+        private int revision, successfulRevision = -1;
         private readonly Button test, remove;
         private readonly Expander optionalKey;
         private CancellationTokenSource? checking;
@@ -27,6 +29,19 @@ public sealed partial class SettingsView
             var available = ProviderCatalog.All.Where(p => !helper || p.LanguageModel).Select(p => new LanguageChoice(p.Name, ProviderLabel(p.Name)));
             if (helper) available = new[] { new LanguageChoice("None", "Без AI-помощника") }.Concat(available);
             selector = owner.Choice(parent, helper ? "assistant" : "provider", helper ? "Помощник" : "Сервис", available, helper ? s.AssistantProvider : s.Provider);
+            var guidePanel = new StackPanel();
+            guideCategory = Muted("", new(0, 0, 0, 8)); guideCategory.FontSize = 12; Identify(guideCategory, prefix + "guide-category", "Connection guide"); guidePanel.Children.Add(guideCategory);
+            guideSteps = Muted("", new(0)); guideSteps.FontSize = 12; Identify(guideSteps, prefix + "guide-steps", "Connection guide"); guidePanel.Children.Add(guideSteps);
+            var details = Ui.Localize(new Expander { Header = "Before you connect", Margin = new(0, 8, 0, 0) }); guideNote = Muted("", new(0, 8, 0, 0)); var detailContent = new StackPanel(); detailContent.Children.Add(guideNote); details.Content = detailContent; guidePanel.Children.Add(details);
+            documentation = Ui.Localize(new Button { Content = "Official setup guide ↗", HorizontalAlignment = HorizontalAlignment.Left, Padding = new(10, 5, 10, 5), Margin = new(0, 10, 0, 0) });
+            Identify(documentation, prefix + "docs", "Official setup guide ↗"); documentation.Click += (_, _) =>
+            {
+                try { if (ProviderSetupGuides.Get(Name).DocumentationUrl is { } url) System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+                catch { if (result is not null) Ui.SetText(result, "The browser could not open. You can find the setup links in the bundled documentation."); }
+            };
+            detailContent.Children.Add(documentation);
+            var guideCard = new Border { Child = guidePanel, Padding = new(14), Margin = new(0, 0, 0, 12), CornerRadius = new(8), BorderThickness = new(1) }; guideCard.SetResourceReference(Border.BorderBrushProperty, "BorderBrush"); parent.Children.Add(guideCard);
+            health = Muted("", new(0, 0, 0, 10)); health.FontWeight = FontWeights.SemiBold; health.FontSize = 12; AutomationProperties.SetLiveSetting(health, AutomationLiveSetting.Polite); Identify(health, prefix + "health", "Connection status"); parent.Children.Add(health);
             description = Muted(""); description.FontSize = 12; parent.Children.Add(description); parent.Children.Add(body);
             fallbackHint = Muted("If translation fails or takes over 5 seconds, English → Russian uses the built-in dictionary. The service is retried after 15 seconds. Connection tests use the configured timeout.", new(0, 10, 0, 0)); fallbackHint.FontSize = 12; parent.Children.Add(fallbackHint);
             body.Children.Add(keySlot);
@@ -43,9 +58,7 @@ public sealed partial class SettingsView
             owner.Field(owner.Advanced(ollama, "Адрес локального сервера"), "ollama", "Адрес Ollama", s.OllamaEndpoint, "Обычно http://127.0.0.1:11434", prefix);
             var yandex = Service("Yandex Translate"); var auth = owner.Advanced(yandex, "Подключение через IAM-токен");
             var iam = owner.Toggle(auth, "iam", "Использовать IAM-токен", "Вставьте токен в поле API-ключа выше.", s.YandexIamToken, prefix);
-            var folderPanel = new StackPanel(); auth.Children.Add(folderPanel); owner.Field(folderPanel, "folder", "ID каталога Yandex Cloud", s.YandexFolderId, "Обязателен для пользовательского IAM-токена.", prefix);
-            void FolderVisibility() => folderPanel.Visibility = iam.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            iam.Checked += (_, _) => FolderVisibility(); iam.Unchecked += (_, _) => FolderVisibility(); FolderVisibility();
+            owner.Field(yandex, "folder", "ID каталога Yandex Cloud", s.YandexFolderId, "Copy the folder ID from Yandex Cloud. It is required for an IAM token and is sent with an API key when provided.", prefix);
             var yandexGpt = Service("YandexGPT"); owner.Field(yandexGpt, "folder", "ID каталога Yandex Cloud", s.YandexFolderId, null, prefix + "gpt-");
             var gptOptions = owner.Advanced(yandexGpt, "Модель и тип доступа"); owner.Field(gptOptions, "yandexModel", "Модель · необязательно", s.YandexModel, "Если оставить пустым, используется модель по умолчанию в вашем каталоге.", prefix);
             owner.Toggle(gptOptions, "iam", "Использовать IAM-токен", "Вставьте токен вместо API-ключа.", s.YandexIamToken, prefix + "gpt-");
@@ -74,6 +87,8 @@ public sealed partial class SettingsView
 
         private void Update()
         {
+            var guide = ProviderSetupGuides.Get(Name); Ui.SetText(guideCategory, guide.Category); Ui.SetText(guideSteps, guide.Steps); Ui.SetText(guideNote, guide.Note);
+            documentation.Visibility = guide.DocumentationUrl is null ? Visibility.Collapsed : Visibility.Visible;
             foreach (var service in services) service.Value.Visibility = service.Key == Name ? Visibility.Visible : Visibility.Collapsed;
             body.Visibility = Name is "None" or ProviderCatalog.BuiltInDictionary ? Visibility.Collapsed : Visibility.Visible;
             fallbackHint.Visibility = !helper && Name != ProviderCatalog.BuiltInDictionary ? Visibility.Visible : Visibility.Collapsed;
@@ -116,10 +131,13 @@ public sealed partial class SettingsView
         }
 
         public void Cancel() => checking?.Cancel();
+        public void MarkSaved() { if (successfulRevision == revision && checking is null) Ui.SetText(health, "Connection checked · ready"); }
         public void InvalidateResult()
         {
             if (result is null) return;
-            if (checking is not null) { checking.Cancel(); return; }
+            revision++;
+            Ui.SetText(health, Name == ProviderCatalog.BuiltInDictionary ? "Ready offline · no connection needed" : Name == "None" ? "Off · optional" : "Not checked yet"); health.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush");
+            if (checking is not null) { checking.Cancel(); Ui.SetText(result, "Settings changed. Check this connection again."); return; }
             result.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); Ui.SetText(result, "Тестовая фраза · без сохранения настроек");
         }
 
@@ -127,6 +145,7 @@ public sealed partial class SettingsView
         {
             if (checking is not null) { checking.Cancel(); return; }
             using var cancellation = new CancellationTokenSource(); checking = cancellation; owner.runningChecks++; owner.UpdateActions();
+            var testedRevision = revision; Ui.SetText(health, "Checking connection…"); health.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush");
             Ui.SetContent(test, "Отменить проверку"); result.SetResourceReference(TextBlock.ForegroundProperty, "MutedBrush"); Ui.SetText(result, "Подключаемся… Первый запуск локальной модели может занять больше времени.");
             try
             {
@@ -134,10 +153,12 @@ public sealed partial class SettingsView
                 if (helper) settings = settings with { Provider = settings.AssistantProvider, OllamaModel = settings.AssistantModel };
                 settings = settings with { AssistantProvider = "None" };
                 var translated = await owner.vm.TestConnectionAsync(settings, owner.keyDrafts.GetValueOrDefault(Name), owner.removedKeys.Contains(Name), cancellation.Token);
-                cancellation.Token.ThrowIfCancellationRequested(); result.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); Ui.SetText(result, L.M("✓ Подключение работает\n{0}", translated));
+                cancellation.Token.ThrowIfCancellationRequested(); if (testedRevision != revision) return;
+                successfulRevision = revision;
+                Ui.SetText(health, "Connection works · save to apply"); health.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); result.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush"); Ui.SetText(result, L.M("✓ Подключение работает\n{0}", translated));
             }
-            catch (OperationCanceledException) { Ui.SetText(result, "Проверка отменена."); }
-            catch (Exception error) { result.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush"); Ui.Error(result, error, "Не удалось подключиться. Проверьте адрес сервера и доступ к сети."); }
+            catch (OperationCanceledException) { if (testedRevision == revision) { Ui.SetText(health, "Not checked yet"); Ui.SetText(result, "Проверка отменена."); } }
+            catch (Exception error) { if (testedRevision == revision) { Ui.SetText(health, "Needs attention · check the setup steps"); health.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush"); result.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush"); Ui.Error(result, error, "Не удалось подключиться. Проверьте адрес сервера и доступ к сети."); } }
             finally { checking = null; owner.runningChecks--; owner.UpdateActions(); Ui.SetContent(test, "Проверить подключение"); }
         }
 

@@ -85,8 +85,8 @@ public sealed class TranslationProvider(HttpClient client, AppSettings settings,
             if (settings.YandexIamToken)
             {
                 if (string.IsNullOrWhiteSpace(settings.YandexFolderId)) throw new UserFacingException("Для IAM-токена Яндекса укажите folder ID в настройках.");
-                body["folderId"] = settings.YandexFolderId;
             }
+            if (!string.IsNullOrWhiteSpace(settings.YandexFolderId)) body["folderId"] = settings.YandexFolderId;
             var message = new HttpRequestMessage(HttpMethod.Post, "https://translate.api.cloud.yandex.net/translate/v2/translate") { Content = JsonContent.Create(body) };
             message.Headers.TryAddWithoutValidation("Authorization", (settings.YandexIamToken ? "Bearer " : "Api-Key ") + key);
             return message;

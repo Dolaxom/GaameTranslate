@@ -22,6 +22,7 @@ public sealed record HotkeySettings
 public sealed record AppSettings
 {
     public string InterfaceLanguage { get; init; } = "ru";
+    public bool ShowStartupTips { get; init; } = true;
     public string SourceLanguage { get; init; } = "auto";
     public string OcrLanguage { get; init; } = "auto";
     public string OcrEngine { get; init; } = "PP-OCRv6 Small";

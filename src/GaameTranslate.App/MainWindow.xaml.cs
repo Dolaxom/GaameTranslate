@@ -11,6 +11,7 @@ public partial class MainWindow : Window
     private readonly VocabularyView vocabularyView;
     private readonly DispatcherTimer searchTimer = new() { Interval = TimeSpan.FromMilliseconds(250) };
     public bool AllowClose { get; set; }
+    private QuickStartWindow? quickStart;
     public MainWindow(MainViewModel model)
     {
         vm = model; InitializeComponent(); DataContext = vm;
@@ -20,7 +21,14 @@ public partial class MainWindow : Window
         Closing += OnClosing;
         searchTimer.Tick += async (_, _) => { searchTimer.Stop(); await vm.GuardAsync(vm.RefreshAsync); };
         vm.PropertyChanged += OnModelChanged;
-        Closed += (_, _) => { searchTimer.Stop(); vm.PropertyChanged -= OnModelChanged; vocabularyView.Dispose(); };
+        vm.QuickStartRequested += ShowQuickStart; vm.SettingsTabRequested += settingsView.OpenTab;
+        Closed += (_, _) => { quickStart?.Close(); searchTimer.Stop(); vm.PropertyChanged -= OnModelChanged; vm.QuickStartRequested -= ShowQuickStart; vm.SettingsTabRequested -= settingsView.OpenTab; vocabularyView.Dispose(); };
+    }
+    private void ShowQuickStart()
+    {
+        if (!IsVisible) Show(); WindowState = WindowState.Normal;
+        if (quickStart is not null) { quickStart.Activate(); return; }
+        quickStart = new QuickStartWindow(vm) { Owner = this }; quickStart.Closed += (_, _) => quickStart = null; quickStart.Show();
     }
     private void OnClosing(object? sender, CancelEventArgs e)
     {

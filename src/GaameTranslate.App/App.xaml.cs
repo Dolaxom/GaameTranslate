@@ -22,7 +22,7 @@ public partial class App : System.Windows.Application
     private OverlayManager? overlays;
     private MainViewModel? vm;
     private MainWindow? main;
-    private bool exiting, shortcutsPaused, restoreMain;
+    private bool exiting, shortcutsPaused, restoreMain, startupBalloonActive;
     private Task ocrWarmup = Task.CompletedTask;
     private readonly CancellationTokenSource ocrWarmupLifetime = new();
     private readonly Dictionary<Forms.ToolStripItem, UiMessage> trayLabels = [];
@@ -59,7 +59,7 @@ public partial class App : System.Windows.Application
             vm.SessionReady += overlays.Show; vm.ToggleOverlayRequested += overlays.Toggle; vm.InteractionRequested += overlays.ToggleInteraction;
             vm.WordLookupRequested += overlays.Lookup;
             vm.IsScreenOverlayVisible = () => overlays.IsVisible; vm.CloseOverlayRequested += overlays.Close;
-            vm.OperationFailed += message => { if (main is { IsVisible: false }) trayIcon?.ShowBalloonTip(5000, "GaameTranslate", message, Forms.ToolTipIcon.Warning); };
+            vm.OperationFailed += message => { if (main is { IsVisible: false }) { startupBalloonActive = false; trayIcon?.ShowBalloonTip(5000, "GaameTranslate", message, Forms.ToolTipIcon.Warning); } };
             vm.CaptureVisibilityChanged += hidden =>
             {
                 if (hidden) { restoreMain = main.IsVisible; main.Hide(); overlays.HideForCapture(); }
@@ -77,6 +77,11 @@ public partial class App : System.Windows.Application
             CreateTray(); RegisterHotkeys(); if (e.Args.Contains("--settings")) vm.PageIndex = 5; else if (e.Args.Contains("--vocabulary")) vm.PageIndex = 2;
             if (!vm.Settings.StartMinimized || e.Args.Contains("--show") || e.Args.Contains("--settings") || e.Args.Contains("--vocabulary")) main.Show();
             ocrWarmup = WarmOcrAsync();
+            if (!e.Args.Contains("--smoke-test"))
+            {
+                vm.NotifyStartup();
+                if (vm.IsStartupTipVisible && !main.IsVisible) { startupBalloonActive = true; trayIcon?.ShowBalloonTip(6000, L.Get("Dictionary mode is ready"), L.Get("No full translator is configured. English–Russian dictionary hints are available offline. Click for the quick start guide."), Forms.ToolTipIcon.Info); }
+            }
             if (e.Args.Contains("--smoke-test"))
             {
                 // Real native OCR, GDI and DPAPI diagnostic. Does not contact translation services.
@@ -137,6 +142,8 @@ public partial class App : System.Windows.Application
         var menu = new Forms.ContextMenuStrip();
         Forms.ToolStripItem Item(string key, EventHandler handler) { var item = menu.Items.Add(L.Get(key), null, handler); trayLabels[item] = new(key); return item; }
         Item("Open GaameTranslate", (_, _) => ShowMain()); Item("Translate a region", (_, _) => OnHotkey("Region")); Item("Translate fullscreen", (_, _) => OnHotkey("Fullscreen")); Item("Repeat last region", (_, _) => OnHotkey("Repeat")); Item("Vocabulary", (_, _) => OnHotkey("Vocabulary"));
+        Item("Quick start guide", (_, _) => vm?.OpenQuickStartCommand.Execute(null));
+        trayIcon.BalloonTipClicked += (_, _) => { if (startupBalloonActive && vm?.IsStartupTipVisible == true) vm.OpenQuickStartCommand.Execute(null); else ShowMain(); startupBalloonActive = false; };
         Item("Show / hide overlay", (_, _) => overlays?.Toggle()); Item("Toggle overlay interaction", (_, _) => overlays?.ToggleInteraction()); menu.Items.Add(new Forms.ToolStripSeparator());
         Item("Экранный переводчик", (_, _) => OnHotkey("ScreenTranslation")); Item("Слово под курсором", (_, _) => OnHotkey("WordLookup"));
         var pause = Item("Pause shortcuts", (_, _) => { }); pause.Click += (_, _) => { shortcutsPaused = !shortcutsPaused; trayLabels[pause] = new(shortcutsPaused ? "Resume shortcuts" : "Pause shortcuts"); RefreshTrayLanguage(null, null); controller?.SetEnabled(!shortcutsPaused && vm?.IsRecordingShortcut == false && vm.Settings.ControllerEnabled); if (shortcutsPaused) { hotkeys?.Unregister(); vm?.StopMonitoring(); } else RegisterHotkeys(); };

@@ -37,6 +37,7 @@ public sealed partial class SettingsView : UserControl
     }
 
     public void RefreshIfClean() { if (!HasUnsavedChanges && runningChecks == 0 && !saving) Build(); }
+    public void OpenTab(string id) { if (pages.ContainsKey(id)) SelectPage(id); }
 
     private void Build()
     {
@@ -113,7 +114,7 @@ public sealed partial class SettingsView : UserControl
             foreach (var name in keyDrafts.Keys.Concat(removedKeys).Distinct().ToArray())
                 vm.UpdateProviderCredential(name, keyDrafts.GetValueOrDefault(name, ""), removedKeys.Contains(name));
             keyDrafts.Clear(); removedKeys.Clear();
-            foreach (var connection in connections) connection.RefreshKey();
+            foreach (var connection in connections) { connection.RefreshKey(); connection.MarkSaved(); }
             HasUnsavedChanges = false; feedback.SetResourceReference(TextBlock.ForegroundProperty, "AccentBrush");
             Ui.SetText(feedback, vm.Status.Key == "Настройки сохранены." ? new UiMessage("Сохранено · настройки уже применены") : vm.Status);
             if (vm.Status.Key.StartsWith("Сочетания заняты", StringComparison.Ordinal)) feedback.SetResourceReference(TextBlock.ForegroundProperty, "SettingsErrorBrush");
@@ -186,7 +187,7 @@ public sealed partial class SettingsView : UserControl
         }
         return ReadConnectionSettings() with
         {
-            InterfaceLanguage = C("interfaceLanguage"),
+            InterfaceLanguage = C("interfaceLanguage"), ShowStartupTips = F("startupTips"),
             OcrEngine = C("engine"), OcrLanguage = C("ocr"), OcrUseGpu = F("gpu"), GroupParagraphs = F("paragraphs"), MonitorIndex = int.Parse(C("monitor"), CultureInfo.InvariantCulture), MonitoringIntervalMs = (int)(V("interval") * 1000),
             OverlayMode = Enum.Parse<OverlayMode>(C("overlay")), OverlayFontSize = V("font"), OverlayOpacity = V("opacity") / 100, ClickThrough = F("clickThrough"), MatchSourceTypography = F("typography"), SampleOverlayBackground = F("background"), FreezeImage = F("freeze"),
             EnableOnlineDictionary = F("online"), SaveWordScreenshots = F("screenshots"), SaveWordAudio = F("audio"), AutoExplainWords = F("autoExplain"), SpeechVoice = C("voice"), AnkiEndpoint = T("ankiEndpoint"), AnkiDeck = T("ankiDeck"),

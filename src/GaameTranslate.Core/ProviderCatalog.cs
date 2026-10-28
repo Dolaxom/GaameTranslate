@@ -20,6 +20,14 @@ public static class ProviderCatalog
         new("DeepL Free", "DeepL API Free · доступность зависит от региона"),
         new("DeepL Pro", "DeepL API Pro · доступность зависит от региона")];
     public static bool IsLanguageModel(string name) => All.FirstOrDefault(p => p.Name == name)?.LanguageModel == true;
+    public static bool MissingSetupFields(AppSettings settings) => settings.Provider switch
+    {
+        "OpenAI compatible" => string.IsNullOrWhiteSpace(settings.CompatibleModel),
+        "Ollama" => string.IsNullOrWhiteSpace(settings.OllamaModel),
+        "YandexGPT" => string.IsNullOrWhiteSpace(settings.YandexFolderId),
+        "Yandex Translate" => settings.YandexIamToken && string.IsNullOrWhiteSpace(settings.YandexFolderId),
+        _ => false
+    };
     public static bool RequiresKey(AppSettings settings)
     {
         if (settings.Provider == "OpenAI compatible") return !AppSettings.ValidateEndpoint(settings.CompatibleEndpoint).IsLoopback;

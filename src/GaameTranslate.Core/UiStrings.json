@@ -2666,5 +2666,285 @@
   "If translation fails or takes over 5 seconds, English → Russian uses the built-in dictionary. The service is retried after 15 seconds. Connection tests use the configured timeout.": {
     "en": "If translation fails or takes over 5 seconds, English → Russian uses the built-in dictionary. The service is retried after 15 seconds. Connection tests use the configured timeout.",
     "ru": "При ошибке или ожидании дольше 5 секунд перевод с английского на русский выполняет встроенный словарь. Через 15 секунд приложение снова попробует сервис. Проверка подключения использует настроенный тайм-аут."
+  },
+  "A quick start, at your pace": {
+    "en": "A quick start, at your pace",
+    "ru": "Коротко о главном"
+  },
+  "Understand the game. Keep the words.": {
+    "en": "Understand the game. Keep the words.",
+    "ru": "Понимайте игру. Запоминайте слова."
+  },
+  "Start with what you have": {
+    "en": "Start with what you have",
+    "ru": "Начните без настройки"
+  },
+  "The built-in English–Russian dictionary works offline, with no account or download. It gives word-by-word hints. It cannot understand a sentence or choose the right meaning every time.": {
+    "en": "The built-in English–Russian dictionary works offline, with no account or download. It gives word-by-word hints. It cannot understand a sentence or choose the right meaning every time.",
+    "ru": "Встроенный англо-русский словарь работает без интернета, аккаунта и загрузок. Он даёт пословные подсказки, но не понимает предложения и не всегда выбирает нужное значение."
+  },
+  "Connect a translator for better sentences": {
+    "en": "Connect a translator for better sentences",
+    "ru": "Подключите переводчик для целых фраз"
+  },
+  "Open Settings → Translation, choose a service, follow its three steps, check the connection, and save. A local service runs on your PC; a cloud service receives the text you ask it to translate and may require paid API access.": {
+    "en": "Open Settings → Translation, choose a service, follow its three steps, check the connection, and save. A local service runs on your PC; a cloud service receives the text you ask it to translate and may require paid API access.",
+    "ru": "Откройте «Настройки → Перевод», выберите сервис, выполните три шага, проверьте подключение и сохраните. Локальный сервис работает на вашем ПК; облачный получает текст по вашему запросу и может требовать платного доступа к API."
+  },
+  "An assistant is optional": {
+    "en": "An assistant is optional",
+    "ru": "Помощник — по желанию"
+  },
+  "Settings → Dictionary selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.": {
+    "en": "Settings → Dictionary selects the AI assistant for contextual explanations. It is separate from the main translator. You can translate words and save cards without it.",
+    "ru": "В «Настройки → Словарь» выбирается AI-помощник для объяснений в контексте. Он настраивается отдельно от основного переводчика. Переводить слова и сохранять карточки можно и без него."
+  },
+  "Your first minute": {
+    "en": "Your first minute",
+    "ru": "Попробуйте за минуту"
+  },
+  "1. Use {0} for the screen or {1} for a word under your cursor.\n2. Save a useful word with its sentence.\n3. Open My vocabulary or Review when you want to practise. Escape closes a translation window.": {
+    "en": "1. Use {0} for the screen or {1} for a word under your cursor.\n2. Save a useful word with its sentence.\n3. Open My vocabulary or Review when you want to practise. Escape closes a translation window.",
+    "ru": "1. Нажмите {0} для экрана или {1} для слова под курсором.\n2. Сохраните полезное слово вместе с фразой.\n3. Откройте «Мой словарь» или «Повторение», чтобы потренироваться. Escape закрывает окно перевода."
+  },
+  "If a service stops working": {
+    "en": "If a service stops working",
+    "ru": "Если сервис перестал работать"
+  },
+  "For English → Russian, a failed or slow service falls back to the built-in dictionary. The app labels that lower-quality result and retries the service later. Unknown words remain in the original; other language pairs need a working service.": {
+    "en": "For English → Russian, a failed or slow service falls back to the built-in dictionary. The app labels that lower-quality result and retries the service later. Unknown words remain in the original; other language pairs need a working service.",
+    "ru": "При ошибке или медленном ответе сервиса перевод с английского на русский выполняет встроенный словарь. Приложение отмечает ограниченное качество и позже снова пробует сервис. Неизвестные слова остаются в оригинале; для других языков нужен работающий сервис."
+  },
+  "Try a sample": {
+    "en": "Try a sample",
+    "ru": "Попробовать на примере"
+  },
+  "Shortcut settings": {
+    "en": "Shortcut settings",
+    "ru": "Настроить клавиши"
+  },
+  "Got it": {
+    "en": "Got it",
+    "ru": "Понятно"
+  },
+  "Quick start guide": {
+    "en": "Quick start guide",
+    "ru": "Как начать"
+  },
+  "Dismiss for this session": {
+    "en": "Dismiss for this session",
+    "ru": "Закрыть до следующего запуска"
+  },
+  "Dictionary mode is ready": {
+    "en": "Dictionary mode is ready",
+    "ru": "Можно начать со словаря"
+  },
+  "No full translator is configured. You can already try English–Russian word hints offline. Connect a service for full sentences and better context.": {
+    "en": "No full translator is configured. You can already try English–Russian word hints offline. Connect a service for full sentences and better context.",
+    "ru": "Полноценный переводчик пока не настроен. Уже можно попробовать англо-русские подсказки без интернета. Подключите сервис для перевода целых фраз с учётом контекста."
+  },
+  "You can turn startup tips off in Settings → Application.": {
+    "en": "You can turn startup tips off in Settings → Application.",
+    "ru": "Подсказку при запуске можно отключить в «Настройки → Приложение»."
+  },
+  "No full translator is configured. English–Russian dictionary hints are available offline. Click for the quick start guide.": {
+    "en": "No full translator is configured. English–Russian dictionary hints are available offline. Click for the quick start guide.",
+    "ru": "Переводчик пока не настроен. Англо-русские словарные подсказки доступны без интернета. Нажмите, чтобы узнать, как начать."
+  },
+  "Getting started": {
+    "en": "Getting started",
+    "ru": "Первые шаги"
+  },
+  "Help is always available from the sidebar and tray menu.": {
+    "en": "Help is always available from the sidebar and tray menu.",
+    "ru": "Справка всегда доступна в боковом меню и меню значка в трее."
+  },
+  "Show dictionary-mode tips at startup": {
+    "en": "Show dictionary-mode tips at startup",
+    "ru": "Подсказывать о словарном режиме при запуске"
+  },
+  "A non-blocking reminder appears when no full translation provider is configured.": {
+    "en": "A non-blocking reminder appears when no full translation provider is configured.",
+    "ru": "Если полноценный переводчик не настроен, при запуске появится подсказка. Она не мешает работе."
+  },
+  "Sample ready. Press Translate text to try your current translator. No screen capture is needed.": {
+    "en": "Sample ready. Press Translate text to try your current translator. No screen capture is needed.",
+    "ru": "Пример готов. Нажмите «Перевести текст», чтобы попробовать текущий переводчик. Захват экрана не нужен."
+  },
+  "Connection guide": {
+    "en": "Connection guide",
+    "ru": "Как подключить"
+  },
+  "Before you connect": {
+    "en": "Before you connect",
+    "ru": "Что нужно знать"
+  },
+  "Official setup guide ↗": {
+    "en": "Official setup guide ↗",
+    "ru": "Официальная инструкция ↗"
+  },
+  "The browser could not open. You can find the setup links in the bundled documentation.": {
+    "en": "The browser could not open. You can find the setup links in the bundled documentation.",
+    "ru": "Не удалось открыть браузер. Ссылки на инструкции есть в документации рядом с приложением."
+  },
+  "Connection status": {
+    "en": "Connection status",
+    "ru": "Состояние подключения"
+  },
+  "Ready offline · no connection needed": {
+    "en": "Ready offline · no connection needed",
+    "ru": "Готово без интернета · подключение не требуется"
+  },
+  "Off · optional": {
+    "en": "Off · optional",
+    "ru": "Выключен · по желанию"
+  },
+  "Not checked yet": {
+    "en": "Not checked yet",
+    "ru": "Подключение ещё не проверено"
+  },
+  "Settings changed. Check this connection again.": {
+    "en": "Settings changed. Check this connection again.",
+    "ru": "Параметры изменились. Проверьте подключение заново."
+  },
+  "Checking connection…": {
+    "en": "Checking connection…",
+    "ru": "Проверяем подключение…"
+  },
+  "Connection works · save to apply": {
+    "en": "Connection works · save to apply",
+    "ru": "Подключение работает · сохраните настройки"
+  },
+  "Needs attention · check the setup steps": {
+    "en": "Needs attention · check the setup steps",
+    "ru": "Нужна настройка · проверьте шаги подключения"
+  },
+  "Copy the folder ID from Yandex Cloud. It is required for an IAM token and is sent with an API key when provided.": {
+    "en": "Copy the folder ID from Yandex Cloud. It is required for an IAM token and is sent with an API key when provided.",
+    "ru": "Скопируйте ID каталога из Yandex Cloud. Для IAM-токена он обязателен; с API-ключом отправляется, если указан."
+  },
+  "No setup · offline": {
+    "en": "No setup · offline",
+    "ru": "Без настройки · офлайн"
+  },
+  "1. Keep English → Russian selected.\n2. Try a word or a short sentence.\n3. Connect a service later for full translations.": {
+    "en": "1. Keep English → Russian selected.\n2. Try a word or a short sentence.\n3. Connect a service later for full translations.",
+    "ru": "1. Выберите английский → русский.\n2. Попробуйте слово или короткую фразу.\n3. Позже подключите сервис для полноценного перевода."
+  },
+  "Dictionary hints do not understand sentence context or grammar. Unknown words stay unchanged.": {
+    "en": "Dictionary hints do not understand sentence context or grammar. Unknown words stay unchanged.",
+    "ru": "Словарные подсказки не учитывают контекст и грамматику. Неизвестные слова остаются без изменений."
+  },
+  "Optional assistant": {
+    "en": "Optional assistant",
+    "ru": "Помощник по желанию"
+  },
+  "1. Keep the assistant off to start.\n2. Word translation and saved cards still work.\n3. Choose a language model here when you want explanations.": {
+    "en": "1. Keep the assistant off to start.\n2. Word translation and saved cards still work.\n3. Choose a language model here when you want explanations.",
+    "ru": "1. Для начала можно не включать помощника.\n2. Перевод слов и карточки всё равно работают.\n3. Выберите языковую модель, когда понадобятся объяснения."
+  },
+  "The translator handles the text. The assistant explains a word in its sentence.": {
+    "en": "The translator handles the text. The assistant explains a word in its sentence.",
+    "ru": "Переводчик переводит текст. Помощник объясняет слово в контексте фразы."
+  },
+  "Local or self-hosted translator": {
+    "en": "Local or self-hosted translator",
+    "ru": "Локальный переводчик или свой сервер"
+  },
+  "1. Start your LibreTranslate server with English and Russian models.\n2. Enter its address, usually http://127.0.0.1:5000.\n3. Check the connection, then save.": {
+    "en": "1. Start your LibreTranslate server with English and Russian models.\n2. Enter its address, usually http://127.0.0.1:5000.\n3. Check the connection, then save.",
+    "ru": "1. Запустите LibreTranslate с английской и русской моделями.\n2. Укажите адрес, обычно http://127.0.0.1:5000.\n3. Проверьте подключение и сохраните."
+  },
+  "Installing GaameTranslate does not start a LibreTranslate server. A local server usually needs no API key.": {
+    "en": "Installing GaameTranslate does not start a LibreTranslate server. A local server usually needs no API key.",
+    "ru": "Установка GaameTranslate не запускает сервер LibreTranslate. Для локального сервера API-ключ обычно не нужен."
+  },
+  "Local AI · hardware-dependent speed": {
+    "en": "Local AI · hardware-dependent speed",
+    "ru": "Локальный AI · скорость зависит от ПК"
+  },
+  "1. Install and start Ollama; download a model.\n2. Enter its model name and server address, usually http://127.0.0.1:11434.\n3. Check the connection, then save.": {
+    "en": "1. Install and start Ollama; download a model.\n2. Enter its model name and server address, usually http://127.0.0.1:11434.\n3. Check the connection, then save.",
+    "ru": "1. Установите и запустите Ollama, загрузите модель.\n2. Укажите её имя и адрес сервера, обычно http://127.0.0.1:11434.\n3. Проверьте подключение и сохраните."
+  },
+  "Translation: translategemma:4b or a general model. Explanations: use a general model such as Qwen. Models need a separate download.": {
+    "en": "Translation: translategemma:4b or a general model. Explanations: use a general model such as Qwen. Models need a separate download.",
+    "ru": "Для перевода: translategemma:4b или универсальная модель. Для объяснений нужна универсальная модель, например Qwen. Модели загружаются отдельно."
+  },
+  "Local server or compatible cloud API": {
+    "en": "Local server or compatible cloud API",
+    "ru": "Локальный сервер или совместимый облачный API"
+  },
+  "1. Start LM Studio or get access to a compatible API.\n2. Enter the base URL, model ID, and a key if required.\n3. Check the connection, then save.": {
+    "en": "1. Start LM Studio or get access to a compatible API.\n2. Enter the base URL, model ID, and a key if required.\n3. Check the connection, then save.",
+    "ru": "1. Запустите LM Studio или получите доступ к совместимому API.\n2. Укажите адрес API, ID модели и ключ, если требуется.\n3. Проверьте подключение и сохраните."
+  },
+  "For local LM Studio, the usual URL is http://127.0.0.1:1234/v1. Cloud APIs need their own credentials and may charge for usage.": {
+    "en": "For local LM Studio, the usual URL is http://127.0.0.1:1234/v1. Cloud APIs need their own credentials and may charge for usage.",
+    "ru": "Для локального LM Studio обычный адрес — http://127.0.0.1:1234/v1. Облачные API требуют отдельного доступа и могут быть платными."
+  },
+  "Cloud translator · API account": {
+    "en": "Cloud translator · API account",
+    "ru": "Облачный переводчик · нужен доступ к API"
+  },
+  "1. Enable Yandex Cloud Translate access and create an API key.\n2. Enter the key and your folder ID; choose IAM only for an IAM token.\n3. Check the connection, then save.": {
+    "en": "1. Enable Yandex Cloud Translate access and create an API key.\n2. Enter the key and your folder ID; choose IAM only for an IAM token.\n3. Check the connection, then save.",
+    "ru": "1. Подключите Yandex Cloud Translate и создайте API-ключ.\n2. Введите ключ и ID каталога; включайте IAM только для IAM-токена.\n3. Проверьте подключение и сохраните."
+  },
+  "Use the Translate API credentials, not a Yandex account password. Billing and the ai.translate.user role must allow requests.": {
+    "en": "Use the Translate API credentials, not a Yandex account password. Billing and the ai.translate.user role must allow requests.",
+    "ru": "Нужен доступ к Translate API, а не пароль от Яндекса. Платёжный аккаунт и роль ai.translate.user должны разрешать запросы."
+  },
+  "Cloud AI · API account": {
+    "en": "Cloud AI · API account",
+    "ru": "Облачный AI · нужен доступ к API"
+  },
+  "1. Get Yandex AI Studio API access and model permissions.\n2. Enter the API key and folder ID; select a model if needed.\n3. Check the connection, then save.": {
+    "en": "1. Get Yandex AI Studio API access and model permissions.\n2. Enter the API key and folder ID; select a model if needed.\n3. Check the connection, then save.",
+    "ru": "1. Получите доступ к Yandex AI Studio API и нужной модели.\n2. Введите API-ключ и ID каталога, при необходимости выберите модель.\n3. Проверьте подключение и сохраните."
+  },
+  "A consumer chat subscription does not replace API access. Translation and dictionary explanations are configured separately.": {
+    "en": "A consumer chat subscription does not replace API access. Translation and dictionary explanations are configured separately.",
+    "ru": "Подписка на чат не заменяет доступ к API. Перевод и объяснения слов настраиваются отдельно."
+  },
+  "1. Get an authorization key from the GigaChat API account.\n2. Paste that key and select the matching scope and model.\n3. Check the connection, then save.": {
+    "en": "1. Get an authorization key from the GigaChat API account.\n2. Paste that key and select the matching scope and model.\n3. Check the connection, then save.",
+    "ru": "1. Получите ключ авторизации в кабинете GigaChat API.\n2. Вставьте ключ, укажите подходящий scope и модель.\n3. Проверьте подключение и сохраните."
+  },
+  "Use the authorization key, not your password or a temporary access token. GIGACHAT_API_PERS is for personal API accounts; Windows may need the provider's trusted certificate.": {
+    "en": "Use the authorization key, not your password or a temporary access token. GIGACHAT_API_PERS is for personal API accounts; Windows may need the provider's trusted certificate.",
+    "ru": "Нужен ключ авторизации, а не пароль или временный токен доступа. GIGACHAT_API_PERS — для личного API-аккаунта; Windows может потребоваться доверенный сертификат провайдера."
+  },
+  "Cloud translator · Azure resource": {
+    "en": "Cloud translator · Azure resource",
+    "ru": "Облачный переводчик · ресурс Azure"
+  },
+  "1. Create an Azure Translator resource.\n2. Copy its API key and region into these fields.\n3. Check the connection, then save.": {
+    "en": "1. Create an Azure Translator resource.\n2. Copy its API key and region into these fields.\n3. Check the connection, then save.",
+    "ru": "1. Создайте ресурс Azure Translator.\n2. Скопируйте его API-ключ и регион в эти поля.\n3. Проверьте подключение и сохраните."
+  },
+  "Use the Translator resource credentials. Regional or multi-service resources need the matching region.": {
+    "en": "Use the Translator resource credentials. Regional or multi-service resources need the matching region.",
+    "ru": "Используйте ключ ресурса Translator. Для регионального или мультисервисного ресурса укажите соответствующий регион."
+  },
+  "Cloud translator · DeepL API plan": {
+    "en": "Cloud translator · DeepL API plan",
+    "ru": "Облачный переводчик · тариф DeepL API"
+  },
+  "1. Get a key for a DeepL API plan.\n2. Match Free or Pro to that API key.\n3. Check the connection, then save.": {
+    "en": "1. Get a key for a DeepL API plan.\n2. Match Free or Pro to that API key.\n3. Check the connection, then save.",
+    "ru": "1. Получите ключ тарифа DeepL API.\n2. Выберите Free или Pro в соответствии с ключом.\n3. Проверьте подключение и сохраните."
+  },
+  "A DeepL website subscription is separate from API access. Availability depends on your region and account.": {
+    "en": "A DeepL website subscription is separate from API access. Availability depends on your region and account.",
+    "ru": "Подписка на сайте DeepL не заменяет доступ к API. Доступность зависит от региона и аккаунта."
+  },
+  "Connection checked · ready": {
+    "ru": "Подключение проверено · готово",
+    "en": "Connection checked · ready"
+  },
+  "Your text has been kept. Press Translate text when you are ready.": {
+    "en": "Your text has been kept. Press Translate text when you are ready.",
+    "ru": "Ваш текст сохранён в поле. Когда будете готовы, нажмите «Перевести текст»."
   }
 }

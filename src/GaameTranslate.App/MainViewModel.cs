@@ -21,6 +21,23 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     [NotifyPropertyChangedFor(nameof(ShowDictionaryNotice), nameof(DictionaryNotice), nameof(DictionaryNoticeTitle))]
     private bool usedDictionaryFallback;
     private readonly TranslationFailover failover = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowDictionaryNotice))]
+    private bool isStartupTipVisible;
+    public event Action? QuickStartRequested;
+    public event Action<string>? SettingsTabRequested;
+    public void NotifyStartup() => IsStartupTipVisible = Settings.ShowStartupTips && NeedsProviderSetup;
+    [RelayCommand] private void DismissStartupTip() => IsStartupTipVisible = false;
+    [RelayCommand] private void OpenQuickStart() { IsStartupTipVisible = false; QuickStartRequested?.Invoke(); }
+    [RelayCommand] private void TrySample()
+    {
+        IsStartupTipVisible = false;
+        var useSample = InputText.Length == 0;
+        if (useSample) InputText = "Hello, traveler! Your journey begins here.";
+        PageIndex = 1; Status = useSample ? "Sample ready. Press Translate text to try your current translator. No screen capture is needed." : "Your text has been kept. Press Translate text when you are ready.";
+        if (System.Windows.Application.Current is App app) app.ShowMain();
+    }
+    public void OpenSettingsTab(string tab) { OpenSettings(); SettingsTabRequested?.Invoke(tab); }
     [ObservableProperty] private int pageIndex;
     [ObservableProperty] private UiMessage status = "Ready when you are. Select an area to get started.";
     [ObservableProperty] private bool isBusy;
@@ -56,9 +73,9 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public ISpeechService Speech => speech;
     public LocalMediaStore Media => media;
     public GameProfileStore Profiles { get; } = new(Path.GetDirectoryName(media.DirectoryPath)!);
-    public bool UsesBuiltInDictionary(AppSettings configuration) => configuration.Provider == ProviderCatalog.BuiltInDictionary || ProviderCatalog.RequiresKey(configuration) && !HasKey(configuration.Provider);
+    public bool UsesBuiltInDictionary(AppSettings configuration) => configuration.Provider == ProviderCatalog.BuiltInDictionary || ProviderCatalog.MissingSetupFields(configuration) || ProviderCatalog.RequiresKey(configuration) && !HasKey(configuration.Provider);
     public bool NeedsProviderSetup => UsesBuiltInDictionary(Settings);
-    public bool ShowDictionaryNotice => NeedsProviderSetup || UsedDictionaryFallback;
+    public bool ShowDictionaryNotice => (NeedsProviderSetup || UsedDictionaryFallback) && !IsStartupTipVisible;
     public UiMessage DictionaryNotice => UsedDictionaryFallback ? ProviderCatalog.DictionaryFallbackWarning : ProviderCatalog.DictionaryWarning;
     public UiMessage DictionaryNoticeTitle => UsedDictionaryFallback ? "Backup translation · English → Russian" : "Built-in dictionary · English → Russian";
     public string EffectiveProviderName(AppSettings configuration) => UsesBuiltInDictionary(configuration) ? ProviderCatalog.BuiltInDictionary : configuration.Provider;
@@ -151,7 +168,7 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     public void StopMonitoring() { monitoring?.Cancel(); if (IsMonitoring) operation?.Cancel(); IsMonitoring = false; }
     [RelayCommand] private void ToggleOverlay() => ToggleOverlayRequested?.Invoke();
     [RelayCommand] private void ToggleInteraction() => InteractionRequested?.Invoke();
-    [RelayCommand] private void OpenSettings() { PageIndex = 5; if (System.Windows.Application.Current is App app) app.ShowMain(); }
+    [RelayCommand] private void OpenSettings() { IsStartupTipVisible = false; PageIndex = 5; SettingsTabRequested?.Invoke("translation"); if (System.Windows.Application.Current is App app) app.ShowMain(); }
     [RelayCommand] private void OpenVocabulary() => PageIndex = 2;
     [RelayCommand]
     private async Task SwapLanguagesAsync() => await GuardAsync(async () =>
@@ -276,10 +293,11 @@ public sealed partial class MainViewModel(IScreenCapture capture, IOcrProvider o
     }
     public async Task SaveSettingsAsync(AppSettings value, string? newKey, bool removeKey)
     {
-        InterfaceOnlySettingsChange = value.InterfaceLanguage != Settings.InterfaceLanguage && (value with { InterfaceLanguage = Settings.InterfaceLanguage }) == Settings && string.IsNullOrWhiteSpace(newKey) && !removeKey;
+        InterfaceOnlySettingsChange = (value.InterfaceLanguage != Settings.InterfaceLanguage || value.ShowStartupTips != Settings.ShowStartupTips) && (value with { InterfaceLanguage = Settings.InterfaceLanguage, ShowStartupTips = Settings.ShowStartupTips }) == Settings && string.IsNullOrWhiteSpace(newKey) && !removeKey;
         value.Validate(); GlobalHotkeys.Validate(value.Hotkeys); await settingsStore.SaveAsync(value);
         if (removeKey) credentials.Delete(value.Provider); else if (!string.IsNullOrWhiteSpace(newKey)) credentials.Write(value.Provider, newKey.Trim());
         Settings = value; L.SetLanguage(value.InterfaceLanguage);
+        if (!NeedsProviderSetup || !value.ShowStartupTips) IsStartupTipVisible = false;
         if (!InterfaceOnlySettingsChange) { lastProfileSettings = null; cache.Clear(); failover.Clear(); UsedDictionaryFallback = false; }
         OnPropertyChanged(nameof(NeedsProviderSetup)); Status = "Настройки сохранены."; SettingsChanged?.Invoke();
     }

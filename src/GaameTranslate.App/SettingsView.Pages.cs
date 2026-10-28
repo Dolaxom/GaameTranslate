@@ -161,6 +161,9 @@ public sealed partial class SettingsView
     private void BuildApplication()
     {
         var page = Page("app"); var s = vm.Settings;
+        var help = Section(page, "Getting started", "Help is always available from the sidebar and tray menu.");
+        Toggle(help, "startupTips", "Show dictionary-mode tips at startup", "A non-blocking reminder appears when no full translation provider is configured.", s.ShowStartupTips);
+        var guide = Ui.Localize(new Button { Content = "Quick start guide", HorizontalAlignment = HorizontalAlignment.Left }); guide.Click += (_, _) => vm.OpenQuickStartCommand.Execute(null); help.Children.Add(guide);
         var appearance = Section(page, "Привычный вид и поведение", "Изменения применяются после сохранения.");
         Choice(appearance, "interfaceLanguage", "Язык интерфейса / Interface language", [new("ru", "Русский"), new("en", "English")], s.InterfaceLanguage);
         Toggle(appearance, "light", "Светлая тема", "Выключите, чтобы использовать тёмную тему.", s.LightTheme);
