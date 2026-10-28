@@ -26,6 +26,15 @@ An unfamiliar word shouldn't interrupt a good story. Press **Alt+Q** to translat
 2. **Try it right away:** open an English-language game and press **Alt+Q** for the screen or **Alt+W** for a word. The built-in English–Russian dictionary works without accounts, downloads, or a server.
 3. **Upgrade the translation when ready:** choose a provider in **Settings → Translation**, enter its connection details, then **Check connection → Save**.
 
+New here? Open **Quick start guide** in the sidebar or tray menu for a short tour, a sample text, and shortcut help. Each provider has its own three-step setup card and an official guide. Startup tips can be turned off in **Settings → Application**.
+
+<details>
+<summary><strong>A peek at the quick-start guide</strong></summary>
+
+<img src="assets/screenshots/quick-start.png" alt="Quick-start guide with game translation shortcuts and an explanation of dictionary mode" width="600">
+
+</details>
+
 That's it! Windowed or borderless games work best.
 
 > **Prefer Russian?** Go to **Settings → Application → Interface language** and choose **Русский**. You can switch back to English anytime, without restarting.
@@ -131,7 +140,7 @@ You'll need Windows and the **.NET 10 SDK**.
 
 Find the app in `artifacts/publish/win-x64` and the ZIP in `artifacts`.
 
-More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.3.2.md) · [localization](docs/LOCALIZATION.md).
+More details: [testing](docs/TESTING.md) · [release notes](docs/RELEASE-0.4.0.md) · [localization](docs/LOCALIZATION.md).
 
 </details>
 

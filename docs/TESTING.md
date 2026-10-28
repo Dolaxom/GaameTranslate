@@ -1,5 +1,9 @@
 # Testing and verification
 
+## First-run help and connector setup 0.4.0
+
+Run `dotnet run --project tests/GaameTranslate.Windows.Verify -c Release -- artifacts/onboarding --onboarding` for startup reminders, dismissal and persisted opt-out, single-instance help, RU/EN switching, sample-text safety, draft-preserving tab navigation, all connector cards, connection states, stale-response cancellation, and small-window actions. The suite writes screenshots and a results JSON file. HTTP is controlled; no real provider or browser is contacted. Unit tests verify bilingual help coverage and incomplete connector detection. Tray balloon delivery depends on Windows settings and is not asserted by the WPF suite.
+
 ## Automated domain and infrastructure tests
 
 ```powershell

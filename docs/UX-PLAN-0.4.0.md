@@ -1,0 +1,10 @@
+# First-run UX plan — implemented in 0.4.0
+
+1. **Startup reminder:** a dismissible in-app notification when the selected translator is missing required setup or the built-in dictionary is selected. A minimized launch uses the tray balloon; clicking it opens help. No network probes on startup. The ordinary dictionary banner is hidden while the notification is visible to avoid duplicate warnings.
+2. **Reusable quick start:** explain dictionary hints, full translation, the optional AI assistant, local/cloud services, fallback behavior, and the user's actual shortcuts. Keep actions visible while the text scrolls. Reuse one window and offer access from the sidebar, tray, and Application settings.
+3. **Connector-specific help:** show three setup steps for each translator and assistant, with extra notes and an official documentation link under a disclosure. Do not open external pages or download models automatically.
+4. **Honest connection feedback:** distinguish unverified, checking, successful-but-unsaved, saved-and-checked, and failed states. Any edit cancels and invalidates an outstanding check. A late response cannot verify a different draft. The saved provider's presence alone does not imply a healthy connection.
+5. **A safe sample and direct navigation:** prepare an English sample on the Translate page without automatically translating or capturing. Retain existing text. Help buttons open the correct settings tab without discarding drafts.
+6. **User control and accessibility:** persist a startup-tip preference, keep help available when reminders are disabled, support live RU/EN in all new text, use named controls and polite status announcements, and retain footer actions in small windows.
+
+Verification: `OnboardingTests` checks bilingual guide coverage for all connectors and safe settings defaults. `--onboarding` exercises real WPF windows with isolated settings and databases, controlled HTTP responses, late checks, navigation, saved preferences, localization, and screenshots. Windows notification delivery still depends on the user's Windows notification preferences; the in-app reminder remains available when the main window is shown.
